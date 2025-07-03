@@ -9,5 +9,5 @@ interface ValidatorInterface
     public function validate(
         \M2E\Temu\Model\Product $product,
         \M2E\Temu\Model\Product\Action\Configurator $configurator
-    ): ?string;
+    ): ?\M2E\Temu\Model\Product\Action\Validator\ValidatorMessage;
 }

@@ -44,7 +44,11 @@ class SizeFinder extends AbstractDimensionFinder
         }
 
         if (count($childSizes) === 0) {
-            throw new PackageDimensionException((string)__('Package Dimensions are missing. To list the Product, please make sure that the Package settings are correct.'));
+            throw new PackageDimensionException(
+                (string)__('Package Dimensions are missing. To list the Product, please make sure that the Package settings are correct.'),
+                [],
+                \M2E\Temu\Model\Product\PackageDimension\PackageDimensionException::CODE_DIMENSIONS_MISSING
+            );
         }
 
         krsort($childSizes, SORT_NUMERIC);

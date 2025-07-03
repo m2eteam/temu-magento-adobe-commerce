@@ -8,5 +8,6 @@ interface PolicyInterface
 {
     public function getId(): ?int;
     public function getNick(): string;
+    public function setTitle(string $title): void;
     public function getTitle(): string;
 }

@@ -3,13 +3,17 @@
 namespace M2E\Temu\Block\Adminhtml\Template\Category\Chooser\Specific\Form\Element;
 
 use M2E\Temu\Block\Adminhtml\Template\Category\Chooser\Specific\Form\Element\Dictionary\Multiselect;
+use M2E\Temu\Block\Adminhtml\Template\Category\Chooser\Specific\Form\Element\Dictionary\Select;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
+use M2E\Temu\Model\Category\CategoryAttribute;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 
 class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
 {
     use \M2E\Temu\Block\Adminhtml\Traits\BlockTrait;
+
+    private const DEFAULT_MAX_MULTIPLE_VALUES_COUNT = 10;
 
     public \Magento\Framework\View\LayoutInterface $layout;
     private \M2E\Core\Helper\Magento\Attribute $magentoAttributeHelper;
@@ -46,6 +50,7 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
             $json = $this->getRecommendedJsonRelations();
             $this->js->addRequireJs(
                 [
+                    'etcs' => 'Temu/Template/Category/Specifics',
                     'childSelectUpdater' => 'Temu/Template/Category/AttributesRelation',
                 ],
                 <<<JS
@@ -206,7 +211,7 @@ JS
         }
 
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
-        $element = $this->_factoryElement->create('select', [
+        $element = $this->_factoryElement->create(Select::class, [
             'data' => [
                 'name' => $this->makeInputName($index, 'value_mode'),
                 'style' => 'width: 100%',
@@ -214,6 +219,8 @@ JS
                 'value' => !empty($specific['template_attribute']) ?
                     $specific['template_attribute']['value_mode'] : null,
                 'values' => $values,
+                'data-max-rows' => $specific['multiple_selected_max_count']
+                    ?? self::DEFAULT_MAX_MULTIPLE_VALUES_COUNT,
             ],
         ]);
 
@@ -434,6 +441,24 @@ HTML;
             && !empty($specific['parent_template_pid']);
     }
 
+    public function getAdditionalClass($specific): string
+    {
+        $result = '';
+        if ($this->isProductChildAttribute($specific)) {
+            $result .= ' child-relation-row ';
+        }
+
+        if ($this->shouldShowAddMoreBtn($specific)) {
+            if (CategoryAttribute::getCleanAttributeId($specific['id']) !== $specific['id']) {
+                $result .= ' M2E-category-product-attribute-variant ';
+            } else {
+                $result .= ' M2E-category-product-attribute-add-more ';
+            }
+        }
+
+        return $result;
+    }
+
     private function formatAttributeValues(array $specific): array
     {
         $selected = $specific['template_attribute']['value_temu_recommended'] ?? [];
@@ -459,14 +484,22 @@ HTML;
         return $formattedValues;
     }
 
-    private function hasChild($specific): bool
+    private function hasChild(array $specific): bool
     {
         foreach ($specific['values'] as $value) {
-            if (empty($value['children_relation'])) {
+            if (!empty($value['children_relation'])) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private function shouldShowAddMoreBtn(array $specific): bool
+    {
+        return $specific['attribute_type'] === CategoryAttribute::ATTRIBUTE_TYPE_PRODUCT
+            && $specific['type'] == \M2E\Temu\Model\Template\Category::RENDER_TYPE_SELECT_MULTIPLE
+            && empty($specific['parent_template_pid'])
+            && !$this->hasChild($specific);
     }
 }

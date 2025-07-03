@@ -121,6 +121,12 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['default' => null]
             )
             ->addColumn(
+                SellingFormatResource::COLUMN_ITEM_TAX_CODE_ATTRIBUTE,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
                 SellingFormatResource::COLUMN_UPDATE_DATE,
                 Table::TYPE_DATETIME,
                 null,
@@ -476,6 +482,12 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 Table::TYPE_TEXT,
                 255,
                 ['nullable' => false]
+            )
+            ->addColumn(
+                DescriptionResource::COLUMN_BULLET_POINTS,
+                Table::TYPE_TEXT,
+                \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
+                ['default' => null]
             )
             ->addColumn(
                 DescriptionResource::COLUMN_UPDATE_DATE,

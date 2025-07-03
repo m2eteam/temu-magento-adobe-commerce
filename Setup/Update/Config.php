@@ -28,6 +28,8 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
                 \M2E\Temu\Setup\Update\y25_m06\AddShippingReviseColumnToPolicy::class,
                 \M2E\Temu\Setup\Update\y25_m06\AddOnlineShippingColumnsToProductTable::class,
                 \M2E\Temu\Setup\Update\y25_m06\AddReferenceLink::class,
+                \M2E\Temu\Setup\Update\y25_m06\AddBulletPointsColumns::class,
+                \M2E\Temu\Setup\Update\y25_m06\AddItemTaxCodeColumns::class,
             ],
         ];
     }

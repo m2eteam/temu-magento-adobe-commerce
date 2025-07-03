@@ -1,8 +1,9 @@
 define([
     'jquery',
     'mage/translate',
-    'Temu/Common'
-], function (jQuery, $t) {
+    'Temu/Template/Category/Specifics/DynamicRowsHandler',
+    'Temu/Common',
+], function (jQuery, $t, DynamicRowsHandler) {
     window.TemuTemplateCategorySpecifics = Class.create(Common, {
 
         maxSelectedSpecifics: 45,
@@ -46,6 +47,7 @@ define([
 
             this.addVariantsValidator();
             this.createSpecificsSnapshot();
+            new DynamicRowsHandler(this);
         },
 
         getElementScope: function (element) {

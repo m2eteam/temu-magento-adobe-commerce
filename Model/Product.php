@@ -550,6 +550,30 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return (string)$images;
     }
 
+    public function setOnlineItemTaxCode(?string $value): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_ITEM_TAX_CODE, $value);
+
+        return $this;
+    }
+
+    public function getOnlineItemTaxCode(): ?string
+    {
+        return $this->getData(ProductResource::COLUMN_ONLINE_ITEM_TAX_CODE);
+    }
+
+    public function setOnlineBulletPoints(?string $value): self
+    {
+        $this->setData(ProductResource::COLUMN_ONLINE_BULLET_POINTS, $value);
+
+        return $this;
+    }
+
+    public function getOnlineBulletPoints(): ?string
+    {
+        return $this->getData(ProductResource::COLUMN_ONLINE_BULLET_POINTS);
+    }
+
     // ----------------------------------------
 
     private function setStatusChanger(int $statusChanger): self

@@ -67,6 +67,7 @@ define([
 
         updateTemplates: function(isForce) {
             const self = this;
+            MessagesObj.clear();
 
             new Ajax.Request(this.urlGetTemplates, {
                 method: 'post',
@@ -89,7 +90,8 @@ define([
                         return;
                     }
 
-                    console.error(response.message);
+                    self.renderDeliveryTemplates([]);
+                    MessagesObj.addError(response.message);
                 },
             });
         },

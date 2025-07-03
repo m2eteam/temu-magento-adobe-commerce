@@ -156,6 +156,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['default' => null]
             )
             ->addColumn(
+                ProductResource::COLUMN_ONLINE_ITEM_TAX_CODE,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
                 ProductResource::COLUMN_ONLINE_SHIPPING_TEMPLATE_ID,
                 Table::TYPE_TEXT,
                 255,
@@ -166,6 +172,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                ProductResource::COLUMN_ONLINE_BULLET_POINTS,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
             )
             ->addColumn(
                 ProductResource::COLUMN_TEMPLATE_CATEGORY_ID,

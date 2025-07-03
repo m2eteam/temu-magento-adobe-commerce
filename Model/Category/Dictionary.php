@@ -101,6 +101,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
             array_filter(
                 $allAttributes,
                 fn(DictionaryAbstractAttribute $attribute) => $attribute->isRequired()
+                    && !$attribute->getParentTemplatePid()
             )
         );
 

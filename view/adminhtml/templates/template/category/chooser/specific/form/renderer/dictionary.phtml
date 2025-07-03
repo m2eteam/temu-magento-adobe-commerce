@@ -21,8 +21,8 @@ $element = $block->getElement();
     <tbody>
     <?php
     foreach ($element->getSpecifics() as $index => $specific) { ?>
-        <tr style="height: 25px;" <?php
-        /* @noEscape */ echo ($element->isProductChildAttribute($specific)) ? 'class="child-relation-row"' : ''; ?>>
+        <tr style="height: 25px;"  class="<?php
+        /* @noEscape */ $element->getAdditionalClass($specific); ?>">
             <td style="vertical-align:top;">
                 <?php
                 echo $element->getAttributeIdHiddenHtml($index, $specific); ?>

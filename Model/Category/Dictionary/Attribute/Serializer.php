@@ -104,6 +104,7 @@ class Serializer
                 'template_pid' => $attribute->getTemplatePid(),
                 'parent_spec_id' => $attribute->getParentSpecId(),
                 'parent_template_pid' => $attribute->getParentTemplatePid(),
+                'multiple_selected_max_count' => $attribute->getMultipleSelectedMaxCount(),
                 'values' => $values,
             ];
         }
@@ -133,7 +134,8 @@ class Serializer
                 $item['template_pid'],
                 $item['parent_spec_id'],
                 $item['parent_template_pid'] ?? null,
-                $values
+                $values,
+                $item['multiple_selected_max_count'] ?? null
             );
         }
 

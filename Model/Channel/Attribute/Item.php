@@ -24,6 +24,7 @@ class Item
     private string $typeFormat;
     private array $rules;
     private ?int $parentTemplatePid;
+    private ?int $multipleSelectedMaxCount;
 
     public function __construct(
         string $id,
@@ -39,7 +40,8 @@ class Item
         int $refPid,
         int $templatePid,
         ?int $parentSpecId,
-        ?int $parentTemplatePid
+        ?int $parentTemplatePid,
+        ?int $multipleSelectedMaxCount
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -55,6 +57,7 @@ class Item
         $this->rules = $rules;
         $this->pid = $pid;
         $this->parentTemplatePid = $parentTemplatePid;
+        $this->multipleSelectedMaxCount = $multipleSelectedMaxCount;
     }
 
     public function getId(): string
@@ -149,5 +152,10 @@ class Item
     public function getParentTemplatePid(): ?int
     {
         return $this->parentTemplatePid;
+    }
+
+    public function getMultipleSelectedMaxCount(): ?int
+    {
+        return $this->multipleSelectedMaxCount;
     }
 }

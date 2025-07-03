@@ -34,7 +34,7 @@ class SaveService
         $this->syncSnapshotBuilderFactory = $syncSnapshotBuilderFactory;
     }
 
-    public function save(array $data)
+    public function save(array $data): SellingFormat
     {
         $templateModel = $this->sellingFormatFactory->create();
 
@@ -47,17 +47,17 @@ class SaveService
 
         $templateBuilder = $this->builderFactory->create();
 
-        $template = $templateBuilder->build($templateModel, $data);
+        $templateBuilder->build($templateModel, $data);
         if (empty($data['id'])) {
-            $this->sellingFormatRepository->create($template);
+            $this->sellingFormatRepository->create($templateModel);
         } else {
-            $this->sellingFormatRepository->save($template);
+            $this->sellingFormatRepository->save($templateModel);
         }
 
         $snapshotBuilder = $this->syncSnapshotBuilderFactory->create();
-        $snapshotBuilder->setModel($template);
+        $snapshotBuilder->setModel($templateModel);
 
-        $newData = $this->makeSnapshot($template);
+        $newData = $this->makeSnapshot($templateModel);
 
         $diff = $this->diffFactory->create();
 
@@ -65,7 +65,7 @@ class SaveService
         $diff->setOldSnapshot($oldData);
 
         $affectedListingsProducts = $this->affectedProductsFactory->create();
-        $affectedListingsProducts->setModel($template);
+        $affectedListingsProducts->setModel($templateModel);
 
         $changeProcessor = $this->changeProcessorFactory->create();
 
@@ -74,7 +74,7 @@ class SaveService
             $affectedListingsProducts->getObjectsData(['id', 'status'])
         );
 
-        return $template;
+        return $templateModel;
     }
 
     private function makeSnapshot($model)

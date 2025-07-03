@@ -60,6 +60,11 @@ class Synchronization extends \M2E\Temu\Model\ActiveRecord\AbstractModel impleme
 
     //########################################
 
+    public function setTitle(string $title): void
+    {
+        $this->setData(SynchronizationResource::COLUMN_TITLE, $title);
+    }
+
     public function getTitle(): string
     {
         return (string)$this->getData(SynchronizationResource::COLUMN_TITLE);

@@ -12,6 +12,7 @@ abstract class AbstractProcessStart
 {
     use ActionLoggerTrait;
 
+    private \M2E\Temu\Model\Product\Action\TagManager $tagManager;
     private \M2E\Temu\Model\Product\LockManager $lockManager;
     private \M2E\Temu\Model\Product $listingProduct;
     private \M2E\Temu\Model\Product\Action\Configurator $actionConfigurator;
@@ -20,6 +21,12 @@ abstract class AbstractProcessStart
     private Async\Processing\InitiatorFactory $processingInitiatorFactory;
     private array $params;
     private int $statusChanger;
+
+    public function __construct(
+        \M2E\Temu\Model\Product\Action\TagManager $tagManager
+    ) {
+        $this->tagManager = $tagManager;
+    }
 
     public function initialize(
         \M2E\Temu\Model\Product\Action\Logger $actionLogger,
@@ -100,16 +107,22 @@ abstract class AbstractProcessStart
             $this->getVariantSettings()
         );
 
-        foreach ($this->getActionValidator()->getMessages() as $messageData) {
+        foreach ($this->getActionValidator()->getMessages() as $message) {
             $this->addActionLogMessage(
                 \M2E\Core\Model\Response\Message::create(
-                    (string)$messageData['text'],
-                    $messageData['type']
+                    $message->getText(),
+                    $message->getType()
                 ),
             );
         }
 
-        return $validationResult;
+        if ($validationResult) {
+            return true;
+        }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $this->getActionValidator()->getMessages());
+
+        return false;
     }
 
     abstract protected function getActionValidator(): Type\AbstractValidator;

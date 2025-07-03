@@ -10,6 +10,8 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
 {
     private \Magento\Framework\App\RequestInterface $request;
     private \M2E\Temu\Model\Magento\Product\RuleFactory $ruleFactory;
+    /** @var mixed */
+    private array $rawData = [];
 
     public function __construct(
         \M2E\Temu\Model\Magento\Product\RuleFactory $ruleFactory,
@@ -19,30 +21,29 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
         $this->ruleFactory = $ruleFactory;
     }
 
-    /**
-     * @throws \M2E\Temu\Model\Exception
-     */
-    protected function prepareData(): array
-    {
-        $data = parent::prepareData();
+    protected function initData(
+        \M2E\Temu\Model\Policy\PolicyInterface $model,
+        ?int $id,
+        string $title,
+        array $rawData
+    ): void {
+        $this->rawData = $rawData;
 
-        $this->rawData = \M2E\Core\Helper\Data::arrayReplaceRecursive($this->getDefaultData(), $this->rawData);
-
-        return array_merge(
-            $data,
+        $data = array_merge(
+            $rawData,
             $this->prepareListData(),
             $this->prepareReviseData(),
             $this->prepareRelistData(),
             $this->prepareStopData()
         );
+
+        /** @var \M2E\Temu\Model\Policy\Synchronization $model */
+        $model->addData($data);
     }
 
     // ---------------------------------------
 
-    /**
-     * @throws \M2E\Temu\Model\Exception
-     */
-    protected function prepareListData(): array
+    private function prepareListData(): array
     {
         $data = [];
 
@@ -77,7 +78,7 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
         return $data;
     }
 
-    protected function prepareReviseData(): array
+    private function prepareReviseData(): array
     {
         $data = [
             'revise_update_qty' => 1,
@@ -123,10 +124,7 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
         return $data;
     }
 
-    /**
-     * @throws \M2E\Temu\Model\Exception
-     */
-    protected function prepareRelistData(): array
+    private function prepareRelistData(): array
     {
         $data = [];
 
@@ -165,10 +163,7 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
         return $data;
     }
 
-    /**
-     * @throws \M2E\Temu\Model\Exception
-     */
-    protected function prepareStopData(): array
+    private function prepareStopData(): array
     {
         $data = [];
 
@@ -203,10 +198,7 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
         return $data;
     }
 
-    /**
-     * @throws \M2E\Temu\Model\Exception
-     */
-    protected function getRuleData($rulePrefix): ?string
+    private function getRuleData($rulePrefix): ?string
     {
         $post = $this->request->getParams();
 
@@ -220,6 +212,8 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
 
         return $ruleModel->getSerializedFromPost($post);
     }
+
+    // ----------------------------------------
 
     public function getDefaultData(): array
     {

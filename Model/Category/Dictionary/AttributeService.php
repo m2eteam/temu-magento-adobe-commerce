@@ -62,7 +62,8 @@ class AttributeService
                 $responseAttribute->getTemplatePid(),
                 $responseAttribute->getParentSpecId(),
                 $responseAttribute->getParentTemplatePid(),
-                $values
+                $values,
+                $responseAttribute->getMultipleSelectedMaxCount()
             );
         }
 

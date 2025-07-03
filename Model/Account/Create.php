@@ -12,6 +12,7 @@ class Create
     private \M2E\Core\Helper\Magento\Store $storeHelper;
     private \M2E\Temu\Model\ShippingProvider\SynchronizeService $shippingProviderSynchronizeService;
     private \M2E\Temu\Helper\Module\Exception $helperException;
+    private \M2E\Temu\Model\Account\AuthCodeSessionStorage $authCodeSessionStorage;
 
     public function __construct(
         \M2E\Temu\Model\AccountFactory $accountFactory,
@@ -19,7 +20,8 @@ class Create
         \M2E\Temu\Model\Account\Repository $accountRepository,
         \M2E\Temu\Model\ShippingProvider\SynchronizeService $shippingProviderSynchronizeService,
         \M2E\Core\Helper\Magento\Store $storeHelper,
-        \M2E\Temu\Helper\Module\Exception $helperException
+        \M2E\Temu\Helper\Module\Exception $helperException,
+        \M2E\Temu\Model\Account\AuthCodeSessionStorage $authCodeSessionStorage
     ) {
         $this->addProcessor = $addProcessor;
         $this->accountRepository = $accountRepository;
@@ -27,6 +29,7 @@ class Create
         $this->shippingProviderSynchronizeService = $shippingProviderSynchronizeService;
         $this->storeHelper = $storeHelper;
         $this->helperException = $helperException;
+        $this->authCodeSessionStorage = $authCodeSessionStorage;
     }
 
     /**
@@ -46,6 +49,14 @@ class Create
         ?string $referer,
         ?string $callbackHost
     ): \M2E\Temu\Model\Account {
+        $accountId = $this->authCodeSessionStorage->getAccount($authCode);
+        if ($accountId !== null) {
+            $account = $this->accountRepository->find($accountId);
+            if ($account !== null) {
+                return $account;
+            }
+        }
+
         $response = $this->createOnServer(
             $authCode,
             $region,
@@ -77,6 +88,7 @@ class Create
         );
 
         $this->accountRepository->create($account);
+        $this->authCodeSessionStorage->setAccount($authCode, $account->getId());
 
         try {
             $this->synchronizeShippingProvider($account);

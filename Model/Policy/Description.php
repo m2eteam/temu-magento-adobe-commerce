@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace M2E\Temu\Model\Policy;
 
 use M2E\Temu\Model\ResourceModel\Policy\Description as DescriptionResource;
+use M2E\Temu\Model\Policy\Description\BulletPoint;
 
 class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements PolicyInterface
 {
@@ -15,8 +16,7 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
     public const TITLE_MODE_PRODUCT = 0;
     public const GALLERY_IMAGES_MODE_NONE = 0;
     public const EDITOR_TYPE_TINYMCE = 1;
-    public const INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED
-        = 'magento_static_block_in_description_changed';
+    public const INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED = 'magento_static_block_in_description_changed';
     public const TITLE_MODE_CUSTOM = 1;
     public const GALLERY_IMAGES_MODE_PRODUCT = 1;
     public const DESCRIPTION_MODE_CUSTOM = 2;
@@ -62,51 +62,35 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
         return \M2E\Temu\Model\Policy\Manager::TEMPLATE_DESCRIPTION;
     }
 
+    public function setTitle(string $title): void
+    {
+        $this->setData(DescriptionResource::COLUMN_TITLE, $title);
+    }
+
     public function getTitle(): string
     {
-        return $this->getData('title');
+        return $this->getData(DescriptionResource::COLUMN_TITLE);
     }
 
     // ----------------------------------------
 
-    public function getCreateDate()
+    public function setTitleMode(int $mode): self
     {
-        return $this->getData('create_date');
+        $this->setData(DescriptionResource::COLUMN_TITLE_MODE, $mode);
+
+        return $this;
     }
-
-    public function getUpdateDate()
-    {
-        return $this->getData('update_date');
-    }
-
-    // ----------------------------------------
-
-    /**
-     * @param \M2E\Temu\Model\Magento\Product $magentoProduct
-     *
-     * @return \M2E\Temu\Model\Policy\Description\Source
-     */
-    public function getSource(
-        \M2E\Temu\Model\Magento\Product $magentoProduct
-    ): Description\Source {
-        $productId = $magentoProduct->getProductId();
-
-        if (!empty($this->descriptionSourceModels[$productId])) {
-            return $this->descriptionSourceModels[$productId];
-        }
-
-        $this->descriptionSourceModels[$productId] = $this->sourceFactory->create();
-        $this->descriptionSourceModels[$productId]->setMagentoProduct($magentoProduct);
-        $this->descriptionSourceModels[$productId]->setDescriptionPolicy($this);
-
-        return $this->descriptionSourceModels[$productId];
-    }
-
-    // ----------------------------------------
 
     public function getTitleMode(): int
     {
         return (int)$this->getData(DescriptionResource::COLUMN_TITLE_MODE);
+    }
+
+    public function setTitleTemplate(string $template): self
+    {
+        $this->setData(DescriptionResource::COLUMN_TITLE_TEMPLATE, $template);
+
+        return $this;
     }
 
     public function getTitleSource(): array
@@ -133,9 +117,23 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
         return $attributes;
     }
 
+    public function setDescriptionMode(int $mode): self
+    {
+        $this->setData(DescriptionResource::COLUMN_DESCRIPTION_MODE, $mode);
+
+        return $this;
+    }
+
     public function getDescriptionMode(): int
     {
         return (int)$this->getData(DescriptionResource::COLUMN_DESCRIPTION_MODE);
+    }
+
+    public function setDescriptionTemplate(string $template): self
+    {
+        $this->setData(DescriptionResource::COLUMN_DESCRIPTION_TEMPLATE, $template);
+
+        return $this;
     }
 
     public function getDescriptionSource(): array
@@ -165,6 +163,13 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
 
     // ---------------------------------------
 
+    public function setImageMainMode(int $mode): self
+    {
+        $this->setData(DescriptionResource::COLUMN_IMAGE_MAIN_MODE, $mode);
+
+        return $this;
+    }
+
     public function getImageMainMode(): int
     {
         return (int)$this->getData(DescriptionResource::COLUMN_IMAGE_MAIN_MODE);
@@ -178,6 +183,13 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
     public function isImageMainModeAttribute(): bool
     {
         return $this->getImageMainMode() === self::IMAGE_MAIN_MODE_ATTRIBUTE;
+    }
+
+    public function setImageMainAttribute(string $attribute): self
+    {
+        $this->setData(DescriptionResource::COLUMN_IMAGE_MAIN_ATTRIBUTE, $attribute);
+
+        return $this;
     }
 
     public function getImageMainSource(): array
@@ -204,6 +216,13 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
 
     // ---------------------------------------
 
+    public function setGalleryImagesMode(int $mode): self
+    {
+        $this->setData(DescriptionResource::COLUMN_GALLERY_IMAGES_MODE, $mode);
+
+        return $this;
+    }
+
     public function getGalleryImagesMode(): int
     {
         return (int)$this->getData(DescriptionResource::COLUMN_GALLERY_IMAGES_MODE);
@@ -222,6 +241,20 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
     public function isGalleryImagesModeAttribute(): bool
     {
         return $this->getGalleryImagesMode() === self::GALLERY_IMAGES_MODE_ATTRIBUTE;
+    }
+
+    public function setGalleryImagesAttribute(string $attribute): self
+    {
+        $this->setData(DescriptionResource::COLUMN_GALLERY_IMAGES_ATTRIBUTE, $attribute);
+
+        return $this;
+    }
+
+    public function setGalleryImagesLimit(int $limit): self
+    {
+        $this->setData(DescriptionResource::COLUMN_GALLERY_IMAGES_LIMIT, $limit);
+
+        return $this;
     }
 
     public function getGalleryImagesSource(): array
@@ -245,5 +278,79 @@ class Description extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements 
         }
 
         return $attributes;
+    }
+
+    /**
+     * @param Description\BulletPoint[] $bulletPoints
+     *
+     * @return self
+     */
+    public function setBulletPoints(array $bulletPoints): self
+    {
+        $data = [];
+        foreach ($bulletPoints as $bulletPoint) {
+            $data[] = [
+                'bullet_point_mode' => $bulletPoint->getMode(),
+                'bullet_point_custom_value' => $bulletPoint->getCustomValue(),
+                'bullet_point_attribute' => $bulletPoint->getAttribute(),
+            ];
+        }
+
+        $this->setData(DescriptionResource::COLUMN_BULLET_POINTS, json_encode($data));
+
+        return $this;
+    }
+
+    /**
+     * @return \M2E\Temu\Model\Policy\Description\BulletPoint[]
+     */
+    public function getBulletPoints(): array
+    {
+        $bulletPointsJson = $this->getData(DescriptionResource::COLUMN_BULLET_POINTS);
+        if (empty($bulletPointsJson)) {
+            return [];
+        }
+
+        $decoded = (array)json_decode($bulletPointsJson, true);
+
+        $result = [];
+
+        foreach ($decoded as $item) {
+            $result[] = new BulletPoint(
+                $item['bullet_point_mode'],
+                $item['bullet_point_custom_value'],
+                $item['bullet_point_attribute'],
+            );
+        }
+
+        return $result;
+    }
+
+    public function getCreateDate()
+    {
+        return $this->getData('create_date');
+    }
+
+    public function getUpdateDate()
+    {
+        return $this->getData('update_date');
+    }
+
+    // ----------------------------------------
+
+    public function getSource(
+        \M2E\Temu\Model\Magento\Product $magentoProduct
+    ): Description\Source {
+        $productId = $magentoProduct->getProductId();
+
+        if (!empty($this->descriptionSourceModels[$productId])) {
+            return $this->descriptionSourceModels[$productId];
+        }
+
+        $this->descriptionSourceModels[$productId] = $this->sourceFactory->create();
+        $this->descriptionSourceModels[$productId]->setMagentoProduct($magentoProduct);
+        $this->descriptionSourceModels[$productId]->setDescriptionPolicy($this);
+
+        return $this->descriptionSourceModels[$productId];
     }
 }

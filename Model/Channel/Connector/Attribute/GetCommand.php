@@ -56,7 +56,8 @@ class GetCommand implements \M2E\Core\Model\Connector\CommandInterface
                 $attributeData['ref_pid'],
                 $attributeData['template_pid'],
                 $attributeData['parent_spec_id'],
-                $attributeData['parent_template_pid']
+                $attributeData['parent_template_pid'],
+                $attributeData['multiple_selected_max_count']
             );
 
             foreach ($attributeData['options'] as $value) {

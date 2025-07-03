@@ -19,6 +19,7 @@ class Description extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractMod
     public const COLUMN_GALLERY_IMAGES_MODE = 'gallery_images_mode';
     public const COLUMN_GALLERY_IMAGES_LIMIT = 'gallery_images_limit';
     public const COLUMN_GALLERY_IMAGES_ATTRIBUTE = 'gallery_images_attribute';
+    public const COLUMN_BULLET_POINTS = 'bullet_points';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';
 

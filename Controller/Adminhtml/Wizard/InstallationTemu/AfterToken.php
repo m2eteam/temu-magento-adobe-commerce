@@ -8,8 +8,10 @@ class AfterToken extends Installation
 {
     private \M2E\Temu\Helper\Module\Exception $exceptionHelper;
     private \M2E\Temu\Model\Account\Create $accountCreate;
+    private \M2E\Temu\Model\Account\AuthCodeSessionStorage $authCodeSessionStorage;
 
     public function __construct(
+        \M2E\Temu\Model\Account\AuthCodeSessionStorage $authCodeSessionStorage,
         \M2E\Temu\Model\Account\Create $accountCreate,
         \M2E\Temu\Helper\Module\Exception $exceptionHelper,
         \M2E\Core\Helper\Magento $magentoHelper,
@@ -24,6 +26,7 @@ class AfterToken extends Installation
             $licenseService,
         );
 
+        $this->authCodeSessionStorage = $authCodeSessionStorage;
         $this->exceptionHelper = $exceptionHelper;
         $this->accountCreate = $accountCreate;
     }
@@ -44,6 +47,10 @@ class AfterToken extends Installation
         }
 
         try {
+            if ($this->authCodeSessionStorage->getAccount($authCode) !== null) {
+                return $this->_redirect('*/*/installation');
+            }
+
             $this->accountCreate->create($authCode, $region, $referrer, $callbackHost);
             $this->setStep($this->getNextStep());
         } catch (\Throwable $throwable) {

@@ -1,7 +1,5 @@
 <?php
 
-// @codingStandardsIgnoreFile
-
 /** @var \M2E\Temu\Block\Adminhtml\Template\Description\Preview $block */
 
 ?>
@@ -10,8 +8,8 @@
 echo $block->getLayout()->createBlock(\M2E\Temu\Block\Adminhtml\HelpBlock::class)->setData([
     'style' => 'margin-top: 30px',
     'no_hide' => true,
-    'title' => $block->__('Description Preview'),
-    'content' => $block->__(
+    'title' => __('Description Preview'),
+    'content' => __(
         'If your description contains %extension_title Attributes, some of them such as Image URLs, Images, etc. might display for the previewing the value which is different from the actual one that will be sent to %channel_title.',
         [
             'extension_title' => \M2E\Temu\Helper\Module::getExtensionTitle(),

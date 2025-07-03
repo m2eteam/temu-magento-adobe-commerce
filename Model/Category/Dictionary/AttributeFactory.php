@@ -60,7 +60,8 @@ class AttributeFactory
         int $templatePid,
         ?int $parentSpecId,
         ?int $parentTemplatePid,
-        array $values
+        array $values,
+        ?int $multipleSelectedMaxCount
     ): \M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute {
         return new \M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute(
             $id,
@@ -76,7 +77,8 @@ class AttributeFactory
             $templatePid,
             $parentSpecId,
             $parentTemplatePid,
-            $values
+            $values,
+            $multipleSelectedMaxCount
         );
     }
 

@@ -35,6 +35,10 @@ class Config extends \M2E\Temu\Plugin\AbstractPlugin
      */
     protected function canExecute(): bool
     {
+        if (!$this->isModuleTablesExist()) {
+            return false;
+        }
+
         if ($this->moduleMaintenanceHelper->isEnabled()) {
             return false;
         }

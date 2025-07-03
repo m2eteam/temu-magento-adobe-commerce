@@ -81,7 +81,7 @@ class ValidateModeManually extends AbstractListing
         $requiredAttributes = [];
 
         foreach ($category->getProductAttributes() as $productAttribute) {
-            if ($productAttribute->isRequired()) {
+            if ($productAttribute->isRequired() && !$productAttribute->getParentTemplatePid()) {
                 $requiredAttributes[] = $productAttribute;
             }
         }

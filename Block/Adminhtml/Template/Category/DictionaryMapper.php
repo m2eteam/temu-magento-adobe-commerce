@@ -34,13 +34,15 @@ class DictionaryMapper
         $attributes = [];
         foreach ($dictionary->getProductAttributes() as $productAttribute) {
             $item = $this->map($productAttribute, $savedAttributes, $generalMappingAttributes);
+            $attributeVariants = $this->getProductAttributeVariants($productAttribute, $savedAttributes);
 
             if ($item['required']) {
-                array_unshift($attributes, $item);
+                array_unshift($attributes, $item, ...$attributeVariants);
                 continue;
             }
 
-            $attributes[] = $item;
+            array_unshift($attributeVariants, $item);
+            $attributes = array_merge($attributes, $attributeVariants);
         }
 
         $attributes = $this->sortAttributesByTitle($attributes);
@@ -119,6 +121,7 @@ class DictionaryMapper
             'values' => [],
             'template_attribute' => [],
             'parent_template_pid' => $attribute->getParentTemplatePid(),
+            'multiple_selected_max_count' => $attribute->getMultipleSelectedMaxCount()
         ];
 
         $existsAttribute = $savedAttributes[$attribute->getId()] ?? null;
@@ -248,5 +251,36 @@ class DictionaryMapper
                 $this->processAttributeWithChildren($childAttribute, $attributesMap, $sorted, $processed);
             }
         }
+    }
+
+    private function getProductAttributeVariants(
+        \M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute,
+        array $savedAttributes
+    ): array {
+        $variants = [];
+
+        foreach ($savedAttributes as $savedAttribute) {
+            if ($this->isMatchingAttribute($attribute, $savedAttribute)) {
+                $modifiedAttribute = clone $attribute;
+                $modifiedAttribute->setId($savedAttribute->getAttributeId());
+                $variants[] = $this->map(
+                    $modifiedAttribute,
+                    [$savedAttribute->getAttributeId() => $savedAttribute]
+                );
+            }
+        }
+
+        return $variants;
+    }
+
+    private function isMatchingAttribute(
+        \M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute,
+        \M2E\Temu\Model\Category\CategoryAttribute $savedAttribute
+    ): bool {
+        $savedId = $savedAttribute->getAttributeId();
+        $cleanedId = \M2E\Temu\Model\Category\CategoryAttribute::getCleanAttributeId($savedId);
+
+        return $savedId !== $attribute->getId()
+            && $cleanedId === $attribute->getId();
     }
 }

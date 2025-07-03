@@ -8,65 +8,75 @@ use M2E\Temu\Model\Policy\Description as DescriptionAlias;
 
 class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
 {
-    /**
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
-    protected function prepareData(): array
-    {
-        $data = parent::prepareData();
+    protected function initData(
+        \M2E\Temu\Model\Policy\PolicyInterface $model,
+        ?int $id,
+        string $title,
+        array $rawData
+    ): void {
 
-        $defaultData = $this->getDefaultData();
+        /** @var \M2E\Temu\Model\Policy\Description $model */
 
-        $data = \M2E\Core\Helper\Data::arrayReplaceRecursive($defaultData, $data);
-
-        if (isset($this->rawData['title_mode'])) {
-            $data['title_mode'] = (int)$this->rawData['title_mode'];
+        if (isset($rawData['title_mode'])) {
+            $model->setTitleMode((int)$rawData['title_mode']);
         }
 
-        if (isset($this->rawData['title_template'])) {
-            $data['title_template'] = $this->rawData['title_template'];
+        if (isset($rawData['title_template'])) {
+            $model->setTitleTemplate($rawData['title_template']);
         }
 
-        if (isset($this->rawData['description_mode'])) {
-            $data['description_mode'] = (int)$this->rawData['description_mode'];
+        if (isset($rawData['description_mode'])) {
+            $model->setDescriptionMode((int)$rawData['description_mode']);
         }
 
-        if (isset($this->rawData['description_template'])) {
-            $data['description_template'] = $this->rawData['description_template'];
+        if (isset($rawData['description_template'])) {
+            $model->setDescriptionTemplate($rawData['description_template']);
         }
 
-        if (isset($this->rawData['editor_type'])) {
-            $data['editor_type'] = (int)$this->rawData['editor_type'];
+        if (isset($rawData['image_main_mode'])) {
+            $model->setImageMainMode((int)$rawData['image_main_mode']);
         }
 
-        if (isset($this->rawData['image_main_mode'])) {
-            $data['image_main_mode'] = (int)$this->rawData['image_main_mode'];
+        if (isset($rawData['image_main_attribute'])) {
+            $model->setImageMainAttribute($rawData['image_main_attribute']);
         }
 
-        if (isset($this->rawData['image_main_attribute'])) {
-            $data['image_main_attribute'] = $this->rawData['image_main_attribute'];
+        if (isset($rawData['gallery_images_mode'])) {
+            $model->setGalleryImagesMode((int)$rawData['gallery_images_mode']);
         }
 
-        if (isset($this->rawData['gallery_images_mode'])) {
-            $data['gallery_images_mode'] = (int)$this->rawData['gallery_images_mode'];
+        if (isset($rawData['gallery_images_limit'])) {
+            $model->setGalleryImagesLimit((int)$rawData['gallery_images_limit']);
         }
 
-        if (isset($this->rawData['gallery_images_limit'])) {
-            $data['gallery_images_limit'] = (int)$this->rawData['gallery_images_limit'];
+        if (isset($rawData['gallery_images_attribute'])) {
+            $model->setGalleryImagesAttribute($rawData['gallery_images_attribute']);
         }
 
-        if (isset($this->rawData['gallery_images_attribute'])) {
-            $data['gallery_images_attribute'] = $this->rawData['gallery_images_attribute'];
+        $bulletPoints = [];
+        foreach ($rawData['bullet_point'] ?? [] as $bulletPointRaw) {
+            if (count($bulletPoints) >= BulletPoint::MAX_COUNT) {
+                break;
+            }
+
+            $bulletPoint = new BulletPoint(
+                (int)$bulletPointRaw['bullet_point_mode'],
+                empty($bulletPointRaw['bullet_point_custom_value']) ? null : $bulletPointRaw['bullet_point_custom_value'],
+                empty($bulletPointRaw['bullet_point_attribute']) ? null : $bulletPointRaw['bullet_point_attribute']
+            );
+
+            if (!$bulletPoint->isConfigured()) {
+                continue;
+            }
+
+            $bulletPoints[] = $bulletPoint;
         }
 
-        return $data;
+        $model->setBulletPoints($bulletPoints);
     }
 
     // ----------------------------------------
 
-    /**
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
     public function getDefaultData(): array
     {
         return [
@@ -84,7 +94,7 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
             'variation_images_limit' => 1,
             'variation_images_attribute' => '',
             'default_image_url' => '',
-            'variation_configurable_images' => \M2E\Core\Helper\Json::encode([]),
+            'bullet_points' => [],
         ];
     }
 }

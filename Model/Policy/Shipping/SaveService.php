@@ -86,9 +86,9 @@ class SaveService
     {
         $shipping = $this->shippingRepository->get((int)$data['id']);
 
-        $shipping->setTitle($data['title'])
-                   ->setShippingTemplateId($data['shipping_template_id'])
-                   ->setPreparationTime((int)$data['preparation_time']);
+        $shipping->setTitle($data['title']);
+        $shipping->setShippingTemplateId($data['shipping_template_id'])
+                 ->setPreparationTime((int)$data['preparation_time']);
 
         $this->shippingRepository->save($shipping);
 

@@ -27,7 +27,7 @@ class TemplateList extends \M2E\Temu\Controller\Adminhtml\AbstractTemplate
         if ($account === null) {
             $this->setJsonContent([
                 'result' => false,
-                'message' => 'Account Id is required',
+                'message' => 'Account not defined.',
             ]);
 
             return $this->getResult();
@@ -35,18 +35,27 @@ class TemplateList extends \M2E\Temu\Controller\Adminhtml\AbstractTemplate
 
         $force = (bool)(int)$this->getRequest()->getParam('force', 0);
 
-        $shippingTemplates = [];
-        foreach ($this->shippingService->getAllTemplates($account, $force)->getAll() as $template) {
-            $shippingTemplates[] = [
-                'id' => $template->id,
-                'title' => $template->name,
-            ];
-        }
+        try {
+            $collection = $this->shippingService->getTemplates($account, $force);
 
-        $this->setJsonContent([
-            'result' => true,
-            'templates' => $shippingTemplates,
-        ]);
+            $shippingTemplates = [];
+            foreach ($collection->getAll() as $template) {
+                $shippingTemplates[] = [
+                    'id' => $template->id,
+                    'title' => $template->name,
+                ];
+            }
+
+            $this->setJsonContent([
+                'result' => true,
+                'templates' => $shippingTemplates,
+            ]);
+        } catch (\Throwable $exception) {
+            $this->setJsonContent([
+                'result' => false,
+                'message' => (string)__('Failed to download the shipping template. Please try again.'),
+            ]);
+        }
 
         return $this->getResult();
     }

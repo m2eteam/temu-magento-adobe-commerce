@@ -1,33 +1,53 @@
 define([
+    'mage/translate',
     'Magento_Ui/js/modal/modal',
     'Temu/Common',
     'mage/adminhtml/wysiwyg/tiny_mce/setup'
-], function () {
+], function ($t) {
     window.TemuTemplateDescription = Class.create(Common, {
+
+        descriptionModeCustomValue: 0,
+
+        currentBulletPointIndex: 0,
+
+        bulletPointModeCustomValue: 1,
+        bulletPointModeCustomAttribute: 2,
+        bulletPointMaxCount: 0,
 
         // ---------------------------------------
 
-        initialize: function () {
-            jQuery.validator.addMethod('Temu-validate-description-mode', function (value, el) {
+        initialize: function(
+                descriptionModeCustomValue,
+                bulletPointModeCustomValue,
+                bulletPointModeCustomAttribute,
+                bulletPointsaMaxCount,
+        ) {
+            this.descriptionModeCustomValue = descriptionModeCustomValue;
+            this.bulletPointModeCustomValue = bulletPointModeCustomValue;
+            this.bulletPointModeCustomAttribute = bulletPointModeCustomAttribute;
+            this.bulletPointMaxCount = bulletPointsaMaxCount;
+
+            self = this;
+
+            jQuery.validator.addMethod('Temu-validate-description-mode', function(value, el) {
 
                 if (value === '-1') {
                     return false;
                 }
 
                 return Validation.get('required-entry').test(value, el);
-            }, Temu.translator.translate('This is a required field.'));
+            }, $t('This is a required field.'));
 
-            jQuery.validator.addMethod('Temu-validate-description-template', function (value, el) {
+            jQuery.validator.addMethod('Temu-validate-description-template', function(value, el) {
 
-                if ($('description_mode').value != Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\Description::DESCRIPTION_MODE_CUSTOM')) {
+                if ($('description_mode').value != self.descriptionModeCustomValue) {
                     return true;
                 }
 
                 return Validation.get('required-entry').test(value, el);
-            }, Temu.translator.translate('This is a required field.'));
+            }, $t('This is a required field.'));
 
-
-            jQuery.validator.addMethod('Temu-validate-magento-product-id', function (value) {
+            jQuery.validator.addMethod('Temu-validate-magento-product-id', function(value) {
 
                 var isValidMagentoProductId = false;
 
@@ -35,16 +55,16 @@ define([
                     method: 'post',
                     asynchronous: false,
                     parameters: {
-                        product_id: value
+                        product_id: value,
                     },
-                    onSuccess: function (transport) {
+                    onSuccess: function(transport) {
                         var response = transport.responseText.evalJSON();
                         isValidMagentoProductId = response.result;
-                    }
+                    },
                 });
 
                 return isValidMagentoProductId;
-            }, Temu.translator.translate('Please enter a valid Magento product ID.'));
+            }, $t('Please enter a valid Magento product ID.'));
         },
 
         initObservers: function () {
@@ -65,7 +85,7 @@ define([
                     .simulate('change');
 
             $('description_mode')
-                    .observe('change', TemuTemplateDescriptionObj.description_mode_change)
+                    .observe('change', this.description_mode_change.bind(this))
                     .simulate('change');
 
             $('custom_inserts_open_popup')
@@ -77,6 +97,10 @@ define([
                     .down('.admin__field')
                     .appendChild($('description_template_buttons'));
 
+            $$(".bullet-point-mode-selector").each(function (element) {
+                element.observe('change', self.bulletPointModeChange.bind(self));
+                element.simulate('change');
+            });
 
             this.initCustomInsertsPopup();
             this.initPreviewPopup();
@@ -118,12 +142,13 @@ define([
             self.setTextVisibilityMode(this, 'custom_title_tr');
         },
 
-        description_mode_change: function () {
-            if (this.value !== '-1' && this.options[0].value === '-1') {
-                this.removeChild(this.options[0]);
+        description_mode_change: function (event) {
+            const element = event.target;
+            if (element.value !== '-1' && element.options[0].value === '-1') {
+                element.removeChild(element.options[0]);
             }
 
-            var viewEditCustomDescription = $('view_edit_custom_description');
+            const viewEditCustomDescription = $('view_edit_custom_description');
 
             if (viewEditCustomDescription) {
                 viewEditCustomDescription.hide();
@@ -131,7 +156,7 @@ define([
 
             $$('.c-custom_description_tr').invoke('hide');
 
-            if (this.value == Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\Description::DESCRIPTION_MODE_CUSTOM')) {
+            if (element.value == this.descriptionModeCustomValue) {
                 if (viewEditCustomDescription) {
                     viewEditCustomDescription.show();
                     $$('.c-custom_description_tr').invoke('hide');
@@ -143,6 +168,112 @@ define([
                 if (viewEditCustomDescription) {
                     viewEditCustomDescription.remove();
                 }
+            }
+        },
+
+        bulletPointModeChange: function (event) {
+            const element = event.target;
+            const container = element.parentElement;
+            let selectedValue = element.value;
+
+            const customValueEl = container.querySelector('.bullet_point_custom_value');
+            const attributeValueEl = container.querySelector('.bullet_point_attribute');
+
+            this.setBulletPointMode(0, customValueEl);
+            this.setBulletPointMode(0, attributeValueEl);
+
+            if (selectedValue == this.bulletPointModeCustomValue) {
+                this.setBulletPointMode(selectedValue, customValueEl);
+            }
+
+            if (selectedValue == this.bulletPointModeCustomAttribute) {
+                this.setBulletPointMode(selectedValue, attributeValueEl);
+            }
+        },
+
+        setBulletPointMode: function (value, element) {
+            if (!element) {
+                return;
+            }
+
+            if (
+                value == this.bulletPointModeCustomValue ||
+                value == this.bulletPointModeCustomAttribute
+            ) {
+                element.show();
+            } else {
+                element.hide();
+            }
+        },
+
+        showNextBulletPoint: function () {
+            if (this.isBulletPointCountMax()) {
+                this.hideBulletPointAddMoreButton();
+
+                return;
+            }
+
+            const newIndex = this.getBulletPointsCount();
+
+            const anyRow = jQuery(this.getLastBulletPointRow());
+
+            const parentContainer = anyRow.parent().parent();
+
+            const newRow = anyRow.parent().clone(true, true);
+            newRow.css('margin-top', '30px');
+            // ----------------------------------------
+            newRow.find('.admin__field-tooltip').remove();
+            newRow.find('#add_bullet_point_button').remove();
+
+            newRow.find('[id]').each(function() {
+                jQuery(this).removeAttr('id');
+            });
+            // ----------------------------------------
+            newRow.find('[name]').each(function() {
+                const name = jQuery(this).attr('name');
+                const newName = name.replace(/\[bullet_point\]\[(\d+)\]/, function(str, p1) {
+                    return `[bullet_point][${newIndex}]`;
+                });
+                jQuery(this).attr('name', newName);
+            });
+            // ----------------------------------------
+
+            const newSelect = newRow.children().first();
+            newSelect.val(0);
+
+            newRow.find('.bullet_point_custom_value').val('');
+            newRow.find('.bullet_point_attribute').val('');
+
+            // ----------------------------------------
+
+            parentContainer.append(newRow);
+
+            newSelect.on('change', this.bulletPointModeChange.bind(this));
+            newSelect.trigger('change');
+
+            // ----------------------------------------
+
+            if (this.isBulletPointCountMax()) {
+                this.hideBulletPointAddMoreButton();
+            }
+        },
+
+        getLastBulletPointRow: function () {
+            return $$(".bullet-point-mode-selector").last();
+        },
+
+        isBulletPointCountMax: function () {
+            return this.getBulletPointsCount() >= this.bulletPointMaxCount;
+        },
+
+        getBulletPointsCount: function () {
+            return $$(".bullet-point-mode-selector").length;
+        },
+
+        hideBulletPointAddMoreButton: function () {
+            const button = $('add_bullet_point_button');
+            if (button) {
+                button.style.display = 'none';
             }
         },
 
@@ -175,7 +306,7 @@ define([
             }
 
             popup.modal({
-                title: Temu.translator.translate('Custom Insertions'),
+                title: $t('Custom Insertions'),
                 type: 'slide',
                 buttons: [],
                 closed: function () {
@@ -238,16 +369,16 @@ define([
             }
 
             popup.modal({
-                title: Temu.translator.translate('Description Preview'),
+                title: $t('Description Preview'),
                 type: 'popup',
                 buttons: [{
-                    text: Temu.translator.translate('Cancel'),
+                    text: $t('Cancel'),
                     class: 'action-secondary action-dismiss',
                     click: function (event) {
                         this.closeModal(event);
                     }
                 }, {
-                    text: Temu.translator.translate('Confirm'),
+                    text: $t('Confirm'),
                     class: 'action-primary action-accept',
                     click: function (event) {
                         if (!jQuery('#description_preview_form').valid()) {
@@ -270,10 +401,11 @@ define([
 
         openPreviewPopup: function () {
             if (
-                    $('description_mode').value == Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\Description::DESCRIPTION_MODE_CUSTOM')
+                    $('description_mode').value == this.descriptionModeCustomValue
                     && !$('description_template').value.length
             ) {
-                this.alert(Temu.translator.translate('Please enter Description Value.'));
+                this.alert($t('Please enter Description Value.'));
+
                 return;
             }
 

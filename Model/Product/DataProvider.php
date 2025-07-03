@@ -103,6 +103,25 @@ class DataProvider
         return $result;
     }
 
+    public function getItemTaxCode(): DataProvider\ItemTaxCode\Result
+    {
+        if ($this->hasResult(DataProvider\ItemTaxCodeProvider::NICK)) {
+            /** @var DataProvider\ItemTaxCode\Result */
+            return $this->getResult(DataProvider\ItemTaxCodeProvider::NICK);
+        }
+
+        /** @var \M2E\Temu\Model\Product\DataProvider\ItemTaxCodeProvider $builder */
+        $builder = $this->getBuilder(\M2E\Temu\Model\Product\DataProvider\ItemTaxCodeProvider::NICK);
+
+        $taxCode = $builder->getItemTaxCode($this->product);
+
+        $result = DataProvider\ItemTaxCode\Result::success($taxCode);
+
+        $this->addResult(DataProvider\ItemTaxCodeProvider::NICK, $result);
+
+        return $result;
+    }
+
     public function getDescription(): DataProvider\Description\Result
     {
         if ($this->hasResult(DataProvider\DescriptionProvider::NICK)) {
@@ -156,6 +175,25 @@ class DataProvider
         $result = DataProvider\Images\Result::success($value);
 
         $this->addResult(DataProvider\ImagesProvider::NICK, $result);
+
+        return $result;
+    }
+
+    public function getBulletsPoints(): DataProvider\BulletPoints\Result
+    {
+        if ($this->hasResult(DataProvider\BulletPointsProvider::NICK)) {
+            /** @var DataProvider\BulletPoints\Result */
+            return $this->getResult(DataProvider\BulletPointsProvider::NICK);
+        }
+
+        /** @var \M2E\Temu\Model\Product\DataProvider\BulletPointsProvider $builder */
+        $builder = $this->getBuilder(\M2E\Temu\Model\Product\DataProvider\BulletPointsProvider::NICK);
+
+        $value = $builder->getBulletPoints($this->product);
+
+        $result = DataProvider\BulletPoints\Result::success($value);
+
+        $this->addResult(DataProvider\BulletPointsProvider::NICK, $result);
 
         return $result;
     }

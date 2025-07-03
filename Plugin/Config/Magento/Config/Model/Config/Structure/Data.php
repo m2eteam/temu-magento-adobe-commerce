@@ -41,7 +41,10 @@ class Data extends \M2E\Temu\Plugin\AbstractPlugin
     {
         $result = $callback(...$arguments);
 
-        if ($this->moduleMaintenanceHelper->isEnabled()) {
+        if (
+            $this->moduleMaintenanceHelper->isEnabled()
+            || !$this->isModuleTablesExist()
+        ) {
             unset($result['sections'][Configuration::MODULE_AND_CHANNELS_SECTION_COMPONENT]);
             unset($result['sections'][Configuration::INTERFACE_AND_MAGENTO_INVENTORY_SECTION_COMPONENT]);
             unset($result['sections'][Configuration::LOGS_CLEARING_SECTION_COMPONENT]);

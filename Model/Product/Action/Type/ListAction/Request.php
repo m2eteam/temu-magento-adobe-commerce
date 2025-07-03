@@ -23,7 +23,9 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
         $request['title'] = $dataProvider->getTitle()->getValue();
         $request['description'] = $dataProvider->getDescription()->getValue()->description;
         $request['currency_code'] = $product->getCurrencyCode();
-        $request['bullet_points'] = [];
+        $request['bullet_points'] = $dataProvider->getBulletsPoints()->getValue();
+
+        $request['item_tax_code'] = $dataProvider->getItemTaxCode()->getValue();
 
         $request['images'] = array_map(
             static function (\M2E\Temu\Model\Product\DataProvider\Images\Image $image) {

@@ -10,62 +10,94 @@ class ShippingService
     private const CACHE_LIFETIME_THIRTY_MINUTES = 1800;
 
     private \M2E\Temu\Helper\Data\Cache\Permanent $cache;
-    private \M2E\Temu\Model\Channel\Policy\Shipping\TemplateService $deliveryTemplateService;
+    private \M2E\Temu\Model\Channel\Shipping\TemplateRetriever $deliveryTemplateService;
 
     public function __construct(
-        \M2E\Temu\Model\Channel\Policy\Shipping\TemplateService $deliveryTemplateService,
+        \M2E\Temu\Model\Channel\Shipping\TemplateRetriever $deliveryTemplateService,
         \M2E\Temu\Helper\Data\Cache\Permanent $cache
     ) {
         $this->cache = $cache;
         $this->deliveryTemplateService = $deliveryTemplateService;
     }
 
-    public function getAllTemplates(
+    /**
+     * @param \M2E\Temu\Model\Account $account
+     * @param bool $force
+     *
+     * @return \M2E\Temu\Model\Channel\Shipping\Template\Collection
+     * @throws \M2E\Temu\Model\Exception
+     */
+    public function getTemplates(
         \M2E\Temu\Model\Account $account,
         bool $force
-    ): \M2E\Temu\Model\Channel\Policy\Shipping\Template\Collection {
-        if (!$force) {
-            $cachedData = $this->fromCache($this->createCacheKey($account));
-            if ($cachedData !== null) {
-                return \M2E\Temu\Model\Channel\Policy\Shipping\Template\Collection::createFromArray($cachedData);
-            }
+    ): \M2E\Temu\Model\Channel\Shipping\Template\Collection {
+        if ($force) {
+            $this->clearCache($account);
+
+            return $this->retrieveTemplates($account);
         }
 
-        $this->clearCache($this->createCacheKey($account));
-
-        $templateCollection = $this->deliveryTemplateService->retrieve($account);
-        if ($templateCollection->isEmpty()) {
-            return $templateCollection;
+        $collection = $this->fromCache($account);
+        if ($collection === null) {
+            $collection = $this->retrieveTemplates($account);
+            $this->toCache($collection, $account);
         }
 
-        $this->toCache(
-            $templateCollection->toArray(),
-            $this->createCacheKey($account)
-        );
-
-        return $templateCollection;
+        return $collection;
     }
 
     // ----------------------------------------
+
+    /**
+     * @param \M2E\Temu\Model\Account $account
+     *
+     * @return \M2E\Temu\Model\Channel\Shipping\Template\Collection
+     * @throws \M2E\Temu\Model\Exception
+     */
+    private function retrieveTemplates(
+        \M2E\Temu\Model\Account $account
+    ): \M2E\Temu\Model\Channel\Shipping\Template\Collection {
+        return $this->deliveryTemplateService->retrieve($account);
+    }
+
+    private function toCache(
+        \M2E\Temu\Model\Channel\Shipping\Template\Collection $collection,
+        \M2E\Temu\Model\Account $account
+    ): void {
+        $data = [];
+        foreach ($collection->getAll() as $template) {
+            $data[] = [
+                'id' => $template->id,
+                'name' => $template->name,
+            ];
+        }
+
+        $this->cache->setValue($this->createCacheKey($account), $data, [], self::CACHE_LIFETIME_THIRTY_MINUTES);
+    }
+
+    private function fromCache(\M2E\Temu\Model\Account $account): ?\M2E\Temu\Model\Channel\Shipping\Template\Collection
+    {
+        $value = $this->cache->getValue($this->createCacheKey($account));
+        if ($value === null) {
+            return null;
+        }
+
+        $collection = new \M2E\Temu\Model\Channel\Shipping\Template\Collection();
+        foreach ($value as $templateRaw) {
+            $collection->add(new \M2E\Temu\Model\Channel\Shipping\Template($templateRaw['id'], $templateRaw['name']));
+        }
+
+        return $collection;
+    }
+
+    private function clearCache(\M2E\Temu\Model\Account $account): void
+    {
+        $this->cache->removeValue($this->createCacheKey($account));
+    }
 
     private function createCacheKey(
         \M2E\Temu\Model\Account $account
     ): string {
         return self::CACHE_KEY_SHIPPING_TEMPLATES . $account->getId();
-    }
-
-    private function toCache(array $data, string $key): void
-    {
-        $this->cache->setValue($key, $data, [], self::CACHE_LIFETIME_THIRTY_MINUTES);
-    }
-
-    private function fromCache(string $key): ?array
-    {
-        return $this->cache->getValue($key);
-    }
-
-    private function clearCache(string $key): void
-    {
-        $this->cache->removeValue($key);
     }
 }

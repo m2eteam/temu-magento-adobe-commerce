@@ -105,19 +105,14 @@ class SellingFormat extends \M2E\Temu\Model\ActiveRecord\AbstractModel implement
 
     // ----------------------------------------
 
+    public function setTitle(string $title): void
+    {
+        $this->setData(SellingFormatResource::COLUMN_TITLE, $title);
+    }
+
     public function getTitle(): string
     {
         return (string)$this->getData(SellingFormatResource::COLUMN_TITLE);
-    }
-
-    public function getCreateDate()
-    {
-        return $this->getData(SellingFormatResource::COLUMN_CREATE_DATE);
-    }
-
-    public function getUpdateDate()
-    {
-        return $this->getData(SellingFormatResource::COLUMN_UPDATE_DATE);
     }
 
     // ----------------------------------------
@@ -192,6 +187,21 @@ class SellingFormat extends \M2E\Temu\Model\ActiveRecord\AbstractModel implement
     public function getReferenceLinkAttribute(): ?string
     {
         return $this->getData(SellingFormatResource::COLUMN_REFERENCE_LINK_ATTRIBUTE);
+    }
+
+    public function getItemTaxCodeAttribute(): ?string
+    {
+        return $this->getData(SellingFormatResource::COLUMN_ITEM_TAX_CODE_ATTRIBUTE);
+    }
+
+    public function getUpdateDate()
+    {
+        return $this->getData(SellingFormatResource::COLUMN_UPDATE_DATE);
+    }
+
+    public function getCreateDate()
+    {
+        return $this->getData(SellingFormatResource::COLUMN_CREATE_DATE);
     }
 
     public function isLocked(): bool

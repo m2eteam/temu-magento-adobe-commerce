@@ -65,18 +65,19 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
     protected function processSuccess(array $responseData): void
     {
         $product = $this->getProduct();
-        $product->setStatus(\M2E\Temu\Model\Product::STATUS_LISTED, $this->getStatusChanger());
 
         $metadata = $this->getRequestMetaData();
 
         $this->processVariants($responseData['product']['skus']);
 
-        $product->setChannelProductId($responseData['product']['id'])
+        $product->setStatusListed($responseData['product']['id'], $this->getStatusChanger())
                 ->setOnlineDescription($metadata[DataProvider\DescriptionProvider::NICK]['online_description'])
                 ->setOnlineTitle($metadata[DataProvider\TitleProvider::NICK]['online_title'])
                 ->setOnlineImages($metadata[DataProvider\ImagesProvider::NICK]['images'])
                 ->setOnlineCategoryId($metadata[DataProvider\CategoryProvider::NICK])
                 ->setOnlineCategoryData($metadata[DataProvider\ProductAttributesProvider::NICK])
+                ->setOnlineBulletPoints($metadata[DataProvider\BulletPointsProvider::NICK])
+                ->setOnlineItemTaxCode($metadata[DataProvider\ItemTaxCodeProvider::NICK] ?? null)
                 ->removeBlockingByError()
                 ->recalculateOnlineDataByVariants();
 

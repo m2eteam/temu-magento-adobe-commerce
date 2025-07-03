@@ -657,3 +657,18 @@ button.action * {
     visibility: visible;
     position: static;
 }
+/* Add more product attributes  */
+.M2E-category-product-attribute-add-more {
+    position: relative;
+}
+
+.M2E-add-more-attribute-btn-container{
+    margin-top: 5px;
+}
+.M2E-category-product-attribute-add-more .remove_row,
+.M2E-category-product-attribute-variant .control.final .add_row,
+.M2E-category-product-attribute-variant td:first-child span,
+.M2E-category-product-attribute-variant td:first-child div {
+    display: none;
+}
+/* ================================================ */

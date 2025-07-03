@@ -86,7 +86,7 @@ class Processor
         \M2E\Temu\Model\Magento\Product $magentoProduct,
         array &$result
     ): void {
-        $dictionaryAttribute = $this->getDictionaryAttributeById($attribute->getAttributeId());
+        $dictionaryAttribute = $this->getDictionaryAttributeById($this->getAttributeId($attribute));
         if ($attribute->isValueModeNone() || !$dictionaryAttribute) {
             return;
         }
@@ -99,6 +99,7 @@ class Processor
 
         if ($recommendedValue) {
             $this->handleRecommendedValue($recommendedValue, $dictionaryAttribute, $result);
+
             return;
         }
 
@@ -141,7 +142,7 @@ class Processor
         \M2E\Temu\Model\Category\CategoryAttribute $attribute,
         array &$result
     ): void {
-        $dictionaryAttribute = $this->getDictionaryAttributeById($attribute->getAttributeId());
+        $dictionaryAttribute = $this->getDictionaryAttributeById($this->getAttributeId($attribute));
         foreach ($attribute->getRecommendedValue() as $valueId) {
             $result[] = $this->createAttributeItem(
                 $dictionaryAttribute,
@@ -158,7 +159,7 @@ class Processor
     ): void {
         $customValue = $attribute->getCustomValue();
         if (!empty($customValue)) {
-            $dictionaryAttribute = $this->getDictionaryAttributeById($attribute->getAttributeId());
+            $dictionaryAttribute = $this->getDictionaryAttributeById($this->getAttributeId($attribute));
             $parsedValue = $this->descriptionRender->parseWithoutMagentoTemplate($customValue, $magentoProduct);
             $result[] = $this->createAttributeItem(
                 $dictionaryAttribute,
@@ -174,7 +175,7 @@ class Processor
     ): void {
         $attributeValue = $magentoProduct->getAttributeValue($attribute->getCustomAttributeValue());
         if (!empty($attributeValue)) {
-            $dictionaryAttribute = $this->getDictionaryAttributeById($attribute->getAttributeId());
+            $dictionaryAttribute = $this->getDictionaryAttributeById($this->getAttributeId($attribute));
             $result[] = $this->createAttributeItem(
                 $dictionaryAttribute,
                 $attributeValue
@@ -195,5 +196,15 @@ class Processor
             $customValue,
             $recommendedValue
         );
+    }
+
+    private function getAttributeId(\M2E\Temu\Model\Category\CategoryAttribute $attribute): string
+    {
+        $id = $attribute->getAttributeId();
+        if (\M2E\Temu\Model\Category\CategoryAttribute::isAdditionalAttributeId($id)) {
+            $id = \M2E\Temu\Model\Category\CategoryAttribute::getCleanAttributeId($id);
+        }
+
+        return $id;
     }
 }

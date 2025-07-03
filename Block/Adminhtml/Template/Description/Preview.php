@@ -8,9 +8,9 @@ use M2E\Temu\Block\Adminhtml\Magento\AbstractBlock;
 
 class Preview extends AbstractBlock
 {
-    protected $_template = 'temu/template/description/preview.phtml';
+    protected $_template = 'template/description/preview.phtml';
 
-    protected function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
 

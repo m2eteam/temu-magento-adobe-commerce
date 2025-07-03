@@ -24,7 +24,12 @@ class Validator extends \M2E\Temu\Model\Product\Action\Type\AbstractValidator
         \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
     ): bool {
         if (!$product->isRevisable()) {
-            $this->addMessage('Item is not Listed or not available');
+            $this->addMessage(
+                new \M2E\Temu\Model\Product\Action\Validator\ValidatorMessage(
+                    'Item is not Listed or not available',
+                    \M2E\Temu\Model\Tag\ValidatorIssues::NOT_USER_ERROR
+                )
+            );
 
             return false;
         }

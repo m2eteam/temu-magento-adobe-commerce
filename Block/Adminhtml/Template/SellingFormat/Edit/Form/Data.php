@@ -272,6 +272,8 @@ class Data extends AbstractForm
             ]
         );
 
+        // ----------------------------------------
+
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
@@ -311,6 +313,51 @@ class Data extends AbstractForm
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        // ----------------------------------------
+
+        $fieldset = $form->addFieldset(
+            'magento_block_template_selling_format_edit_form_item_tax_code',
+            [
+                'legend' => __('Tax'),
+                'collapsable' => true,
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if ($formData['item_tax_code_attribute'] == $attribute['code']) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => $attribute['code'],
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'item_tax_code_attribute',
+            self::SELECT,
+            [
+                'name' => 'selling_format[item_tax_code_attribute]',
+                'label' => __('Item Tax Code'),
+                'values' => [
+                    '' => __('None'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        // ----------------------------------------
 
         $this->setForm($form);
 
@@ -419,7 +466,7 @@ JS
         return $template->getData();
     }
 
-    private function getAttributesByInputTypes()
+    private function getAttributesByInputTypes(): array
     {
         $attributes = $this->globalDataHelper->getValue('temu_attributes');
 

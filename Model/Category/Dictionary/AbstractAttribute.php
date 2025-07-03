@@ -6,7 +6,7 @@ namespace M2E\Temu\Model\Category\Dictionary;
 
 abstract class AbstractAttribute
 {
-    protected string $id;
+    private string $id;
     private string $name;
     private bool $isRequired;
     private bool $isMultipleSelected;
@@ -21,6 +21,7 @@ abstract class AbstractAttribute
     private array $rules;
     private int $pid;
     private ?int $parentTemplatePid;
+    private ?int $multipleSelectedMaxCount;
 
     public function __construct(
         string $id,
@@ -36,7 +37,8 @@ abstract class AbstractAttribute
         int $templatePid,
         ?int $parentSpecId,
         ?int $parentTemplatePid,
-        array $recommendedValues = []
+        array $recommendedValues = [],
+        ?int $multipleSelectedMaxCount = null
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -52,6 +54,7 @@ abstract class AbstractAttribute
         $this->rules = $rules;
         $this->pid = $pid;
         $this->parentTemplatePid = $parentTemplatePid;
+        $this->multipleSelectedMaxCount = $multipleSelectedMaxCount;
     }
 
     abstract public function getType(): string;
@@ -59,6 +62,11 @@ abstract class AbstractAttribute
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function setId(string $id): void
+    {
+        $this->id = $id;
     }
 
     public function getName(): string
@@ -127,5 +135,10 @@ abstract class AbstractAttribute
     public function getParentTemplatePid(): ?int
     {
         return $this->parentTemplatePid;
+    }
+
+    public function getMultipleSelectedMaxCount(): ?int
+    {
+        return $this->multipleSelectedMaxCount;
     }
 }

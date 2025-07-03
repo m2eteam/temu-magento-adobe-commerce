@@ -5,60 +5,55 @@ declare(strict_types=1);
 namespace M2E\Temu\Block\Adminhtml\Template\Description\Edit\Form;
 
 use M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm;
-use M2E\Temu\Model\Policy\Description as DescriptionAlias;
+use M2E\Temu\Model\Policy\Description as DescriptionPolicy;
+use M2E\Temu\Model\ResourceModel\Policy\Description as DescriptionResource;
 
 class Data extends AbstractForm
 {
-    /** @var \M2E\Core\Helper\Magento\Attribute */
-    protected $magentoAttributeHelper;
+    private \M2E\Core\Helper\Magento\Attribute $magentoAttributeHelper;
 
-    /** @var \M2E\Temu\Helper\Data */
-    private $dataHelper;
+    private \M2E\Temu\Helper\Data\GlobalData $globalDataHelper;
 
-    /** @var \M2E\Temu\Helper\Data\GlobalData */
-    private $globalDataHelper;
-
-    private $attributes = [];
-    /** @var \M2E\Temu\Model\Policy\Description\BuilderFactory */
-    private DescriptionAlias\BuilderFactory $templateDescriptionBuilderFactory;
+    private array $attributes = [];
+    private array $textAttributes = [];
+    private array $imgAttributes = [];
+    private DescriptionPolicy\BuilderFactory $templateDescriptionBuilderFactory;
 
     public function __construct(
         \M2E\Temu\Model\Policy\Description\BuilderFactory $templateDescriptionBuilderFactory,
         \M2E\Core\Helper\Magento\Attribute $magentoAttributeHelper,
+        \M2E\Temu\Helper\Data\GlobalData $globalDataHelper,
         \M2E\Temu\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \M2E\Temu\Helper\Data $dataHelper,
-        \M2E\Temu\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
-        $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->templateDescriptionBuilderFactory = $templateDescriptionBuilderFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    protected function _construct()
-    {
-        parent::_construct();
-
-        $this->attributes = $this->magentoAttributeHelper->getAll();
-    }
-
     protected function _prepareForm()
     {
-        $imgAttributes = $this->magentoAttributeHelper->filterByInputTypes(
+        $this->attributes = $this->magentoAttributeHelper->getAll();
+        $this->textAttributes = $this->magentoAttributeHelper->filterByInputTypes(
+            $this->attributes,
+            ['text', 'select']
+        );
+        $this->imgAttributes = $this->magentoAttributeHelper->filterByInputTypes(
             $this->attributes,
             ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
         );
+
+        // ----------------------------------------
 
         $formData = $this->getFormData();
 
         $default = $this->getDefault();
         $formData = array_replace_recursive($default, $formData);
 
-        $isCustomDescription = ($formData['description_mode'] == DescriptionAlias::DESCRIPTION_MODE_CUSTOM);
+        $isCustomDescription = ($formData['description_mode'] == DescriptionPolicy::DESCRIPTION_MODE_CUSTOM);
 
         $form = $this->_formFactory->create();
         $this->setForm($form);
@@ -108,17 +103,17 @@ class Data extends AbstractForm
         );
 
         $preparedAttributes = [];
-        foreach ($imgAttributes as $attribute) {
+        foreach ($this->imgAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
-                $formData['image_main_mode'] == DescriptionAlias::IMAGE_MAIN_MODE_ATTRIBUTE
+                $formData['image_main_mode'] == DescriptionPolicy::IMAGE_MAIN_MODE_ATTRIBUTE
                 && $formData['image_main_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => DescriptionAlias::IMAGE_MAIN_MODE_ATTRIBUTE,
+                'value' => DescriptionPolicy::IMAGE_MAIN_MODE_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -130,7 +125,7 @@ class Data extends AbstractForm
                 'name' => 'description[image_main_mode]',
                 'label' => __('Main Image'),
                 'values' => [
-                    DescriptionAlias::IMAGE_MAIN_MODE_PRODUCT => __('Product Base Image'),
+                    DescriptionPolicy::IMAGE_MAIN_MODE_PRODUCT => __('Product Base Image'),
                     [
                         'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -139,7 +134,7 @@ class Data extends AbstractForm
                         ],
                     ],
                 ],
-                'value' => $formData['image_main_mode'] != DescriptionAlias::IMAGE_MAIN_MODE_ATTRIBUTE
+                'value' => $formData['image_main_mode'] != DescriptionPolicy::IMAGE_MAIN_MODE_ATTRIBUTE
                     ? $formData['image_main_mode'] : '',
                 'create_magento_attribute' => true,
             ]
@@ -173,29 +168,29 @@ class Data extends AbstractForm
         );
 
         $preparedImages = [];
-        for ($i = 1; $i <= DescriptionAlias\Source::GALLERY_IMAGES_COUNT_MAX; $i++) {
+        for ($i = 1; $i <= DescriptionPolicy\Source::GALLERY_IMAGES_COUNT_MAX; $i++) {
             $attrs = ['attribute_code' => $i];
 
             if (
                 $i == $formData['gallery_images_limit']
-                && $formData['gallery_images_mode'] == DescriptionAlias::GALLERY_IMAGES_MODE_PRODUCT
+                && $formData['gallery_images_mode'] == DescriptionPolicy::GALLERY_IMAGES_MODE_PRODUCT
             ) {
                 $attrs['selected'] = 'selected';
             }
 
             $preparedImages[] = [
-                'value' => DescriptionAlias::GALLERY_IMAGES_MODE_PRODUCT,
+                'value' => DescriptionPolicy::GALLERY_IMAGES_MODE_PRODUCT,
                 'label' => $i == 1 ? $i : (__('Up to') . " $i"),
                 'attrs' => $attrs,
             ];
         }
 
         $preparedAttributes = [];
-        foreach ($imgAttributes as $attribute) {
+        foreach ($this->imgAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
 
             if (
-                $formData['gallery_images_mode'] == DescriptionAlias::GALLERY_IMAGES_MODE_ATTRIBUTE
+                $formData['gallery_images_mode'] == DescriptionPolicy::GALLERY_IMAGES_MODE_ATTRIBUTE
                 && $formData['gallery_images_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -203,7 +198,7 @@ class Data extends AbstractForm
 
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => DescriptionAlias::GALLERY_IMAGES_MODE_ATTRIBUTE,
+                'value' => DescriptionPolicy::GALLERY_IMAGES_MODE_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -216,7 +211,7 @@ class Data extends AbstractForm
                 'name' => 'description[gallery_images_mode]',
                 'label' => __('Gallery Images'),
                 'values' => [
-                    DescriptionAlias::GALLERY_IMAGES_MODE_NONE => __('None'),
+                    DescriptionPolicy::GALLERY_IMAGES_MODE_NONE => __('None'),
                     [
                         'label' => __('Product Images'),
                         'value' => $preparedImages,
@@ -257,8 +252,8 @@ class Data extends AbstractForm
                 'label' => __('Title'),
                 'name' => 'description[title_mode]',
                 'values' => [
-                    DescriptionAlias::TITLE_MODE_PRODUCT => __('Product Name'),
-                    DescriptionAlias::TITLE_MODE_CUSTOM => __('Custom Value'),
+                    DescriptionPolicy::TITLE_MODE_PRODUCT => __('Product Name'),
+                    DescriptionPolicy::TITLE_MODE_CUSTOM => __('Custom Value'),
                 ],
                 'value' => $formData['title_mode'],
                 'tooltip' => __(
@@ -344,9 +339,9 @@ class Data extends AbstractForm
                 'label' => __('Description'),
                 'name' => 'description[description_mode]',
                 'values' => [
-                    DescriptionAlias::DESCRIPTION_MODE_PRODUCT => __('Product Description'),
-                    DescriptionAlias::DESCRIPTION_MODE_SHORT => __('Product Short Description'),
-                    DescriptionAlias::DESCRIPTION_MODE_CUSTOM => __('Custom Value'),
+                    DescriptionPolicy::DESCRIPTION_MODE_PRODUCT => __('Product Description'),
+                    DescriptionPolicy::DESCRIPTION_MODE_SHORT => __('Product Short Description'),
+                    DescriptionPolicy::DESCRIPTION_MODE_CUSTOM => __('Custom Value'),
                 ],
                 'value' => $this->isEdit() ? $formData['description_mode'] : '-1',
                 'class' => 'Temu-validate-description-mode',
@@ -378,7 +373,7 @@ class Data extends AbstractForm
                 ->setData(
                     [
                         'id' => 'description_template_show_hide_wysiwyg',
-                        'label' => ($formData['editor_type'] == DescriptionAlias::EDITOR_TYPE_SIMPLE)
+                        'label' => ($formData['editor_type'] == DescriptionPolicy::EDITOR_TYPE_SIMPLE)
                             ? __('Show Editor') : __('Hide Editor'),
                         'class' => 'action-primary hidden',
                     ]
@@ -428,11 +423,9 @@ HTML
             ]
         );
 
-        $this->jsPhp->addConstants(
-            [
-                '\M2E\Temu\Model\Policy\Description::DESCRIPTION_MODE_CUSTOM' => \M2E\Temu\Model\Policy\Description::DESCRIPTION_MODE_CUSTOM,
-            ]
-        );
+        $this->addBulletPointFields($fieldset, $formData);
+
+        // ----------------------------------------
 
         $this->jsUrl->addUrls(
             [
@@ -459,17 +452,10 @@ HTML
             ]
         );
 
-        $this->jsTranslator->addTranslations(
-            [
-                'Adding Image' => __('Adding Image'),
-                'Custom Insertions' => __('Custom Insertions'),
-                'Show Editor' => __('Show Editor'),
-                'Hide Editor' => __('Hide Editor'),
-                'Description Preview' => __('Description Preview'),
-                'Please enter a valid Magento product ID.' => __('Please enter a valid Magento product ID.'),
-                'Please enter Description Value.' => __('Please enter Description Value.'),
-            ]
-        );
+        $descriptionModeCustomValue = \M2E\Temu\Model\Policy\Description::DESCRIPTION_MODE_CUSTOM;
+        $bulletPointModeCustomValue = \M2E\Temu\Model\Policy\Description\BulletPoint::MODE_CUSTOM_VALUE;
+        $bulletPointModeCustomAttribute = \M2E\Temu\Model\Policy\Description\BulletPoint::MODE_CUSTOM_ATTRIBUTE;
+        $maxBulletPointsCount = \M2E\Temu\Model\Policy\Description\BulletPoint::MAX_COUNT;
 
         $this->js->add(
             <<<JS
@@ -477,7 +463,12 @@ HTML
         'Temu/Template/Description',
         'Temu/Plugin/Magento/Attribute/Button'
     ], function(){
-        window.TemuTemplateDescriptionObj = new TemuTemplateDescription();
+        window.TemuTemplateDescriptionObj = new TemuTemplateDescription(
+            $descriptionModeCustomValue,
+            $bulletPointModeCustomValue,
+            $bulletPointModeCustomAttribute,
+            $maxBulletPointsCount
+        );
         setTimeout(function() {
             TemuTemplateDescriptionObj.initObservers();
         }, 50);
@@ -506,7 +497,7 @@ JS
         return false;
     }
 
-    public function isEdit()
+    public function isEdit(): bool
     {
         $template = $this->globalDataHelper->getValue('temu_template_description');
 
@@ -523,39 +514,34 @@ JS
             return isset($this->_data['custom_title']) ? $this->_data['custom_title'] : '';
         }
 
-        $template = $this->globalDataHelper->getValue('temu_template_description');
-
         if (!$this->isEdit()) {
             return '';
         }
 
+        /** @var DescriptionPolicy $template */
+        $template = $this->globalDataHelper->getValue('temu_template_description');
+
         return $template->getTitle();
     }
 
-    public function getFormData()
+    public function getFormData(): array
     {
         if (!$this->isEdit()) {
             return [];
         }
 
+        /** @var DescriptionPolicy $template */
         $template = $this->globalDataHelper->getValue('temu_template_description');
 
         $data = $template->getData();
-
-        unset($data['variation_configurable_images']);
+        $data[DescriptionResource::COLUMN_BULLET_POINTS] = $template->getBulletPoints();
 
         return $data;
     }
 
-    public function getDefault()
+    public function getDefault(): array
     {
-        $default = $this->templateDescriptionBuilderFactory->create()->getDefaultData();
-
-        $default['variation_configurable_images'] = \M2E\Core\Helper\Json::decode(
-            $default['variation_configurable_images']
-        );
-
-        return $default;
+        return $this->templateDescriptionBuilderFactory->create()->getDefaultData();
     }
 
     protected function getCustomInsertsHtml()
@@ -618,7 +604,7 @@ JS
 HTML;
     }
 
-    private function getDescriptionPreviewHtml()
+    private function getDescriptionPreviewHtml(): string
     {
         $form = $this->_formFactory->create();
 
@@ -703,5 +689,169 @@ HTML;
     <div id="description_preview_popup" class="admin__old">{$form->toHtml()}</div>
 </div>
 HTML;
+    }
+
+    private function addBulletPointFields(\Magento\Framework\Data\Form\Element\Fieldset $fieldset, array $formData): void
+    {
+        $addMoreButtonHtml = $this->getLayout()->createBlock(\M2E\Temu\Block\Adminhtml\Magento\Button::class)
+                              ->addData(
+                                  [
+                                      'id' => 'add_bullet_point_button',
+                                      'label' => __('Add'),
+                                      'onclick' => 'TemuTemplateDescriptionObj.showNextBulletPoint()',
+                                      'class' => 'action-primary',
+                                      'style' => 'margin-left: 70px;',
+                                  ]
+                              )
+                              ->toHtml();
+
+        $tooltipMessage = (string)__(
+            'Use up to 5 bullet points to highlight your product’s key features and benefits.
+            Keep each point under 200 characters and make them clear and impactful.'
+        );
+
+        $afterElementHtml = $this->getTooltipHtml($tooltipMessage) . $addMoreButtonHtml;
+
+        $existBulletPoints = $formData[DescriptionResource::COLUMN_BULLET_POINTS] ?? [];
+        if (empty($existBulletPoints)) {
+            $this->createBulletPointRow(
+                0,
+                \M2E\Temu\Model\Policy\Description\BulletPoint::MODE_NOT_CONFIGURED,
+                null,
+                null,
+                (string)__('Bullet Points'),
+                $afterElementHtml,
+                $fieldset,
+            );
+
+            return;
+        }
+
+        $countBulletPoints = 0;
+        $isFirstBulletPoint = true;
+        /** @var \M2E\Temu\Model\Policy\Description\BulletPoint $bulletPoint */
+        foreach ($existBulletPoints as $bulletPoint) {
+            if ($countBulletPoints >= \M2E\Temu\Model\Policy\Description\BulletPoint::MAX_COUNT) {
+                break;
+            }
+
+            $this->createBulletPointRow(
+                $countBulletPoints,
+                $bulletPoint->getMode(),
+                $bulletPoint->getCustomValue(),
+                $bulletPoint->getAttribute(),
+                $isFirstBulletPoint ? (string)__('Bullet Points') : null,
+                $isFirstBulletPoint ? $afterElementHtml : null,
+                $fieldset,
+            );
+
+            $isFirstBulletPoint = false;
+            $countBulletPoints++;
+        }
+    }
+
+    private function createBulletPointRow(
+        int $index,
+        int $mode,
+        ?string $customValue,
+        ?string $attributeValue,
+        ?string $title,
+        ?string $afterElementHtml,
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset
+    ): void {
+        $element = $fieldset->addField(
+            'bullet_point_mode_' . $index,
+            'select',
+            [
+                'label' => $title ?? '',
+                'name' => 'description[bullet_point][' . $index . '][bullet_point_mode]',
+                'values' => [
+                    \M2E\Temu\Model\Policy\Description\BulletPoint::MODE_NOT_CONFIGURED => __('None'),
+                    \M2E\Temu\Model\Policy\Description\BulletPoint::MODE_CUSTOM_VALUE => __('Custom Value'),
+                    \M2E\Temu\Model\Policy\Description\BulletPoint::MODE_CUSTOM_ATTRIBUTE => __('Custom Attribute'),
+                ],
+                'value' => $mode,
+                'class' => 'bullet-point-mode-selector',
+                'required' => false,
+                'after_element_html' => $this->createBulletPointCustomValueInput($index, $customValue)->toHtml()
+                    . $this->createBulletPointAttributeInput($index, $attributeValue)->toHtml()
+                    . $afterElementHtml,
+                'container_id' => 'bullet_point_row_' . $index,
+            ]
+        );
+        $element->addCustomAttribute('bullet_point_group', 'group_' . $index);
+    }
+
+    private function createBulletPointCustomValueInput(
+        int $index,
+        ?string $value
+    ): \Magento\Framework\Data\Form\Element\AbstractElement {
+        $customTextBlock = $this->elementFactory->create(
+            'text',
+            [
+                'data' => [
+                    'name' => 'description[bullet_point][' . $index . '][bullet_point_custom_value]',
+                    'value' => $value ?? '',
+                    'class' => 'input-text bullet_point_custom_value',
+                    'style' => 'width: 30%; margin-left: 10px',
+                ],
+            ]
+        )
+                                                ->addCustomAttribute('bullet_point_group', 'group_' . $index);
+
+        $customTextBlock->setId('bullet_point_value_custom_' . $index);
+        $customTextBlock->setForm($this->_form);
+
+        return $customTextBlock;
+    }
+
+    private function createBulletPointAttributeInput(
+        int $index,
+        ?string $value
+    ): \Magento\Framework\Data\Form\Element\AbstractElement {
+        $preparedAttributes = [];
+        foreach ($this->textAttributes as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if ($attribute['code'] == $value) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => $attribute['code'],
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $selectAttrBlock = $this->elementFactory->create(
+            self::SELECT,
+            [
+                'data' => [
+                    'name' => 'description[bullet_point][' . $index . '][bullet_point_attribute]',
+                    'values' => [
+                        [
+                            'value' => '',
+                            'label' => __('-- Please Select --'),
+                        ],
+                        [
+                            'label' => __('Magento Attributes'),
+                            'value' => $preparedAttributes,
+                            'attrs' => [
+                                'is_magento_attribute' => true,
+                            ],
+                        ],
+                    ],
+                    'class' => 'select bullet_point_attribute',
+                    'style' => 'width: 30%; margin-left: 10px',
+                    'create_magento_attribute' => true,
+                ],
+            ]
+        )
+                                                ->addCustomAttribute('allowed_attribute_types', 'text,select')
+                                                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+        $selectAttrBlock->setId('bullet_point_value_attribute_' . $index);
+        $selectAttrBlock->setForm($this->_form);
+
+        return $selectAttrBlock;
     }
 }

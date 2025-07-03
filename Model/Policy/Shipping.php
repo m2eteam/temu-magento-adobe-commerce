@@ -27,7 +27,7 @@ class Shipping extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements Pol
         $this->listingCollectionFactory = $listingCollectionFactory;
     }
 
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
         $this->_init(\M2E\Temu\Model\ResourceModel\Policy\Shipping::class);
@@ -39,12 +39,17 @@ class Shipping extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements Pol
         string $shippingTemplateId,
         int $preparationTime
     ): self {
+        $this->setTitle($title);
         $this->setData(ShippingResource::COLUMN_ACCOUNT_ID, $accountId)
-             ->setTitle($title)
              ->setShippingTemplateId($shippingTemplateId)
              ->setPreparationTime($preparationTime);
 
         return $this;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->setData(ShippingResource::COLUMN_TITLE, $title);
     }
 
     public function getTitle(): string
@@ -65,13 +70,6 @@ class Shipping extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements Pol
     public function getShippingTemplateId(): string
     {
         return $this->getData(ShippingResource::COLUMN_SHIPPING_TEMPLATE_ID);
-    }
-
-    public function setTitle(string $title): self
-    {
-        $this->setData(ShippingResource::COLUMN_TITLE, $title);
-
-        return $this;
     }
 
     public function setShippingTemplateId(string $shippingTemplateId): self

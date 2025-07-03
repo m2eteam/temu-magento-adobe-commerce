@@ -15,8 +15,11 @@ class ProcessStart extends \M2E\Temu\Model\Product\Action\Async\AbstractProcessS
 
     public function __construct(
         RequestFactory $requestFactory,
-        ValidatorFactory $actionValidatorFactory
+        ValidatorFactory $actionValidatorFactory,
+        \M2E\Temu\Model\Product\Action\TagManager $tagManager
     ) {
+        parent::__construct($tagManager);
+
         $this->requestFactory = $requestFactory;
         $this->actionValidatorFactory = $actionValidatorFactory;
     }

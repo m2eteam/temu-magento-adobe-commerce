@@ -6,6 +6,7 @@ namespace M2E\Temu\Model\Product\Action\Type;
 
 use M2E\Core\Model\Response\Message;
 use M2E\Temu\Model\Product\Action\Configurator;
+use M2E\Temu\Model\Product\Action\Validator\ValidatorMessage;
 
 abstract class AbstractValidator
 {
@@ -64,14 +65,14 @@ abstract class AbstractValidator
         \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
     ): bool;
 
-    protected function addMessage($message, $type = Message::TYPE_ERROR): void
+    protected function addMessage(ValidatorMessage $message): void
     {
-        $this->messages[] = [
-            'text' => $message,
-            'type' => $type,
-        ];
+        $this->messages[] = $message;
     }
 
+    /**
+     * @return ValidatorMessage[]
+     */
     public function getMessages(): array
     {
         return $this->messages;
@@ -80,7 +81,7 @@ abstract class AbstractValidator
     public function hasErrorMessages(): bool
     {
         foreach ($this->getMessages() as $message) {
-            if ($message['type'] === Message::TYPE_ERROR) {
+            if ($message->isError()) {
                 return true;
             }
         }
