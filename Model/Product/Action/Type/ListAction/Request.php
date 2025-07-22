@@ -59,7 +59,10 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
                     'identifier' => $item->getIdentifier(),
                     'price_base' => $item->getPrice(),
                     'qty' => $item->getQty(),
-                    'images' => $item->getImages(),
+                    'images' => array_map(
+                        static fn($image) => $image->url,
+                        $item->getImages()
+                    ),
                     'variation_attributes' => $item->getVariationAttributes(),
                     'package_weight' => $item->getPackageWeight(),
                     'package_dimensions' => $item->getPackageDimensions(),

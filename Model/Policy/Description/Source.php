@@ -8,7 +8,7 @@ use M2E\Temu\Model\Policy\Description;
 
 class Source
 {
-    public const GALLERY_IMAGES_COUNT_MAX = 8;
+    public const GALLERY_IMAGES_COUNT_MAX = 10;
 
     private ?\M2E\Temu\Model\Magento\Product $magentoProduct = null;
     private ?\M2E\Temu\Model\Policy\Description $descriptionTemplateModel = null;
@@ -110,15 +110,16 @@ class Source
             return $this->imagesSet;
         }
 
-        $mainImage = $this->getMainImage();
-        $images = $this->getGalleryImages();
-        array_unshift($images, $mainImage);
-
         $set = new \M2E\Temu\Model\Magento\Product\Image\Set();
+
+        $mainImage = $this->getMainImage();
+        if ($mainImage !== null) {
+            $set->add($mainImage);
+        }
+
+        $images = $this->getGalleryImages();
         foreach ($images as $image) {
-            if ($image !== null) {
-                $set->add($image);
-            }
+            $set->add($image);
         }
 
         return $this->imagesSet = $set;

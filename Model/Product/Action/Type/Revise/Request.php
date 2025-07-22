@@ -107,7 +107,10 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
                     'price' => $item->getPrice(),
                     'currency_code' => $item->getCurrency(),
                     'qty' => $item->getQty(),
-                    'images' => $item->getImages(),
+                    'images' => array_map(
+                        static fn($image) => $image->url,
+                        $item->getImages()
+                    ),
                     'package_weight' => $item->getPackageWeight(),
                     'package_dimensions' => $item->getPackageDimensions(),
                     'reference_link' => $item->getReferenceLink()

@@ -23,7 +23,7 @@ class SameSkuAlreadyExists implements ValidatorInterface
     {
         $temuProductSku = $variant->getOnlineSku();
 
-        if ($temuProductSku === null) {
+        if (empty($temuProductSku)) {
             $temuProductSku = $variant->getSku();
         }
 

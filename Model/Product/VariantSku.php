@@ -342,4 +342,9 @@ class VariantSku extends \M2E\Temu\Model\ActiveRecord\AbstractModel implements
     {
         return $this->getProduct()->getCategoryDictionary();
     }
+
+    public function getDescriptionTemplateSource(): \M2E\Temu\Model\Policy\Description\Source
+    {
+        return $this->getProduct()->getDescriptionTemplate()->getSource($this->getMagentoProduct());
+    }
 }

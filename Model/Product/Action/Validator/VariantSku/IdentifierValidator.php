@@ -10,7 +10,7 @@ class IdentifierValidator implements ValidatorInterface
     {
         if (empty($variant->getDataProvider()->getIdentifier()->getValue())) {
             return new \M2E\Temu\Model\Product\Action\Validator\ValidatorMessage(
-                (string)__('EAN is missing a value'),
+                (string)__('The product identifier is missing. Please ensure the correct attribute is selected and that it contains a valid value.'),
                 \M2E\Temu\Model\Tag\ValidatorIssues::ERROR_EAN_MISSING
             );
         }

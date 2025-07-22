@@ -227,7 +227,7 @@ class Data extends AbstractForm
                 'create_magento_attribute' => true,
                 'tooltip' => __(
                     'Adds small thumbnails that appear under the large Base Image.
-                     You can add up to 8 additional photos to each Listing on Temu.
+                     You can add up to 10 additional photos to each Listing on Temu.
                         <br/><b>Note:</b> Text, Multiple Select or Dropdown type Attribute can be used.
                         The value of Attribute must contain absolute urls.
                         <br/>In Text type Attribute urls must be separated with comma.

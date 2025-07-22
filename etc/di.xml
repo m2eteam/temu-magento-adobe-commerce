@@ -170,6 +170,26 @@
                 <item name="description" xsi:type="object">
                     M2E\Temu\Model\Product\Action\Validator\DescriptionValidator
                 </item>
+                <item name="product_variants_total" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\ProductVariantsTotalValidator
+                </item>
+            </argument>
+            <argument name="variantValidators" xsi:type="array">
+                <item name="same_sku" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\SameSkuAlreadyExists
+                </item>
+                <item name="price" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\PriceValidator
+                </item>
+                <item name="qty" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\QtyValidator
+                </item>
+                <item name="identifier" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\IdentifierValidator
+                </item>
+                <item name="images" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\ImagesValidator
+                </item>
             </argument>
         </arguments>
     </type>
@@ -188,6 +208,27 @@
                 </item>
                 <item name="description" xsi:type="object">
                     M2E\Temu\Model\Product\Action\Validator\DescriptionValidator
+                </item>
+            </argument>
+            <argument name="variantValidators" xsi:type="array">
+                <item name="price" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\PriceValidator
+                </item>
+                <item name="qty" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\QtyValidator
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="M2E\Temu\Model\Product\Action\Type\Relist\Validator">
+        <arguments>
+            <argument name="variantValidators" xsi:type="array">
+                <item name="price" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\PriceValidator
+                </item>
+                <item name="qty" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\QtyValidator
                 </item>
             </argument>
         </arguments>

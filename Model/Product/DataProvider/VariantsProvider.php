@@ -79,7 +79,7 @@ class VariantsProvider implements DataBuilderInterface
             $item->setPrice($this->getVariantPrice($variant));
             $item->setCurrency($currency);
             $item->setQty($this->getVariantQty($variant, $variantSettings));
-            $item->setImages([$variant->getDataProvider()->getImage()->getValue()]);
+            $item->setImages($variant->getDataProvider()->getImages()->getValue()->set);
             try {
                 $packageWeight = $variant->getDataProvider()->getPackage()->getValue()->packageWeight;
                 $item->setPackageWeight($packageWeight);
@@ -114,7 +114,7 @@ class VariantsProvider implements DataBuilderInterface
             $item->setQty($this->getVariantQty($variant, $variantSettings));
             $item->setPrice($this->getVariantPrice($variant));
 
-            $item->setImages([$variant->getDataProvider()->getImage()->getValue()]);
+            $item->setImages($variant->getDataProvider()->getImages()->getValue()->set);
             $item->setIdentifier($variant->getDataProvider()->getIdentifier()->getValue());
             $item->setReferenceLink($variant->getDataProvider()->getReferenceLink()->getValue());
             $item->setVariationAttributes($this->getVariationSalesAttributes($variant));

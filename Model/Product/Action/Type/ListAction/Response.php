@@ -41,12 +41,23 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
                 return;
             }
 
-            $resultMessage = sprintf(
-                'Product failed to be listed. Reason: %s',
-                $responseData['messages'][0]['text']
-            );
+            $existTexts = [];
+            foreach ($responseData['messages'] as $messageData) {
+                $text = $messageData['text'];
 
-            $this->getLogBuffer()->addFail($resultMessage);
+                if (isset($existTexts[$text])) {
+                    continue;
+                }
+
+                $existTexts[$text] = true;
+
+                $this->getLogBuffer()->addFail(
+                    sprintf(
+                        'Product failed to be listed. Reason: %s',
+                        $text
+                    )
+                );
+            }
 
             return;
         }

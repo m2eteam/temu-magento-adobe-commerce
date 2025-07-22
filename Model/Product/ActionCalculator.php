@@ -162,6 +162,10 @@ class ActionCalculator
         $configurator = new \M2E\Temu\Model\Product\Action\Configurator();
         $configurator->enableAll();
 
+        if (!$product->hasCategoryTemplate()) {
+            $configurator->disallowCategories();
+        }
+
         return Action::createRelist($product, $configurator, $variantSettings);
     }
 

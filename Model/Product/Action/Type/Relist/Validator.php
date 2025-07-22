@@ -6,12 +6,17 @@ namespace M2E\Temu\Model\Product\Action\Type\Relist;
 
 class Validator extends \M2E\Temu\Model\Product\Action\Type\AbstractValidator
 {
-    private \M2E\Temu\Model\Product\Action\Validator\VariantValidator $variantValidator;
+    /** @var \M2E\Temu\Model\Product\Action\Validator\ValidatorInterface[] */
+    private array $validators;
+    /** @var \M2E\Temu\Model\Product\Action\Validator\VariantSku\ValidatorInterface[] */
+    private array $variantValidators;
 
     public function __construct(
-        \M2E\Temu\Model\Product\Action\Validator\VariantValidator $variantValidator
+        array $validators = [],
+        array $variantValidators = []
     ) {
-        $this->variantValidator = $variantValidator;
+        $this->validators = $validators;
+        $this->variantValidators = $variantValidators;
     }
 
     public function validate(
@@ -30,9 +35,21 @@ class Validator extends \M2E\Temu\Model\Product\Action\Type\AbstractValidator
             return false;
         }
 
-        $variantErrors = $this->variantValidator->validate($product, $variantSettings);
-        foreach ($variantErrors as $variantError) {
-            $this->addMessage($variantError);
+        foreach ($this->validators as $validator) {
+            $error = $validator->validate($product, $actionConfigurator);
+            if ($error !== null) {
+                $this->addMessage($error);
+            }
+        }
+
+        $variants = $product->getVariants();
+        foreach ($variants as $variant) {
+            foreach ($this->variantValidators as $variantValidator) {
+                $error = $variantValidator->validate($variant);
+                if ($error !== null) {
+                    $this->addMessage($error);
+                }
+            }
         }
 
         return !$this->hasErrorMessages();

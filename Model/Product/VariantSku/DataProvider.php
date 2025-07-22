@@ -65,10 +65,10 @@ class DataProvider
         return $result;
     }
 
-    public function getImage(): DataProvider\Image\Result
+    public function getImages(): DataProvider\Images\Result
     {
         if ($this->hasResult(DataProvider\ImageProvider::NICK)) {
-            /** @var \M2E\Temu\Model\Product\VariantSku\DataProvider\Image\Result */
+            /** @var \M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Result */
             return $this->getResult(DataProvider\ImageProvider::NICK);
         }
 
@@ -77,7 +77,7 @@ class DataProvider
 
         $value = $builder->getImage($this->variantSku);
 
-        $result = DataProvider\Image\Result::success($value, $builder->getWarningMessages());
+        $result = DataProvider\Images\Result::success($value, $builder->getWarningMessages());
 
         $this->addResult(DataProvider\ImageProvider::NICK, $result);
 

@@ -24,7 +24,7 @@ class IdentifierProvider implements DataBuilderInterface
     public function getIdentifier(\M2E\Temu\Model\Product\VariantSku $variantSku): string
     {
         $eanAttributeCode = $this->settings->getIdentifierCodeValue();
-        $magentoProduct = $variantSku->getProduct()->getMagentoProduct();
+        $magentoProduct = $variantSku->getMagentoProduct();
 
         return $magentoProduct->getAttributeValue($eanAttributeCode);
     }

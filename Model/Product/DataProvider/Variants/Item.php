@@ -109,11 +109,17 @@ class Item
         return $this->packageDimensions;
     }
 
+    /**
+     * @param \M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Image[] $images
+     */
     public function setImages(array $images): void
     {
         $this->images = $images;
     }
 
+    /**
+     * @return \M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Image[]
+     */
     public function getImages(): array
     {
         return $this->images;

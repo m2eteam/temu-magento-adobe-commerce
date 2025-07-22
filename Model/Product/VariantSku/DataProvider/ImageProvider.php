@@ -6,6 +6,7 @@ namespace M2E\Temu\Model\Product\VariantSku\DataProvider;
 
 use M2E\Temu\Model\Product\DataProvider\DataBuilderHelpTrait;
 use M2E\Temu\Model\Product\DataProvider\DataBuilderInterface;
+use M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Value;
 
 class ImageProvider implements DataBuilderInterface
 {
@@ -13,16 +14,16 @@ class ImageProvider implements DataBuilderInterface
 
     public const NICK = 'Image';
 
-    public function getImage(\M2E\Temu\Model\Product\VariantSku $variantSku): string
+    public function getImage(\M2E\Temu\Model\Product\VariantSku $variantSku): Value
     {
-        $mainImageSource = $variantSku->getProduct()->getDescriptionTemplate()->getImageMainSource();
+        $variantImageSet = $variantSku->getDescriptionTemplateSource()->getImageSet();
 
-        if ($mainImageSource['mode'] === \M2E\Temu\Model\Policy\Description::IMAGE_MAIN_MODE_PRODUCT) {
-            $imageAttributeCode = 'image';
-        } else {
-            $imageAttributeCode = $mainImageSource['attribute'];
+        $set = [];
+
+        foreach ($variantImageSet->getAll() as $variantImage) {
+            $set[] = new \M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Image($variantImage->getUrl());
         }
 
-        return $variantSku->getProduct()->getMagentoProduct()->getImage($imageAttributeCode)->getUrl();
+        return new Value($set);
     }
 }
