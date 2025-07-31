@@ -42,6 +42,4 @@ class View extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         parent::_beforeToHtml();
     }
-
-    //########################################
 }

@@ -20,20 +20,14 @@ class VariantSkuFactory
 
     public function createFromChannel(
         \M2E\Temu\Model\Channel\Product\VariantSku $channelVariant,
-        \M2E\Temu\Model\UnmanagedProduct $product,
-        array $salesAttributes
+        \M2E\Temu\Model\UnmanagedProduct $product
     ): VariantSku {
-        return $this->create(
-            $channelVariant,
-            $product,
-            $salesAttributes
-        );
+        return $this->create($channelVariant, $product);
     }
 
     private function create(
         \M2E\Temu\Model\Channel\Product\VariantSku $channelVariant,
-        \M2E\Temu\Model\UnmanagedProduct $product,
-        array $salesAttributes
+        \M2E\Temu\Model\UnmanagedProduct $product
     ): VariantSku {
         $object = $this->createEmpty();
 
@@ -52,7 +46,6 @@ class VariantSkuFactory
             $channelVariant->getRetailPrice(),
             $channelVariant->getCurrencyCode(),
             $channelVariant->getSpecification(),
-            $salesAttributes,
             $channelVariant->getQtyRequestTime(),
             $channelVariant->getPriceRequestTime()
         );

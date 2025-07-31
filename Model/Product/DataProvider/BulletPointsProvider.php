@@ -12,7 +12,7 @@ class BulletPointsProvider implements DataBuilderInterface
 
     private ?string $bulletPointsHash = null;
 
-    public function getBulletPoints(\M2E\Temu\Model\Product $product): array
+    public function getBulletPoints(\M2E\Temu\Model\Product $product): BulletPoints\Value
     {
         $values = [];
 
@@ -44,7 +44,7 @@ class BulletPointsProvider implements DataBuilderInterface
             $this->bulletPointsHash = $this->generateBulletPointsHash($values);
         }
 
-        return $values;
+        return new BulletPoints\Value($values, $this->bulletPointsHash);
     }
 
     public function getMetaData(): array

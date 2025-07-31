@@ -10,7 +10,8 @@ class Diff extends \M2E\Temu\Model\ActiveRecord\Diff
     {
         return $this->isTitleDifferent()
             || $this->isDescriptionDifferent()
-            || $this->isImagesDifferent();
+            || $this->isImagesDifferent()
+            || $this->isBulletPointsDifferent();
     }
 
     public function isTitleDifferent(): bool
@@ -43,6 +44,15 @@ class Diff extends \M2E\Temu\Model\ActiveRecord\Diff
             \M2E\Temu\Model\ResourceModel\Policy\Description::COLUMN_GALLERY_IMAGES_MODE,
             \M2E\Temu\Model\ResourceModel\Policy\Description::COLUMN_GALLERY_IMAGES_ATTRIBUTE,
             \M2E\Temu\Model\ResourceModel\Policy\Description::COLUMN_GALLERY_IMAGES_LIMIT,
+        ];
+
+        return $this->isSettingsDifferent($keys);
+    }
+
+    public function isBulletPointsDifferent(): bool
+    {
+        $keys = [
+            \M2E\Temu\Model\ResourceModel\Policy\Description::COLUMN_BULLET_POINTS,
         ];
 
         return $this->isSettingsDifferent($keys);

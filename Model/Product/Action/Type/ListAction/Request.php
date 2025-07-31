@@ -23,7 +23,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
         $request['title'] = $dataProvider->getTitle()->getValue();
         $request['description'] = $dataProvider->getDescription()->getValue()->description;
         $request['currency_code'] = $product->getCurrencyCode();
-        $request['bullet_points'] = $dataProvider->getBulletsPoints()->getValue();
+        $request['bullet_points'] = $dataProvider->getBulletsPoints()->getValue()->bulletPoints;
 
         $request['item_tax_code'] = $dataProvider->getItemTaxCode()->getValue();
 

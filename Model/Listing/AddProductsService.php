@@ -108,7 +108,7 @@ class AddProductsService
         }
 
         $existProductSku = $this->listingProductRepository->findBySkus(
-            [$unmanagedProduct->getSku()],
+            [$unmanagedProduct->getFirstSkuFromVariants()],
             $unmanagedProduct->getAccountId(),
         );
 

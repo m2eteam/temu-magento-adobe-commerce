@@ -125,6 +125,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
 
         if ($actionConfigurator->isDescriptionAllowed()) {
             $request['description'] = $dataProvider->getDescription()->getValue()->description;
+            $request['bullet_points'] = $dataProvider->getBulletsPoints()->getValue()->bulletPoints;
         }
 
         if ($actionConfigurator->isImagesAllowed()) {

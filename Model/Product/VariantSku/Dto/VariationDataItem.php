@@ -12,17 +12,17 @@ class VariationDataItem
 
     public function __construct(string $attributeCode, string $attributeName, string $value)
     {
-        if (empty($attributeCode)) {
-            throw new \M2E\Temu\Model\Exception\Logic('Attribute code must not be empty');
-        }
-
-        if (empty($attributeName)) {
-            throw new \M2E\Temu\Model\Exception\Logic('Attribute name must not be empty');
-        }
-
-        if (empty($value)) {
-            throw new \M2E\Temu\Model\Exception\Logic('Attribute value must not be empty');
-        }
+        //if (empty($attributeCode)) {
+        //    throw new \M2E\Temu\Model\Exception\Logic('Attribute code must not be empty');
+        //}
+        //
+        //if (empty($attributeName)) {
+        //    throw new \M2E\Temu\Model\Exception\Logic('Attribute name must not be empty');
+        //}
+        //
+        //if (empty($value)) {
+        //    throw new \M2E\Temu\Model\Exception\Logic('Attribute value must not be empty');
+        //}
 
         $this->attributeCode = $attributeCode;
         $this->attributeName = $attributeName;

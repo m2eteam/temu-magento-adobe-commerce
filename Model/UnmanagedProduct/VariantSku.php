@@ -40,8 +40,7 @@ class VariantSku extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         float $price,
         float $retailPrice,
         string $currencyCode,
-        array $specification,
-        array $salesAttributes,
+        \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification $specification,
         string $qtyRequestTime,
         string $priceRequestTime
     ): self {
@@ -57,7 +56,6 @@ class VariantSku extends \M2E\Temu\Model\ActiveRecord\AbstractModel
             ->setRetailPrice($retailPrice)
             ->setCurrency($currencyCode)
             ->setSpecification($specification)
-            ->setSalesAttributes($salesAttributes)
             ->setData(UnmanagedVariantSkuResource::COLUMN_QTY_ACTUALIZE_DATE, $qtyRequestTime)
             ->setData(UnmanagedVariantSkuResource::COLUMN_PRICE_ACTUALIZE_DATE, $priceRequestTime);
 
@@ -84,38 +82,6 @@ class VariantSku extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public function mapToMagentoProduct(int $magentoProductId): void
     {
         $this->setData(UnmanagedVariantSkuResource::COLUMN_MAGENTO_PRODUCT_ID, $magentoProductId);
-    }
-
-    /**
-     * @param \M2E\Temu\Model\UnmanagedProduct\VariantSku\SalesAttribute[] $values
-     *
-     * @return $this
-     */
-    public function setSalesAttributes(array $values): self
-    {
-        $this->setData(UnmanagedVariantSkuResource::COLUMN_SALES_ATTRIBUTES, json_encode($values, JSON_THROW_ON_ERROR));
-
-        return $this;
-    }
-
-    /**
-     * @return \M2E\Temu\Model\UnmanagedProduct\VariantSku\SalesAttribute[]
-     */
-    public function getSalesAttributes(): array
-    {
-        $json = $this->getData(UnmanagedVariantSkuResource::COLUMN_SALES_ATTRIBUTES);
-        if ($json === null) {
-            return [];
-        }
-
-        $salesAttributesData = json_decode($json, true);
-
-        $salesAttributes = [];
-        foreach ($salesAttributesData as $salesAttribute) {
-            $salesAttributes[] = $this->salesAttributeFactory->create($salesAttribute);
-        }
-
-        return $salesAttributes;
     }
 
     public function getMagentoProductId(): ?int
@@ -224,23 +190,36 @@ class VariantSku extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return (int)$this->getData(UnmanagedVariantSkuResource::COLUMN_STATUS);
     }
 
-    public function setSpecification(array $specification): self
+    public function setSpecification(\M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification $specification): self
     {
         $this->setData(
-            UnmanagedVariantSkuResource::SPECIFICATION,
-            strip_tags(
-                json_encode($specification)
-            )
+            UnmanagedVariantSkuResource::COLUMN_SPECIFICATION,
+            strip_tags(json_encode($specification->toArray()))
         );
 
         return $this;
     }
 
-    public function getSpecification(): array
+    public function getSpecification(): VariantSku\Specification
     {
-        $specification = $this->getData(UnmanagedVariantSkuResource::SPECIFICATION);
+        $specification = $this->getData(UnmanagedVariantSkuResource::COLUMN_SPECIFICATION);
 
-        return json_decode($specification, true);
+        $rawSpecification = json_decode($specification, true);
+
+        $specific = [];
+        foreach ($rawSpecification['specific'] as $item) {
+            $specific[] = new \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specific(
+                $item['id'],
+                $item['title'] ?: '',
+                $item['value_id'],
+                $item['value_title'] ?: ''
+            );
+        }
+
+        return new \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification(
+            $rawSpecification['title'],
+            $specific
+        );
     }
 
     /**

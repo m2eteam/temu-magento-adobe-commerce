@@ -15,7 +15,7 @@ class VariantSku
     private float $retailPrice;
     private int $status;
     private string $currencyCode;
-    private array $specification;
+    private \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification $specification;
     private array $salesAttributes;
     private string $qtyRequestTime;
     private string $priceRequestTime;
@@ -30,7 +30,7 @@ class VariantSku
         float $retailPrice,
         int $status,
         string $currencyCode,
-        array $specification,
+        \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification $specification,
         array $salesAttributes,
         string $qtyRequestTime,
         string $priceRequestTime
@@ -95,7 +95,7 @@ class VariantSku
         return $this->currencyCode;
     }
 
-    public function getSpecification(): array
+    public function getSpecification(): \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification
     {
         return $this->specification;
     }

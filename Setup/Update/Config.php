@@ -31,6 +31,9 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
                 \M2E\Temu\Setup\Update\y25_m06\AddBulletPointsColumns::class,
                 \M2E\Temu\Setup\Update\y25_m06\AddItemTaxCodeColumns::class,
             ],
+            'y25_m07' => [
+                \M2E\Temu\Setup\Update\y25_m07\UnmanagedConfigurableProducts::class,
+            ],
         ];
     }
 }

@@ -327,6 +327,11 @@ class Repository
         return array_values($collection->getItems());
     }
 
+    public function createVariantSku(\M2E\Temu\Model\Product\VariantSku $variantSku): void
+    {
+        $this->variantSkuResource->save($variantSku);
+    }
+
     /**
      * @param \M2E\Temu\Model\Product\VariantSku[] $variantsSku
      *

@@ -63,7 +63,7 @@ class Title extends \Magento\Ui\Component\Listing\Columns\Column
     {
         $unmanagedProduct = $this->getUnmanagedProduct((int)$row['id']);
 
-        return \M2E\Core\Helper\Data::escapeHtml($unmanagedProduct->getSku());
+        return \M2E\Core\Helper\Data::escapeHtml($unmanagedProduct->getFirstSkuFromVariants());
     }
 
     private function renderSalesAttributes(array $row): string
@@ -73,9 +73,12 @@ class Title extends \Magento\Ui\Component\Listing\Columns\Column
             return '';
         }
 
-        $salesAttributes = $unmanagedProduct->getSalesAttributeNames();
+        $salesAttributes = $unmanagedProduct->getSpecificNames();
         if (empty($salesAttributes)) {
-            return '';
+            return sprintf(
+                '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 0 7px">%s</div>',
+                __('Variation product')
+            );
         }
 
         $configurableAttributes = array_map(

@@ -63,6 +63,19 @@ class ChangeProcessor extends \M2E\Temu\Model\Policy\ChangeProcessorAbstract
             ];
         }
 
+        if ($diff->isBulletPointsDifferent()) {
+            $priority = 5;
+
+            if ($status === \M2E\Temu\Model\Product::STATUS_LISTED) {
+                $priority = 30;
+            }
+
+            $data[] = [
+                'type' => \M2E\Temu\Model\Policy\ChangeProcessorAbstract::INSTRUCTION_TYPE_BULLET_POINTS_DATA_CHANGED,
+                'priority' => $priority,
+            ];
+        }
+
         return $data;
     }
 }

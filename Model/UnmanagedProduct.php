@@ -219,7 +219,7 @@ class UnmanagedProduct extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return (float)$maxPrice;
     }
 
-    public function getSku(): ?string
+    public function getFirstSkuFromVariants(): ?string
     {
         $this->getVariants();
         if ($this->isSimple()) {
@@ -316,16 +316,20 @@ class UnmanagedProduct extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return array_values($this->variants);
     }
 
-    public function getSalesAttributeNames(): array
+    public function getSpecificNames(): array
     {
         $names = [];
         $variants = $this->getVariants();
 
         foreach ($variants as $variant) {
-            $salesAttributes = $variant->getSalesAttributes();
-            foreach ($salesAttributes as $attribute) {
-                if (!in_array($attribute->getName(), $names)) {
-                    $names[] = $attribute->getName();
+            $specification = $variant->getSpecification();
+            foreach ($specification->getSpecific() as $specific) {
+                if (empty($specific->getTitle())) {
+                    continue;
+                }
+
+                if (!in_array($specific->getTitle(), $names)) {
+                    $names[] = $specific->getTitle();
                 }
             }
         }

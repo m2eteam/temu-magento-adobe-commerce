@@ -19,8 +19,7 @@ class VariantSku extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractMode
     public const COLUMN_CURRENCY = 'currency';
     public const COLUMN_QTY = 'qty';
     public const COLUMN_IDENTIFIERS = 'identifiers';
-    public const SPECIFICATION = 'specification';
-    public const COLUMN_SALES_ATTRIBUTES = 'sales_attributes';
+    public const COLUMN_SPECIFICATION = 'specification';
     public const COLUMN_QTY_ACTUALIZE_DATE = 'qty_actualize_date';
     public const COLUMN_PRICE_ACTUALIZE_DATE = 'price_actualize_date';
     public const COLUMN_UPDATE_DATE = 'update_date';

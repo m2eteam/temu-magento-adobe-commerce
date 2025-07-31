@@ -319,6 +319,10 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
             $product->setOnlineShippingTemplateId($metadata[DataProvider\ShippingProvider::NICK]['template_id']);
         }
 
+        if (isset($metadata[DataProvider\BulletPointsProvider::NICK])) {
+            $product->setOnlineBulletPoints($metadata[DataProvider\BulletPointsProvider::NICK]);
+        }
+
         $limitDay = $metadata[DataProvider\ShippingProvider::NICK]['limit_day'] ?? null;
 
         if ($limitDay !== null) {

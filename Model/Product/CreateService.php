@@ -12,17 +12,23 @@ class CreateService
     private \M2E\Temu\Model\Product\VariantSkuFactory $variantSkuFactory;
     private Repository $listingProductRepository;
     private \Magento\Framework\App\ResourceConnection $resource;
+    private \M2E\Temu\Model\Product\VariantSku\Deleted\Repository $deletedVariantSkuRepository;
+    private \M2E\Temu\Model\Product\VariantSku\DeletedFactory $deletedVariantSkuFactory;
 
     public function __construct(
         \M2E\Temu\Model\ProductFactory $listingProductFactory,
         \M2E\Temu\Model\Product\VariantSkuFactory $variantSkuFactory,
         Repository $listingProductRepository,
-        \Magento\Framework\App\ResourceConnection $resource
+        \Magento\Framework\App\ResourceConnection $resource,
+        \M2E\Temu\Model\Product\VariantSku\Deleted\Repository $deletedVariantSkuRepository,
+        \M2E\Temu\Model\Product\VariantSku\DeletedFactory $deletedVariantSkuFactory
     ) {
         $this->listingProductFactory = $listingProductFactory;
         $this->variantSkuFactory = $variantSkuFactory;
         $this->listingProductRepository = $listingProductRepository;
         $this->resource = $resource;
+        $this->deletedVariantSkuRepository = $deletedVariantSkuRepository;
+        $this->deletedVariantSkuFactory = $deletedVariantSkuFactory;
     }
 
     public function create(
@@ -59,7 +65,11 @@ class CreateService
             $variants = $this->createVariants($listingProduct, $m2eMagentoProduct, $unmanagedProduct);
 
             $this->listingProductRepository->createVariantsSku($variants);
-            $this->listingProductRepository->save($listingProduct->recalculateOnlineDataByVariants());
+            if ($unmanagedProduct !== null) {
+                $this->createDeletedVariants($listingProduct, $unmanagedProduct);
+            }
+            $listingProduct->recalculateOnlineDataByVariants();
+            $this->listingProductRepository->save($listingProduct);
         } catch (\Throwable $exception) {
             $transaction->rollBack();
 
@@ -97,6 +107,22 @@ class CreateService
 
         $variants = [];
         foreach ($m2eMagentoProduct->getConfigurableChildren() as $child) {
+            if ($unmanagedProduct !== null) {
+                foreach ($unmanagedProduct->getVariants() as $unmanagedVariant) {
+                    if (!$unmanagedVariant->hasMagentoProductId()) {
+                        continue;
+                    }
+
+                    $variants[] = $this->createVariantEntity(
+                        $listingProduct,
+                        $child,
+                        $unmanagedVariant
+                    );
+                }
+
+                return $variants;
+            }
+
             $variants[] = $this->createVariantEntity(
                 $listingProduct,
                 $child,
@@ -181,5 +207,23 @@ class CreateService
         }
 
         return $variationAttributes;
+    }
+
+    private function createDeletedVariants(
+        \M2E\Temu\Model\Product $listingProduct,
+        \M2E\Temu\Model\UnmanagedProduct $unmanagedProduct
+    ) {
+        foreach ($unmanagedProduct->getVariants() as $unmanagedVariant) {
+            if ($unmanagedVariant->hasMagentoProductId()) {
+                continue;
+            }
+
+            $deletedVariant = $this->deletedVariantSkuFactory
+                ->create()
+                ->setProductId($listingProduct->getId())
+                ->initFromUnmanagedVariant($unmanagedVariant);
+
+            $this->deletedVariantSkuRepository->create($deletedVariant);
+        }
     }
 }

@@ -236,6 +236,8 @@ class ActiveChecker extends \M2E\Temu\Model\Instruction\SynchronizationTemplate\
         return [
             ChangeAttributeTracker::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
             \M2E\Temu\Model\Policy\ChangeProcessorAbstract::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
+            \M2E\Temu\Model\Policy\ChangeProcessorAbstract::INSTRUCTION_TYPE_BULLET_POINTS_DATA_CHANGED,
+            \M2E\Temu\Model\Magento\Product\ChangeAttributeTracker::INSTRUCTION_TYPE_BULLET_POINTS_DATA_CHANGED,
             SyncPolicy\ChangeProcessor::INSTRUCTION_TYPE_REVISE_DESCRIPTION_ENABLED,
             SyncPolicy\ChangeProcessor::INSTRUCTION_TYPE_REVISE_DESCRIPTION_DISABLED,
             \M2E\Temu\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,

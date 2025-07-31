@@ -9,18 +9,15 @@ class CreateService
     private \M2E\Temu\Model\UnmanagedProductFactory $productFactory;
     private \M2E\Temu\Model\UnmanagedProduct\Repository $repository;
     private \M2E\Temu\Model\UnmanagedProduct\VariantSkuFactory $variantSkuFactory;
-    private \M2E\Temu\Model\UnmanagedProduct\VariantSku\SalesAttributeFactory $salesAttributeFactory;
 
     public function __construct(
         \M2E\Temu\Model\UnmanagedProductFactory $productFactory,
         \M2E\Temu\Model\UnmanagedProduct\Repository $repository,
-        \M2E\Temu\Model\UnmanagedProduct\VariantSkuFactory $variantSkuFactory,
-        \M2E\Temu\Model\UnmanagedProduct\VariantSku\SalesAttributeFactory $salesAttributeFactory
+        \M2E\Temu\Model\UnmanagedProduct\VariantSkuFactory $variantSkuFactory
     ) {
         $this->productFactory = $productFactory;
         $this->repository = $repository;
         $this->variantSkuFactory = $variantSkuFactory;
-        $this->salesAttributeFactory = $salesAttributeFactory;
     }
 
     public function create(
@@ -54,21 +51,9 @@ class CreateService
         \M2E\Temu\Model\UnmanagedProduct $unmanagedProduct,
         \M2E\Temu\Model\Channel\Product\VariantSku $variantSku
     ): \M2E\Temu\Model\UnmanagedProduct\VariantSku {
-
         return $this->variantSkuFactory->createFromChannel(
             $variantSku,
-            $unmanagedProduct,
-            $this->createSalesAttributes($variantSku)
+            $unmanagedProduct
         );
-    }
-
-    private function createSalesAttributes(
-        \M2E\Temu\Model\Channel\Product\VariantSku $variantSku
-    ): array {
-        $salesAttributes = [];
-        foreach ($variantSku->getSalesAttributes() as $salesAttribute) {
-            $salesAttributes[] = $this->salesAttributeFactory->create($salesAttribute);
-        }
-        return $salesAttributes;
     }
 }

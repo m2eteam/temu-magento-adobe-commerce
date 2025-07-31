@@ -139,13 +139,13 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
         $variationList = array_map(function ($item) {
             return sprintf(
                 '<p><strong>%s</strong>: %s</p>',
-                $item->getAttributeName(),
-                $item->getValue()
+                $item->getAttributeName() ?: '--',
+                $item->getValue() ?: '--'
             );
         }, $row->getVariationData()->getItems());
 
         if (!$row->hasMagentoProductId()) {
-            $label = sprintf('<p><span class="deleted-attribute">%s</span></p>', __('Deleted'));
+            $label = sprintf('<p><span class="deleted-attribute">%s</span></p>', __('Not Linked'));
             return sprintf(
                 '<div class="m2e-variation-attributes">%s%s</div>',
                 implode('', $variationList),

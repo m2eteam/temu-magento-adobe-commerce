@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace M2E\Temu\Block\Adminhtml\Listing\Mapping;
 
-use M2E\Temu\Model\Magento\Product as ProductModel;
-
 class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected \M2E\Core\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory;
@@ -46,10 +44,6 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $collection = $this->magentoProductCollectionFactory->create();
-
-        if ($this->getData('product_type') !== \M2E\Temu\Helper\Magento\Product::TYPE_SIMPLE) {
-            return;
-        }
 
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');

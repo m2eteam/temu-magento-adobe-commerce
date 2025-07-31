@@ -31,15 +31,22 @@ class MapProductPopupHtml extends \M2E\Temu\Controller\Adminhtml\AbstractListing
                     'unmanaged_product_id' => $unmanagedId,
                     'account_id' => $accountId,
                     'grid_url' => \M2E\Temu\Model\UnmanagedProduct\Ui\UrlHelper::PATH_UNMANAGED_MAP_GRID,
-                    'product_type' => $unmanagedProduct->isSimple()
-                        ? \M2E\Temu\Helper\Magento\Product::TYPE_SIMPLE
-                        : \M2E\Temu\Helper\Magento\Product::TYPE_CONFIGURABLE,
-                ],
+                    'product_type' => $this->getAvailableProductTypes($unmanagedProduct),
+                ]
             ]
         );
 
         $this->setAjaxContent($block);
 
         return $this->getResult();
+    }
+
+    private function getAvailableProductTypes(?\M2E\Temu\Model\UnmanagedProduct $unmanagedProduct): array
+    {
+        if ($unmanagedProduct->isSimple()) {
+            return [\M2E\Temu\Helper\Magento\Product::TYPE_SIMPLE];
+        }
+
+        return [\M2E\Temu\Helper\Magento\Product::TYPE_CONFIGURABLE];
     }
 }

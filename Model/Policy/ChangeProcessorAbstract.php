@@ -11,6 +11,7 @@ abstract class ChangeProcessorAbstract
     public const INSTRUCTION_TYPE_TITLE_DATA_CHANGED = 'template_title_data_changed';
     public const INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED = 'template_description_data_changed';
     public const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'template_images_data_changed';
+    public const INSTRUCTION_TYPE_BULLET_POINTS_DATA_CHANGED = 'template_bullet_points_data_changed';
     public const INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED = 'template_categories_data_changed';
     public const INSTRUCTION_TYPE_OTHER_DATA_CHANGED = 'template_other_data_changed';
     public const INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED = 'template_shipping_data_changed';

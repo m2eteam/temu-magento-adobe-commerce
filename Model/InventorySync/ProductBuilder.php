@@ -27,10 +27,6 @@ class ProductBuilder
         foreach ($channelRawProducts as $channelRawProduct) {
             $variantSkusCollection = $this->buildVariantSkusCollection($channelRawProduct['skus']);
 
-            if (count($variantSkusCollection->getAll()) !== 1) {
-                continue;
-            }
-
             $channelProduct = new \M2E\Temu\Model\Channel\Product(
                 $this->account->getId(),
                 $channelRawProduct['id'],
@@ -63,7 +59,7 @@ class ProductBuilder
                 $variantSkuArray['price_retail'],
                 $this->mapChannelStatusOnExtension($variantSkuArray['status']),
                 $variantSkuArray['currency_code'],
-                $variantSkuArray['specification'],
+                $this->createSpecification($variantSkuArray['specification']),
                 [],
                 $variantSkuArray['system']['qty_request_time'],
                 $variantSkuArray['system']['price_request_time']
@@ -78,5 +74,23 @@ class ProductBuilder
     private function mapChannelStatusOnExtension($status)
     {
         return self::PRODUCT_STATUS_MAPPING[$status] ?? Product::STATUS_INACTIVE;
+    }
+
+    private function createSpecification(array $rawSpecification): \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification
+    {
+        $specific = [];
+        foreach ($rawSpecification['specific'] as $item) {
+            $specific[] = new \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specific(
+                $item['id'],
+                $item['title'] ?: '',
+                $item['value_id'],
+                $item['value_title'] ?: ''
+            );
+        }
+
+        return new \M2E\Temu\Model\UnmanagedProduct\VariantSku\Specification(
+            $rawSpecification['title'],
+            $specific
+        );
     }
 }

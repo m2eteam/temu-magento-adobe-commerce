@@ -35,11 +35,19 @@ class Validator extends \M2E\Temu\Model\Product\Action\Type\AbstractValidator
             return false;
         }
 
-        $variants = $product->getVariants();
-        foreach ($variants as $variant) {
+        $existErrors = [];
+
+        foreach ($product->getVariants() as $variant) {
             foreach ($this->variantValidators as $variantValidator) {
                 $error = $variantValidator->validate($variant);
-                if ($error !== null) {
+                if ($error === null) {
+                    continue;
+                }
+
+                $errorText = $error->getText();
+
+                if (!isset($existErrors[$errorText])) {
+                    $existErrors[$errorText] = true;
                     $this->addMessage($error);
                 }
             }

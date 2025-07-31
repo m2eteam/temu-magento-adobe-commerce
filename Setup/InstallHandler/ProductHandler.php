@@ -385,7 +385,7 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ProductVariantSkuDeletedResource::COLUMN_REMOVED_MAGENTO_PRODUCT_ID,
                 Table::TYPE_INTEGER,
                 null,
-                ['unsigned' => true, 'nullable' => false]
+                ['unsigned' => true, 'nullable' => true]
             )
             ->addColumn(
                 ProductVariantSkuDeletedResource::COLUMN_SKU_ID,
@@ -882,13 +882,7 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['nullable' => true, 'default' => null]
             )
             ->addColumn(
-                UnmanagedProductVariantResource::SPECIFICATION,
-                Table::TYPE_TEXT,
-                \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
-                ['default' => null]
-            )
-            ->addColumn(
-                UnmanagedProductVariantResource::COLUMN_SALES_ATTRIBUTES,
+                UnmanagedProductVariantResource::COLUMN_SPECIFICATION,
                 Table::TYPE_TEXT,
                 \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
                 ['default' => null]

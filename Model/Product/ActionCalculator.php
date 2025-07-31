@@ -258,15 +258,19 @@ class ActionCalculator
         return $title !== $onlineTitle;
     }
 
-    private function updateConfiguratorAddDescription( //TODO bullet points
+    private function updateConfiguratorAddDescription(
         Action\Configurator $configurator,
         \M2E\Temu\Model\Product $product
     ): void {
         $syncPolicy = $product->getSynchronizationTemplate();
 
+        if (!$syncPolicy->isReviseUpdateDescription()) {
+            return;
+        }
+
         if (
-            $syncPolicy->isReviseUpdateDescription()
-            && $this->isChangedDescription($product)
+            $this->isChangedDescription($product)
+            || $this->isChangedBulletPoints($product)
         ) {
             $configurator->allowDescription();
         }
@@ -279,6 +283,15 @@ class ActionCalculator
         $onlineDescription = $product->getOnlineDescription();
 
         return $descriptionHash !== $onlineDescription;
+    }
+
+    private function isChangedBulletPoints(
+        \M2E\Temu\Model\Product $product
+    ): bool {
+        $bulletPointsHash = $product->getDataProvider()->getBulletsPoints()->getValue()->hash;
+        $onlineBulletPoints = $product->getOnlineBulletPoints();
+
+        return $bulletPointsHash !== $onlineBulletPoints;
     }
 
     private function updateConfiguratorAddImages(
