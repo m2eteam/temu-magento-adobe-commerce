@@ -25,6 +25,7 @@ class UpgradeCollection extends \M2E\Core\Model\Setup\AbstractUpgradeCollection
             '1.4.1' => ['to' => '1.5.0', 'upgrade' => \M2E\Temu\Setup\Upgrade\v1_5_0\Config::class],
             '1.5.0' => ['to' => '1.5.1', 'upgrade' => null],
             '1.5.1' => ['to' => '1.6.0', 'upgrade' => \M2E\Temu\Setup\Upgrade\v1_6_0\Config::class],
+            '1.6.0' => ['to' => '1.7.0', 'upgrade' => null],
         ];
     }
 }

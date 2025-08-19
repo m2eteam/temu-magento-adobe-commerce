@@ -75,6 +75,10 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
 
     protected function processSuccess(array $responseData): void
     {
+        if (!empty($responseData['not_listed_skus'])) {
+            $this->processNotListedSkus($responseData['not_listed_skus']);
+        }
+
         $product = $this->getProduct();
 
         $metadata = $this->getRequestMetaData();
@@ -101,6 +105,18 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
         }
 
         $this->productRepository->save($product);
+    }
+
+    private function processNotListedSkus(array $skus): void
+    {
+        $notListedSkus = array_column($skus, 'sku');
+
+        $this->getLogBuffer()->addWarning(
+            sprintf(
+                'The following SKUs were not listed on Temu: %s. The product variations were skipped because they contain attribute values (e.g., size, color, material) that are not currently supported by the channel.',
+                implode(', ', $notListedSkus)
+            )
+        );
     }
 
     private function isSuccess(): bool

@@ -40,7 +40,7 @@ class GetCommand implements \M2E\Core\Model\Connector\CommandInterface
         foreach ($responseData['attributes'] as $attributeData) {
             $rules = [
                 'min_value' => $attributeData['rules']['min_value'],
-                'max_value' => $attributeData['rules']['min_value'],
+                'max_value' => $attributeData['rules']['max_value'],
             ];
             $attribute = new \M2E\Temu\Model\Channel\Attribute\Item(
                 (string)$attributeData['id'],

@@ -28,7 +28,7 @@ class VariantsProvider implements DataBuilderInterface
 
         $currency = $product->getCurrencyCode();
         foreach ($variants as $variant) {
-            if ($variantSettings->isSkipAction($variant->getId())) {
+            if (!$this->isAllowedVariantToRevise($variant, $variantSettings)) {
                 continue;
             }
 
@@ -70,7 +70,7 @@ class VariantsProvider implements DataBuilderInterface
 
         $currency = $product->getCurrencyCode();
         foreach ($variants as $variant) {
-            if ($variantSettings->isSkipAction($variant->getId())) {
+            if (!$this->isAllowedVariantToRevise($variant, $variantSettings)) {
                 continue;
             }
 
@@ -95,6 +95,21 @@ class VariantsProvider implements DataBuilderInterface
         $this->onlineDataForSku = $skuItems->collectOnlineDataForReviseDetails();
 
         return $skuItems;
+    }
+
+    private function isAllowedVariantToRevise(
+        \M2E\Temu\Model\Product\VariantSku $variant,
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
+    ): bool {
+        if ($variantSettings->isSkipAction($variant->getId())) {
+            return false;
+        }
+
+        if ($variant->isStatusNotListed()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function getVariantSkusForList(
@@ -150,6 +165,10 @@ class VariantsProvider implements DataBuilderInterface
         $variantSkuIds = [];
         foreach ($variants as $variant) {
             if ($variantSettings->isSkipAction($variant->getId())) {
+                continue;
+            }
+
+            if ($variant->isStatusNotListed()) {
                 continue;
             }
 

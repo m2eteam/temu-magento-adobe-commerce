@@ -64,7 +64,8 @@ trait CommandTrait
                     $order['delivery_address']['country'],
                     $order['delivery_address']['city'],
                     $order['delivery_address']['postcode'],
-                    $order['delivery_address']['country_code']
+                    $order['delivery_address']['country_code'],
+                    $order['delivery_address']['state'] ?? null
                 );
             }
 

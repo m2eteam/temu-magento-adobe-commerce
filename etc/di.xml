@@ -190,6 +190,9 @@
                 <item name="images" xsi:type="object">
                     M2E\Temu\Model\Product\Action\Validator\VariantSku\ImagesValidator
                 </item>
+                <item name="variation_attributes" xsi:type="object">
+                    M2E\Temu\Model\Product\Action\Validator\VariantSku\VariationAttributesValidator
+                </item>
             </argument>
         </arguments>
     </type>

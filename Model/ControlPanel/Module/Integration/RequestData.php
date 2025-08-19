@@ -124,7 +124,7 @@ class RequestData
             $needForceRevise
         );
         foreach ($product->getVariants() as $variant) {
-            $action = $this->variantActionCalculator->process($variant);
+            $action = $this->variantActionCalculator->process($variant, $product);
 
             $variantSettingsBuilder->add($variant->getId(), $action, $variant->getStatus());
         }

@@ -8,7 +8,7 @@ class Maintenance implements \M2E\Core\Model\Module\MaintenanceInterface
 {
     public const MENU_ROOT_NODE_NICK = 'M2E_Temu::temu_maintenance';
 
-    private const MAINTENANCE_CONFIG_PATH = 'm2e_temu/maintenance';
+    private const MAINTENANCE_CONFIG_PATH = 'maintenance';
 
     private \M2E\Core\Model\Module\Maintenance\AdapterFactory $adapterFactory;
     private \M2E\Core\Model\Module\Maintenance\Adapter $adapter;
@@ -51,10 +51,16 @@ class Maintenance implements \M2E\Core\Model\Module\MaintenanceInterface
         /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (!isset($this->adapter)) {
             $this->adapter = $this->adapterFactory->create(
-                self::MAINTENANCE_CONFIG_PATH,
+                $this->getMaintenanceConfigPath(),
             );
         }
 
         return $this->adapter;
+    }
+
+    private function getMaintenanceConfigPath(): string
+    {
+        return \M2E\Temu\Setup\MagentoCoreConfigSettings::MAGENTO_CORE_CONFIG_PREFIX
+            . '/' . self::MAINTENANCE_CONFIG_PATH;
     }
 }

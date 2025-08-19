@@ -15,6 +15,7 @@ class DeliveryAddress
     public ?string $city;
     public ?string $postCode;
     public ?string $countryCode;
+    public ?string $state;
 
     public function __construct(
         ?string $name,
@@ -25,7 +26,8 @@ class DeliveryAddress
         ?string $country,
         ?string $city,
         ?string $postCode,
-        ?string $countryCode
+        ?string $countryCode,
+        ?string $state
     ) {
         $this->name = $name;
         $this->addressLineAll = $addressLineAll;
@@ -36,5 +38,6 @@ class DeliveryAddress
         $this->city = $city;
         $this->postCode = $postCode;
         $this->countryCode = $countryCode;
+        $this->state = $state;
     }
 }

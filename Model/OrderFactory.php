@@ -186,6 +186,7 @@ class OrderFactory
                 'country' => $deliveryAddress->country,
                 'city' => $deliveryAddress->city,
                 'country_code' => $deliveryAddress->countryCode,
+                'state' => $deliveryAddress->state,
             ],
         ];
     }

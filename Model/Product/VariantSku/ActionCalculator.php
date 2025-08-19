@@ -16,10 +16,11 @@ class ActionCalculator
     }
 
     public function process(
-        \M2E\Temu\Model\Product\VariantSku $variant
+        \M2E\Temu\Model\Product\VariantSku $variant,
+        \M2E\Temu\Model\Product $product
     ): string {
         if ($variant->isStatusNotListed()) {
-            return $this->calculateForNotListed($variant);
+            return $this->calculateForNotListed($variant, $product);
         }
 
         if ($variant->isStatusListed()) {
@@ -137,8 +138,14 @@ class ActionCalculator
         return $variant->getOnlinePrice() !== $variant->getDataProvider()->getPrice()->getValue()->price;
     }
 
-    private function calculateForNotListed(\M2E\Temu\Model\Product\VariantSku $variant): string
-    {
+    private function calculateForNotListed(
+        \M2E\Temu\Model\Product\VariantSku $variant,
+        \M2E\Temu\Model\Product $product
+    ): string {
+        if ($product->isStatusListed()) { // unable to add variant to listed product
+            return VariantSettings::ACTION_SKIP;
+        }
+
         $syncPolicy = $variant->getSyncPolicy();
         if (!$syncPolicy->isListMode()) {
             return VariantSettings::ACTION_SKIP;
