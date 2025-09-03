@@ -76,6 +76,7 @@ class Collection extends \Magento\Framework\Data\Collection implements SearchRes
                 'product_' . ProductResource::COLUMN_ONLINE_MIN_PRICE => ProductResource::COLUMN_ONLINE_MIN_PRICE,
                 'product_' . ProductResource::COLUMN_ONLINE_MAX_PRICE => ProductResource::COLUMN_ONLINE_MAX_PRICE,
                 'product_' . ProductResource::COLUMN_CHANNEL_PRODUCT_ID => ProductResource::COLUMN_CHANNEL_PRODUCT_ID,
+                'product_' . ProductResource::COLUMN_TEMPLATE_CATEGORY_ID => ProductResource::COLUMN_TEMPLATE_CATEGORY_ID,
             ],
         );
 

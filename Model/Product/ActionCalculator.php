@@ -109,6 +109,7 @@ class ActionCalculator
         $this->updateConfiguratorAddImages($configurator, $product);
         $this->updateConfiguratorAddCategoryAttributes($configurator, $product);
         $this->updateConfiguratorAddShipping($configurator, $product);
+        $this->updateConfiguratorAddPrice($configurator, $product);
 
         if (empty($configurator->getAllowedDataTypes())) {
             return Action::createNothing($product);
@@ -372,5 +373,28 @@ class ActionCalculator
         $onlinePreparationTime = $product->getOnlinePreparationTime();
 
         return $preparationTime !== $onlinePreparationTime;
+    }
+
+    private function updateConfiguratorAddPrice(
+        Action\Configurator $configurator,
+        \M2E\Temu\Model\Product $product
+    ): void {
+        $syncPolicy = $product->getSynchronizationTemplate();
+
+        if (
+            $syncPolicy->isReviseUpdatePrice()
+            && $this->isChangedItemTaxCode($product)
+        ) {
+            $configurator->allowPrice();
+        }
+    }
+
+    private function isChangedItemTaxCode(
+        \M2E\Temu\Model\Product $product
+    ): bool {
+        $itemTaxCodeValue = $product->getDataProvider()->getItemTaxCode()->getValue();
+        $onlineItemTaxCodeValue = $product->getOnlineItemTaxCode();
+
+        return $itemTaxCodeValue !== $onlineItemTaxCodeValue;
     }
 }

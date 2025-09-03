@@ -91,10 +91,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
     public function isAllRequiredAttributesFilled(): bool
     {
-        $allAttributes = array_merge(
-            $this->getProductAttributes(),
-            $this->getBrandAndSizeChartAttributes()
-        );
+        $allAttributes = $this->getProductAttributes();
 
         $requiredAttributeIds = array_map(
             fn(DictionaryAbstractAttribute $attribute) => $attribute->getId(),
@@ -357,14 +354,6 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public function getPathWithCategoryId(): string
     {
         return sprintf('%s (%s)', $this->getPath(), $this->getCategoryId());
-    }
-
-    /**
-     * @return DictionaryAbstractAttribute[]
-     */
-    public function getBrandAndSizeChartAttributes(): array
-    {
-        return [];
     }
 
     public function isLocked(): bool

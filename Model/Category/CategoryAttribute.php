@@ -13,10 +13,8 @@ class CategoryAttribute extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public const VALUE_MODE_CUSTOM_VALUE = 2;
     public const VALUE_MODE_CUSTOM_ATTRIBUTE = 3;
 
-    public const ATTRIBUTE_TYPE_BRAND = 'brand';
     public const ATTRIBUTE_TYPE_SALES = 'sales';
     public const ATTRIBUTE_TYPE_PRODUCT = 'product';
-    public const ATTRIBUTE_TYPE_SIZE_CHART = 'size-chart';
 
     private const ATTRIBUTE_MULTI_VALUE_DELIMITER = '~';
 

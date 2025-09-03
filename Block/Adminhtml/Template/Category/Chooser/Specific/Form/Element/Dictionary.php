@@ -15,6 +15,11 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
 
     private const DEFAULT_MAX_MULTIPLE_VALUES_COUNT = 10;
 
+    private const PROVINCE_REGION = [
+        'id'    => '1000001001',
+        'title' => 'Province/Region (for China)',
+    ];
+
     public \Magento\Framework\View\LayoutInterface $layout;
     private \M2E\Core\Helper\Magento\Attribute $magentoAttributeHelper;
     /** @var array */
@@ -168,6 +173,20 @@ JS
             $specific['title'],
             $required
         );
+    }
+
+    public function getTitleTooltip($specific): string
+    {
+        if (
+            $specific['id'] !== self::PROVINCE_REGION['id']
+            || $specific['title'] !== self::PROVINCE_REGION['title']
+        ) {
+            return '';
+        }
+
+        $text = (string)__('Must be specified if "Country of Origin" is China.');
+
+        return $this->getTooltipHtml($text, true);
     }
 
     public function getValueModeSelectHtml($index, $specific): string

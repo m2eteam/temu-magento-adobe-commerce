@@ -118,6 +118,7 @@ class Processor
             $this->getReviseImagesScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseCategoryAttributesScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseShippingScheduledActionsPreparedCollection()->getSelect(),
+            $this->getRevisePriceScheduledActionsPreparedCollection()->getSelect(),
             $this->getRelistScheduledActionsPreparedCollection()->getSelect(),
             $this->getStopScheduledActionsPreparedCollection()->getSelect(),
             $this->getDeleteScheduledActionsPreparedCollection()->getSelect(),
@@ -214,6 +215,17 @@ class Processor
             \M2E\Temu\Model\Product::ACTION_REVISE
         );
         $collection->addTagFilter(Configurator::DATA_TYPE_SHIPPING);
+
+        return $collection;
+    }
+
+    private function getRevisePriceScheduledActionsPreparedCollection(): ScheduledActionCollection
+    {
+        $collection = $this->scheduledActionRepository->createCollectionForFindByActionType(
+            self::REVISE_DETAILS_PRIORITY,
+            \M2E\Temu\Model\Product::ACTION_REVISE
+        );
+        $collection->addTagFilter(Configurator::DATA_TYPE_PRICE);
 
         return $collection;
     }

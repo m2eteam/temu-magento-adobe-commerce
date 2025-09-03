@@ -14,6 +14,7 @@ class ChangeAttributeTracker
     public const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'magento_product_images_data_changed';
     public const INSTRUCTION_TYPE_BULLET_POINTS_DATA_CHANGED = 'magento_product_bullet_points_data_changed';
     public const INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED = 'magento_product_categories_data_changed';
+    public const INSTRUCTION_TYPE_ITEM_TAX_CODE_DATA_CHANGED = 'magento_product_item_tax_code_data_changed';
 
     private \M2E\Temu\Model\Product $listingProduct;
     private \M2E\Temu\Model\InstructionService $instructionService;

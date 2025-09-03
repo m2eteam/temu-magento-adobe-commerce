@@ -35,7 +35,7 @@ $element = $block->getElement();
                 <?php
                 echo $element->getAttributeTitleLabelHtml($index, $specific); ?>
                 <?php
-                //echo $element->getTitleTooltip($specific);//TODO? ?>
+                echo $block->escapeHtml($element->getTitleTooltip($specific), ['div', 'a']); ?>
             </td>
             <td style="vertical-align:top;">
                 <?php

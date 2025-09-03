@@ -9,7 +9,8 @@ class Diff extends \M2E\Temu\Model\ActiveRecord\Diff
     public function isDifferent(): bool
     {
         return $this->isQtyDifferent()
-            || $this->isPriceDifferent();
+            || $this->isPriceDifferent()
+            || $this->isItemTaxCodeAttributeDifferent();
     }
 
     public function isQtyDifferent(): bool
@@ -33,6 +34,15 @@ class Diff extends \M2E\Temu\Model\ActiveRecord\Diff
             \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_FIXED_PRICE_MODE,
             \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_FIXED_PRICE_MODIFIER,
             \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_FIXED_PRICE_CUSTOM_ATTRIBUTE,
+        ];
+
+        return $this->isSettingsDifferent($keys);
+    }
+
+    public function isItemTaxCodeAttributeDifferent(): bool
+    {
+        $keys = [
+            \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_ITEM_TAX_CODE_ATTRIBUTE,
         ];
 
         return $this->isSettingsDifferent($keys);

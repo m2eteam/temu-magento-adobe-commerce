@@ -25,7 +25,8 @@ class Configurator
         self::DATA_TYPE_TITLE,
         self::DATA_TYPE_DESCRIPTION,
         self::DATA_TYPE_CATEGORIES,
-        self::DATA_TYPE_SHIPPING
+        self::DATA_TYPE_SHIPPING,
+        self::DATA_TYPE_PRICE
     ];
 
     private string $mode = self::MODE_EXCLUDING;
@@ -45,7 +46,8 @@ class Configurator
             self::DATA_TYPE_TITLE,
             self::DATA_TYPE_DESCRIPTION,
             self::DATA_TYPE_CATEGORIES,
-            self::DATA_TYPE_SHIPPING
+            self::DATA_TYPE_SHIPPING,
+            self::DATA_TYPE_PRICE
         ];
     }
 

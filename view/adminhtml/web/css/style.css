@@ -515,6 +515,10 @@ label.mage-error > a:before {
     margin-left: 2rem;
 }
 
+#safety_compliance_attributes_fieldset .data-grid .Temu-field-tooltip{
+    top: -8px;
+}
+
 .note_icon.admin__field-tooltip {
     width: auto;
 }

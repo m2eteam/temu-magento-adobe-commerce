@@ -74,29 +74,6 @@ class DictionaryMapper
         return $this->sortAttributesByTitle($attributes);
     }
 
-    public function getVirtualAttributes(\M2E\Temu\Model\Category\Dictionary $dictionary): array
-    {
-        $generalMappingAttributes = $this->getGeneralAttributesMappingByAttributeId();
-        $savedAttributes = $this->loadSavedAttributes($dictionary, [
-            CategoryAttribute::ATTRIBUTE_TYPE_BRAND,
-            CategoryAttribute::ATTRIBUTE_TYPE_SIZE_CHART,
-        ]);
-
-        $attributes = [];
-        foreach ($dictionary->getBrandAndSizeChartAttributes() as $virtualAttribute) {
-            $item = $this->map($virtualAttribute, $savedAttributes, $generalMappingAttributes);
-
-            if ($item['required']) {
-                array_unshift($attributes, $item);
-                continue;
-            }
-
-            $attributes[] = $item;
-        }
-
-        return $this->sortAttributesByTitle($attributes);
-    }
-
     /**
      * @param \M2E\Temu\Model\Category\Dictionary\AbstractAttribute $attribute
      * @param \M2E\Temu\Model\Category\CategoryAttribute[] $savedAttributes
@@ -120,6 +97,7 @@ class DictionaryMapper
             'max_values' => $attribute->isMultipleSelected() ? count($attribute->getValues()) : 1,
             'values' => [],
             'template_attribute' => [],
+            'pid' => $attribute->getPid(),
             'parent_template_pid' => $attribute->getParentTemplatePid(),
             'multiple_selected_max_count' => $attribute->getMultipleSelectedMaxCount()
         ];

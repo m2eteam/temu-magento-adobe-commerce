@@ -300,6 +300,8 @@ class ActiveChecker extends \M2E\Temu\Model\Instruction\SynchronizationTemplate\
             \M2E\Temu\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \M2E\Temu\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \M2E\Temu\Model\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+            \M2E\Temu\Model\Policy\ChangeProcessorAbstract::INSTRUCTION_TYPE_ITEM_TAX_CODE_DATA_CHANGED,
+            \M2E\Temu\Model\Magento\Product\ChangeAttributeTracker::INSTRUCTION_TYPE_ITEM_TAX_CODE_DATA_CHANGED,
         ];
     }
 

@@ -86,11 +86,6 @@ class ValidateModeManually extends AbstractListing
             }
         }
 
-        foreach ($category->getBrandAndSizeChartAttributes() as $attribute) {
-            if ($attribute->isRequired()) {
-                $requiredAttributes[] = $attribute;
-            }
-        }
         //TODO: add validation to check sales attribute?
         $filledAttributes = 0;
         foreach ($requiredAttributes as $requiredAttribute) {

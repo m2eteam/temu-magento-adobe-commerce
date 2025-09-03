@@ -14,6 +14,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
         \M2E\Temu\Model\Product\Action\Configurator::DATA_TYPE_DESCRIPTION,
         \M2E\Temu\Model\Product\Action\Configurator::DATA_TYPE_CATEGORIES,
         \M2E\Temu\Model\Product\Action\Configurator::DATA_TYPE_SHIPPING,
+        \M2E\Temu\Model\Product\Action\Configurator::DATA_TYPE_PRICE,
     ];
 
     private array $metadata = [];
@@ -159,6 +160,10 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
                 'template_id' => $dataProvider->getShipping()->getValue()->shippingTemplateId,
                 'limit_day' => $dataProvider->getShipping()->getValue()->preparationTime,
             ];
+        }
+
+        if ($actionConfigurator->isPriceAllowed()) {
+            $request['item_tax_code'] = $dataProvider->getItemTaxCode()->getValue();
         }
 
         $metadata = $dataProvider->getMetaData();

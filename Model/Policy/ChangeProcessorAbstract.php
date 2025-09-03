@@ -8,6 +8,7 @@ abstract class ChangeProcessorAbstract
 {
     public const INSTRUCTION_TYPE_QTY_DATA_CHANGED = 'template_qty_data_changed';
     public const INSTRUCTION_TYPE_PRICE_DATA_CHANGED = 'template_price_data_changed';
+    public const INSTRUCTION_TYPE_ITEM_TAX_CODE_DATA_CHANGED = 'template_item_tax_code_data_changed';
     public const INSTRUCTION_TYPE_TITLE_DATA_CHANGED = 'template_title_data_changed';
     public const INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED = 'template_description_data_changed';
     public const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'template_images_data_changed';

@@ -323,6 +323,10 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
             $product->setOnlineBulletPoints($metadata[DataProvider\BulletPointsProvider::NICK]);
         }
 
+        if (array_key_exists(DataProvider\ItemTaxCodeProvider::NICK, $metadata)) {
+            $product->setOnlineItemTaxCode($metadata[DataProvider\ItemTaxCodeProvider::NICK]);
+        }
+
         $limitDay = $metadata[DataProvider\ShippingProvider::NICK]['limit_day'] ?? null;
 
         if ($limitDay !== null) {

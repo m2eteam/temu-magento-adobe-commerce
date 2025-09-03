@@ -76,11 +76,6 @@ class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $virtualAttributes = $this->dictionaryMapper->getVirtualAttributes($dictionary);
-        if ($virtualAttributes !== []) {
-            $this->addAttributesTable($fieldset, 'virtual_attributes', $virtualAttributes);
-        }
-
         $realAttributes = $this->dictionaryMapper->getProductAttributes($dictionary);
         if ($realAttributes !== []) {
             $this->addAttributesTable($fieldset, 'real_attributes', $realAttributes);

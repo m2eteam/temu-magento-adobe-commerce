@@ -18,6 +18,7 @@ class Logger
     private ?string $onlineImagesHash;
     private ?string $onlineShippingTemplateId;
     private ?int $onlinePreparationTime;
+    private ?string $onlineItemTaxCode;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency
@@ -128,6 +129,7 @@ class Logger
         $this->onlineImagesHash = $product->getOnlineImages();
         $this->onlineShippingTemplateId = $product->getOnlineShippingTemplateId();
         $this->onlinePreparationTime = $product->getOnlinePreparationTime();
+        $this->onlineItemTaxCode = $product->getOnlineItemTaxCode();
     }
 
     public function collectProductSuccessMessages(\M2E\Temu\Model\Product $product): array
@@ -137,6 +139,7 @@ class Logger
         $this->generateMessageAboutChangeCategories($product);
         $this->generateMessageAboutChangeImages($product);
         $this->generateMessageAboutChangeShippingTemplateId($product);
+        $this->generateMessageAboutChangeItemTaxCode($product);
 
         return $this->logs;
     }
@@ -180,6 +183,15 @@ class Logger
             || $this->onlinePreparationTime !== $product->getOnlinePreparationTime()
         ) {
             $this->logs[] = 'Item was revised: Shipping was updated.';
+        }
+    }
+
+    private function generateMessageAboutChangeItemTaxCode(\M2E\Temu\Model\Product $product): void
+    {
+        if (
+            $this->onlineItemTaxCode !== $product->getOnlineItemTaxCode()
+        ) {
+            $this->logs[] = 'Item was revised: Item Tax Code was updated.';
         }
     }
 }

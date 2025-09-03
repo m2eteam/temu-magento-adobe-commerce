@@ -29,9 +29,6 @@
                     <item name="storageConfig" xsi:type="array">
                         <item name="indexField" xsi:type="string">product_id</item>
                     </item>
-                    <item name="filter_url_params" xsi:type="array">
-                        <item name="error_code" xsi:type="string">*</item>
-                    </item>
                 </item>
             </argument>
         </argument>
@@ -44,7 +41,7 @@
             </item>
         </argument>
 
-        <filters name="listing_filters">
+        <filters name="listing_filters" class="M2E\Core\Ui\Component\FiltersWithAppliedFilters">
 
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -124,6 +121,18 @@
                     <label>Synchronization Policy</label>
                     <dataScope>listing_template_synchronization_id</dataScope>
                     <options class="M2E\Temu\Ui\Select\PolicySync"/>
+                </settings>
+            </filterSelect>
+
+            <filterSelect name="product_template_category_id"
+                          provider="${ $.parentName }"
+                          template="ui/grid/filters/elements/ui-select"
+                          component="Magento_Ui/js/form/element/ui-select"
+            >
+                <settings>
+                    <label>Category</label>
+                    <dataScope>product_template_category_id</dataScope>
+                    <options class="M2E\Temu\Ui\Select\Category"/>
                 </settings>
             </filterSelect>
 
@@ -209,7 +218,7 @@
             </action>
         </massaction>
 
-        <bookmark name="bookmarks"/>
+        <bookmark name="bookmarks" class="M2E\Core\Ui\Component\BookmarkWithAppliedFilters" />
 
         <paging name="listing_paging"/>
 

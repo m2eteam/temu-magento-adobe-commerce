@@ -56,7 +56,7 @@ class SaveCategoryAttributesAjax extends \M2E\Temu\Controller\Adminhtml\Abstract
 
             $allAttributes = array_merge(
                 array_values($attributes['real_attributes'] ?? []),
-                array_values($attributes['virtual_attributes'] ?? []),
+                array_values($attributes['safety_compliance_attributes'] ?? []),
                 array_values($salesAttributes)
             );
 

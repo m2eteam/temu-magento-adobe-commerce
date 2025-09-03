@@ -39,12 +39,10 @@ class Edit extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractContainer
     public function prepareFormData(): void
     {
         $realAttributes = $this->dictionaryMapper->getProductAttributes($this->dictionary);
-        $virtualAttributes = $this->dictionaryMapper->getVirtualAttributes($this->dictionary);
         $salesAttributes = $this->dictionaryMapper->getSalesAttributes($this->dictionary);
 
         $formData = [
             'real_attributes' => $realAttributes,
-            'virtual_attributes' => $virtualAttributes,
             'sales_attributes' => $salesAttributes
         ];
 

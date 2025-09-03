@@ -46,7 +46,7 @@ class SaveCategoryAttributes extends \M2E\Temu\Controller\Adminhtml\AbstractCate
         $allAttributes = array_merge(
             array_values($post['real_attributes'] ?? []),
             array_values($salesAttributes),
-            array_values($post['virtual_attributes'] ?? [])
+            array_values($post['safety_compliance_attributes'] ?? [])
         );
 
         $attributes = $this->getAttributes($dictionary->getId(), $allAttributes);

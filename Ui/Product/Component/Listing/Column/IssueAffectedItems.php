@@ -8,17 +8,17 @@ use M2E\Temu\Model\ResourceModel\Product\Grid\AllItems\Collection as AllItemsCol
 
 class IssueAffectedItems extends \Magento\Ui\Component\Listing\Columns\Column
 {
-    private \Magento\Framework\UrlInterface $url;
+    private \M2E\Core\Ui\AppliedFilters\Manager $appliedFiltersManager;
 
     public function __construct(
-        \Magento\Framework\UrlInterface $url,
+        \M2E\Core\Ui\AppliedFilters\Manager $appliedFiltersManager,
         \Magento\Framework\View\Element\UiComponent\ContextInterface $context,
         \Magento\Framework\View\Element\UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = []
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
-        $this->url = $url;
+        $this->appliedFiltersManager = $appliedFiltersManager;
     }
 
     public function prepareDataSource(array $dataSource): array
@@ -28,11 +28,12 @@ class IssueAffectedItems extends \Magento\Ui\Component\Listing\Columns\Column
         }
 
         foreach ($dataSource['data']['items'] as &$row) {
-            $url = $this->url->getUrl(
+            $appliedFiltersBuilder = new \M2E\Core\Ui\AppliedFilters\Builder();
+            $appliedFiltersBuilder->addSelectFilter('error_code', [$row['error_code']]);
+
+            $url = $this->appliedFiltersManager->createUrlWithAppliedFilters(
                 'm2e_temu/product_grid/allItems',
-                [
-                    AllItemsCollection::FILTER_BY_ERROR_CODE_FILED_NAME => $row['error_code']
-                ]
+                $appliedFiltersBuilder->build()
             );
 
             $row['total_items'] = sprintf("<a href='%s'>%s</a>", $url, $row['total_items']);
