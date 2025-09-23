@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace M2E\Temu\Block\Adminhtml\Grid\Column\Renderer;
 
 use M2E\Temu\Model\Product;
+use M2E\Temu\Model\ResourceModel\Product as ProductResource;
 
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
+    use \M2E\Temu\Block\Adminhtml\Traits\BlockTrait;
+
     protected string $dataKeyStatus = 'status';
 
     private \M2E\Temu\Helper\View $viewHelper;
@@ -65,6 +68,7 @@ HTML;
 
         $html .= $this->getScheduledTag($row);
         $html .= $this->getProgressTag($row);
+        $html .= $this->getItemAttributeValidationWarning($row);
 
         return $html;
     }
@@ -176,5 +180,24 @@ HTML;
         }
 
         return $html;
+    }
+
+    private function getItemAttributeValidationWarning(\Magento\Framework\DataObject $row)
+    {
+        if ((int)$row->getData('status') !== Product::STATUS_NOT_LISTED) {
+            return '';
+        }
+
+        $isValid = $row->getData(ProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES);
+        if ($isValid || $isValid === null) {
+            return '';
+        }
+
+        $warningMessage = (string)__('Unable to List Product Due to missing Item Attribute(s)');
+
+        return sprintf(
+            '<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">%s</span>',
+            $this->getTooltipHtml($warningMessage)
+        );
     }
 }

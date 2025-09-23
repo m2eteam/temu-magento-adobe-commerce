@@ -20,6 +20,8 @@ class SellingFormat extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractM
     public const COLUMN_FIXED_PRICE_MODIFIER = 'fixed_price_modifier';
     public const COLUMN_FIXED_PRICE_CUSTOM_ATTRIBUTE = 'fixed_price_custom_attribute';
     public const COLUMN_REFERENCE_LINK_ATTRIBUTE = 'reference_link_attribute';
+    public const COLUMN_ITEM_TAX_CODE_MODE = 'item_tax_code_mode';
+    public const COLUMN_ITEM_TAX_CODE_CUSTOM_VALUE = 'item_tax_code_custom_value';
     public const COLUMN_ITEM_TAX_CODE_ATTRIBUTE = 'item_tax_code_attribute';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';

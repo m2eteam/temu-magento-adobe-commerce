@@ -34,6 +34,13 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
             'y25_m07' => [
                 \M2E\Temu\Setup\Update\y25_m07\UnmanagedConfigurableProducts::class,
             ],
+            'y25_m08' => [
+                \M2E\Temu\Setup\Update\y25_m08\AddValidationAttributesColumns::class,
+                \M2E\Temu\Setup\Update\y25_m08\CompleteWizards::class,
+            ],
+            'y25_m09' => [
+                \M2E\Temu\Setup\Update\y25_m09\AddCustomValueToItemTaxCode::class,
+            ],
         ];
     }
 }

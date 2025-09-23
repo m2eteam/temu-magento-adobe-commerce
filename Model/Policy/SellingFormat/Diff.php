@@ -42,7 +42,9 @@ class Diff extends \M2E\Temu\Model\ActiveRecord\Diff
     public function isItemTaxCodeAttributeDifferent(): bool
     {
         $keys = [
+            \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_ITEM_TAX_CODE_MODE,
             \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_ITEM_TAX_CODE_ATTRIBUTE,
+            \M2E\Temu\Model\ResourceModel\Policy\SellingFormat::COLUMN_ITEM_TAX_CODE_CUSTOM_VALUE,
         ];
 
         return $this->isSettingsDifferent($keys);

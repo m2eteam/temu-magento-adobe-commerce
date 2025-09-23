@@ -1,0 +1,21 @@
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+$parentBlock = $block->getParentBlock();
+?>
+
+<script>
+    require([
+        'Temu/Category/Attribute/Validation/Grid'
+    ], function(Grid) {
+        if (!window.temuGridInitialized) {
+            new Grid({
+                grid_id: '<?= $block->escapeHtml($parentBlock->getGridSelectorId()) ?>',
+                progress_bar_id: '<?= $block->escapeHtml($parentBlock->getProgressBarSelectorId()) ?>',
+                validate_url: '<?= $block->escapeHtml($parentBlock->getValidateUrl()) ?>',
+                reload_grid_url: "<?= $block->escapeHtml($parentBlock->getReloadGridUrl()) ?>"
+            });
+
+            window.temuGridInitialized = true;
+        }
+    });
+</script>

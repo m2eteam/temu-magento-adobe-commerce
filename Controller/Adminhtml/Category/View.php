@@ -33,6 +33,12 @@ class View extends \M2E\Temu\Controller\Adminhtml\AbstractCategory
             throw new \M2E\Temu\Model\Exception\Logic('Category not found');
         }
 
+        $this->addContent(
+            $this->getLayout()->createBlock(
+                \M2E\Temu\Block\Adminhtml\Category\Attributes\Validation\Popup::class
+            ),
+        );
+
         $block = $this->viewFactory->create($this->getLayout(), $dictionary);
         $this->addContent($block);
         $this->getResultPage()->getConfig()->getTitle()->prepend(__('Edit Category'));

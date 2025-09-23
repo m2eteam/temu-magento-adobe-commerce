@@ -112,6 +112,7 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\View\AbstractGrid
                 'online_max_price' => ListingProductResource::COLUMN_ONLINE_MAX_PRICE,
                 'listing_id' => ListingProductResource::COLUMN_LISTING_ID,
                 'variation_attributes' => ListingProductResource::COLUMN_VARIATION_ATTRIBUTES,
+                'is_valid_category_attributes' => ListingProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES,
             ],
             sprintf(
                 '{{table}}.%s = %s',

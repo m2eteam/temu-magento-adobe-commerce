@@ -113,7 +113,7 @@ class Serializer
     }
 
     /**
-     * @return SalesAttribute[]
+     * @return ProductAttribute[]
      */
     public function unSerializeProductAttributes(string $jsonAttributes): array
     {

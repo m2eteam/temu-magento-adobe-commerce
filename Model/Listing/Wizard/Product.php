@@ -9,14 +9,17 @@ use M2E\Temu\Model\ResourceModel\Listing\Wizard\Product as WizardProductResource
 class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 {
     private \M2E\Temu\Model\Listing\Wizard $wizard;
+    private \M2E\Temu\Model\Magento\Product\Cache $magentoProductModel;
 
     /** @var \M2E\Temu\Model\Listing\Wizard\Repository */
     private Repository $repository;
     private \M2E\Temu\Model\Category\Dictionary\Repository $dictionaryRepository;
+    private \M2E\Temu\Model\Magento\Product\CacheFactory $magentoProductFactory;
 
     public function __construct(
         Repository $repository,
         \M2E\Temu\Model\Category\Dictionary\Repository $dictionaryRepository,
+        \M2E\Temu\Model\Magento\Product\CacheFactory $magentoProductFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
@@ -26,6 +29,7 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->repository = $repository;
         $this->dictionaryRepository = $dictionaryRepository;
+        $this->magentoProductFactory = $magentoProductFactory;
     }
 
     public function _construct(): void
@@ -68,6 +72,18 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public function getMagentoProductId(): int
     {
         return (int)$this->getData(WizardProductResource::COLUMN_MAGENTO_PRODUCT_ID);
+    }
+
+    public function getMagentoProduct(): \M2E\Temu\Model\Magento\Product\Cache
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->magentoProductModel)) {
+            $this->magentoProductModel = $this->magentoProductFactory->create();
+            $this->magentoProductModel->setProductId($this->getMagentoProductId());
+            $this->magentoProductModel->setStoreId($this->getWizard()->getListing()->getStoreId());
+        }
+
+        return $this->magentoProductModel;
     }
 
     public function getUnmanagedProductId(): ?int
@@ -135,5 +151,57 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         $this->setData(WizardProductResource::COLUMN_IS_PROCESSED, 1);
 
         return $this;
+    }
+
+    public function markCategoryAttributesAsValid(): void
+    {
+        $this->setCategoryAttributesValid(true);
+        $this->setCategoryAttributesErrors([]);
+    }
+
+    /**
+     * @param string[] $errors
+     *
+     * @return void
+     */
+    public function markCategoryAttributesAsInvalid(array $errors): void
+    {
+        $this->setCategoryAttributesValid(false);
+        $this->setCategoryAttributesErrors($errors);
+    }
+
+    public function isInvalidCategoryAttributes(): bool
+    {
+        $value = $this->getData(WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES);
+
+        return $value === null ? false : !$value;
+    }
+
+    private function setCategoryAttributesValid(bool $isValid): void
+    {
+        $this->setData(WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES, $isValid);
+    }
+
+    private function setCategoryAttributesErrors(array $errors): void
+    {
+        $value = null;
+        if (!empty($errors)) {
+            $value = json_encode($errors);
+        }
+
+        $this->setData(WizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS, $value);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCategoryAttributesErrors(): array
+    {
+        $value = $this->getData(WizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS);
+        if (empty($value)) {
+            return [];
+        }
+
+        return (array)json_decode($value, true);
     }
 }

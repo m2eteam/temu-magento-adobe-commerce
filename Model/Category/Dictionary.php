@@ -274,7 +274,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return (int)$this->getData(DictionaryResource::COLUMN_USED_PRODUCT_ATTRIBUTES);
     }
 
-    public function getHasRequiredProductAttributes(): bool
+    public function hasRequiredProductAttributes(): bool
     {
         return (bool)$this->getData(DictionaryResource::COLUMN_HAS_REQUIRED_PRODUCT_ATTRIBUTES);
     }

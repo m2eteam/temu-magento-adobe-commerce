@@ -57,6 +57,15 @@ class Buffer
         }
     }
 
+    public function removeTagByCode(\M2E\Temu\Model\Product $product, string $code): void
+    {
+        $item = $this->getItem($product->getId());
+        $tag = $this->tagRepository->findTagByCode($code);
+        if ($tag !== null) {
+            $item->removeTag($tag);
+        }
+    }
+
     private function getItem(int $productId): Buffer\Item
     {
         return $this->items[$productId] ?? $this->items[$productId] = new Buffer\Item($productId);

@@ -68,16 +68,33 @@ class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        $fieldset = $form->addFieldset(
-            'attributes',
-            [
-                'legend' => __('Product Attributes'),
-                'collapsable' => false,
-            ]
-        );
+        $safetyAndComplianceAttributes = $this->dictionaryMapper->getSafetyAndComplianceAttributes($dictionary);
+        if (!empty($safetyAndComplianceAttributes)) {
+            $fieldset = $form->addFieldset(
+                'safety_compliance_attributes_fieldset',
+                [
+                    'legend' => __('Safety and Compliance'),
+                    'collapsable' => false,
+                ]
+            );
+
+            $this->addAttributesTable(
+                $fieldset,
+                'safety_compliance_attributes',
+                $safetyAndComplianceAttributes
+            );
+        }
 
         $realAttributes = $this->dictionaryMapper->getProductAttributes($dictionary);
         if ($realAttributes !== []) {
+            $fieldset = $form->addFieldset(
+                'attributes',
+                [
+                    'legend' => __('Product Attributes'),
+                    'collapsable' => false,
+                ]
+            );
+
             $this->addAttributesTable($fieldset, 'real_attributes', $realAttributes);
         }
 

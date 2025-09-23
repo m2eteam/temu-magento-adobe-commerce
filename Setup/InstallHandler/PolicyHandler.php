@@ -121,7 +121,19 @@ class PolicyHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['default' => null]
             )
             ->addColumn(
+                SellingFormatResource::COLUMN_ITEM_TAX_CODE_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true]
+            )
+            ->addColumn(
                 SellingFormatResource::COLUMN_ITEM_TAX_CODE_ATTRIBUTE,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                SellingFormatResource::COLUMN_ITEM_TAX_CODE_CUSTOM_VALUE,
                 Table::TYPE_TEXT,
                 255,
                 ['default' => null]

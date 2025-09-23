@@ -320,6 +320,18 @@ class ListingHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0],
             )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => true, 'default' => null],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS,
+                Table::TYPE_TEXT,
+                \M2E\Core\Model\ResourceModel\Setup::LONG_COLUMN_SIZE,
+                ['nullable' => true, 'default' => null]
+            )
             ->addIndex('wizard_id', ListingWizardProductResource::COLUMN_WIZARD_ID)
             ->addIndex('category_id', ListingWizardProductResource::COLUMN_CATEGORY_ID)
             ->addIndex('is_processed', ListingWizardProductResource::COLUMN_IS_PROCESSED)

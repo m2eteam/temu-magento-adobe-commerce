@@ -79,6 +79,13 @@ class Repository
         return array_values($this->entitiesById);
     }
 
+    public function findTagByCode(string $code): ?\M2E\Temu\Model\Tag
+    {
+        $this->load();
+
+        return $this->tags[$code] ?? null;
+    }
+
     // ----------------------------------------
 
     private function load(): void

@@ -125,7 +125,7 @@ class Data extends AbstractForm
                         ],
                     ],
                 ],
-                'value' => $formData['qty_mode'] != \M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_ATTRIBUTE
+                'value' => $formData['qty_mode'] != SellingFormat::QTY_MODE_ATTRIBUTE
                     ? $formData['qty_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => __(
@@ -324,38 +324,7 @@ class Data extends AbstractForm
             ]
         );
 
-        $preparedAttributes = [];
-        foreach ($attributesByInputTypes['text'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['item_tax_code_attribute'] == $attribute['code']) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => $attribute['code'],
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'item_tax_code_attribute',
-            self::SELECT,
-            [
-                'name' => 'selling_format[item_tax_code_attribute]',
-                'label' => __('Item Tax Code'),
-                'values' => [
-                    '' => __('None'),
-                    [
-                        'label' => __('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true,
-                        ],
-                    ],
-                ],
-                'create_magento_attribute' => true,
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text');
+        $this->addItemTaxCodeFields($fieldset, $attributesByInputTypes, $formData);
 
         // ----------------------------------------
 
@@ -363,24 +332,24 @@ class Data extends AbstractForm
 
         $this->jsPhp->addConstants(
             [
-                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT,
-                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_NUMBER' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_NUMBER,
-                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_ATTRIBUTE' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_ATTRIBUTE,
-                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT_FIXED' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT_FIXED,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODE_ATTRIBUTE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODE_ATTRIBUTE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ATTRIBUTE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ATTRIBUTE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE,
-                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODIFICATION_MODE_ON' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODIFICATION_MODE_ON,
-                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODIFICATION_MODE_OFF' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODIFICATION_MODE_OFF,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE,
-                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_NONE' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_NONE,
+                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT' => SellingFormat::QTY_MODE_PRODUCT,
+                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_NUMBER' => SellingFormat::QTY_MODE_NUMBER,
+                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_ATTRIBUTE' => SellingFormat::QTY_MODE_ATTRIBUTE,
+                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT_FIXED' => SellingFormat::QTY_MODE_PRODUCT_FIXED,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODE_ATTRIBUTE' => SellingFormat::PRICE_MODE_ATTRIBUTE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE' => SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE' => SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE' => SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE' => SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_MODIFIER_ATTRIBUTE' => SellingFormat::PRICE_MODIFIER_ATTRIBUTE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE' => SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE' => SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE' => SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE' => SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE,
+                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODIFICATION_MODE_ON' => SellingFormat::QTY_MODIFICATION_MODE_ON,
+                '\M2E\Temu\Model\Policy\SellingFormat::QTY_MODIFICATION_MODE_OFF' => SellingFormat::QTY_MODIFICATION_MODE_OFF,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE' => SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE,
+                '\M2E\Temu\Model\Policy\SellingFormat::PRICE_COEFFICIENT_NONE' => SellingFormat::PRICE_COEFFICIENT_NONE,
             ]
         );
 
@@ -392,6 +361,14 @@ class Data extends AbstractForm
                 '\M2E\Temu\Model\Policy\Manager::MODE_TEMPLATE' => \M2E\Temu\Model\Policy\Manager::MODE_TEMPLATE,
                 '\M2E\Temu\Model\Policy\Manager::TEMPLATE_SELLING_FORMAT' => \M2E\Temu\Model\Policy\Manager::TEMPLATE_SELLING_FORMAT,
                 '\M2E\Temu\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION' => \M2E\Temu\Model\Policy\Manager::TEMPLATE_SYNCHRONIZATION,
+            ]
+        );
+
+        $this->jsPhp->addConstants(
+            [
+                '\M2E\Temu\Model\Policy\SellingFormat::ITEM_TAX_CODE_MODE_NONE' => SellingFormat::ITEM_TAX_CODE_MODE_NONE,
+                '\M2E\Temu\Model\Policy\SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE' => SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE,
+                '\M2E\Temu\Model\Policy\SellingFormat::ITEM_TAX_CODE_MODE_CUSTOM_VALUE' => SellingFormat::ITEM_TAX_CODE_MODE_CUSTOM_VALUE,
             ]
         );
 
@@ -495,5 +472,75 @@ JS
         ]);
 
         return $block->toHtml();
+    }
+
+    private function addItemTaxCodeFields(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $attributesByInputTypes,
+        array $formData
+    ) {
+        $mode = (int)$formData['item_tax_code_mode'];
+        $attributeCode = $formData['item_tax_code_attribute'];
+        $customValue = $formData['item_tax_code_custom_value'];
+
+        $fieldset->addField(
+            'item_tax_code_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[item_tax_code_attribute]',
+                'value' => $attributeCode,
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $mode === SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE
+                && $attributeCode == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'item_tax_code_mode',
+            self::SELECT,
+            [
+                'name' => 'selling_format[item_tax_code_mode]',
+                'label' => __('Item Tax Code'),
+                'values' => [
+                    SellingFormat::ITEM_TAX_CODE_MODE_NONE => __('None'),
+                    SellingFormat::ITEM_TAX_CODE_MODE_CUSTOM_VALUE => __('Custom Value'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ],
+                    ]
+                ],
+                'value' => $mode != SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE ? $mode : '',
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'item_tax_code_custom_value',
+            'text',
+            [
+                'container_id' => 'item_tax_code_custom_value_tr',
+                'label' => 'Item Tax Code Value',
+                'name' => 'selling_format[item_tax_code_custom_value]',
+                'value' => $customValue,
+                'required' => true,
+            ]
+        );
     }
 }

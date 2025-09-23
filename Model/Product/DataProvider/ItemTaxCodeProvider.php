@@ -14,19 +14,32 @@ class ItemTaxCodeProvider implements DataBuilderInterface
 
     public function getItemTaxCode(\M2E\Temu\Model\Product $product): ?string
     {
-        $itemTaxCodeAttribute = $product->getSellingFormatTemplate()->getItemTaxCodeAttribute();
-        if (empty($itemTaxCodeAttribute)) {
-            return null;
+        $mode = $product->getSellingFormatTemplate()->getItemTaxCodeMode();
+
+        if ($mode === \M2E\Temu\Model\Policy\SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE) {
+            $itemTaxCodeAttribute = $product->getSellingFormatTemplate()->getItemTaxCodeAttribute();
+            if (empty($itemTaxCodeAttribute)) {
+                return null;
+            }
+
+            $attributeValue = $product->getMagentoProduct()->getAttributeValue($itemTaxCodeAttribute);
+            if (empty($attributeValue)) {
+                return null;
+            }
+
+            $this->onlineItemTaxCodeValue = $attributeValue;
+
+            return $attributeValue;
         }
 
-        $attributeValue = $product->getMagentoProduct()->getAttributeValue($itemTaxCodeAttribute);
-        if (empty($attributeValue)) {
-            return null;
+        if ($mode === \M2E\Temu\Model\Policy\SellingFormat::ITEM_TAX_CODE_MODE_CUSTOM_VALUE) {
+            $customValue = $product->getSellingFormatTemplate()->getItemTaxCodeCustomValue();
+            $this->onlineItemTaxCodeValue = $customValue;
+
+            return $customValue;
         }
 
-        $this->onlineItemTaxCodeValue = $attributeValue;
-
-        return $attributeValue;
+        return null;
     }
 
     public function getMetaData(): array

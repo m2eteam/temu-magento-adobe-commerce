@@ -8,6 +8,22 @@ use M2E\Temu\Model\Category\CategoryAttribute;
 
 class DictionaryMapper
 {
+    private const SAFETY_AND_COMPLIANCE_BRAND = [
+        'pid' => 1467,
+        'title' => 'Brand',
+    ];
+
+    private const SAFETY_AND_COMPLIANCE_OTHER = [
+        [
+            'id' => '1000001000',
+            'title' => 'Country of Origin',
+        ],
+        [
+            'id' => '1000001001',
+            'title' => 'Province/Region (for China)',
+        ],
+    ];
+
     private \M2E\Temu\Model\Category\Attribute\Repository $attributeRepository;
     private \M2E\Temu\Model\AttributeMapping\GeneralService $generalService;
     /** @var \M2E\Core\Model\AttributeMapping\Pair[] */
@@ -33,6 +49,10 @@ class DictionaryMapper
 
         $attributes = [];
         foreach ($dictionary->getProductAttributes() as $productAttribute) {
+            if ($this->isSafetyComplianceAttribute($productAttribute)) {
+                continue;
+            }
+
             $item = $this->map($productAttribute, $savedAttributes, $generalMappingAttributes);
             $attributeVariants = $this->getProductAttributeVariants($productAttribute, $savedAttributes);
 
@@ -72,6 +92,36 @@ class DictionaryMapper
         }
 
         return $this->sortAttributesByTitle($attributes);
+    }
+
+    public function getSafetyAndComplianceAttributes(\M2E\Temu\Model\Category\Dictionary $dictionary): array
+    {
+        $generalMappingAttributes = $this->getGeneralAttributesMappingByAttributeId();
+        $savedAttributes = $this->loadSavedAttributes($dictionary, [
+            CategoryAttribute::ATTRIBUTE_TYPE_PRODUCT,
+        ]);
+
+        $attributes = [];
+        foreach ($dictionary->getProductAttributes() as $productAttribute) {
+            if (!$this->isSafetyComplianceAttribute($productAttribute)) {
+                continue;
+            }
+
+            $item = $this->map($productAttribute, $savedAttributes, $generalMappingAttributes);
+            $attributeVariants = $this->getProductAttributeVariants($productAttribute, $savedAttributes);
+
+            if ($item['required']) {
+                array_unshift($attributes, $item, ...$attributeVariants);
+                continue;
+            }
+
+            array_unshift($attributeVariants, $item);
+            $attributes = array_merge($attributes, $attributeVariants);
+        }
+
+        $attributes = $this->sortAttributesByTitle($attributes);
+
+        return $this->sortAttributesByRelations($attributes);
     }
 
     /**
@@ -260,5 +310,31 @@ class DictionaryMapper
 
         return $savedId !== $attribute->getId()
             && $cleanedId === $attribute->getId();
+    }
+
+    private function isSafetyComplianceAttribute(\M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute): bool
+    {
+        return $this->isBrandAttribute($attribute)
+            || $this->isOtherSafetyComplianceAttribute($attribute);
+    }
+
+    private function isBrandAttribute(\M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute): bool
+    {
+        return $attribute->getPid() === self::SAFETY_AND_COMPLIANCE_BRAND['pid']
+            || $attribute->getName() === self::SAFETY_AND_COMPLIANCE_BRAND['title'];
+    }
+
+    private function isOtherSafetyComplianceAttribute(\M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute): bool
+    {
+        foreach (self::SAFETY_AND_COMPLIANCE_OTHER as $item) {
+            if (
+                (string)$attribute->getRefPid() === $item['id']
+                || $attribute->getName() === $item['title']
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -1,0 +1,17 @@
+<?php
+/** @var \M2E\Temu\Block\Adminhtml\Category\Attributes\Validation\Popup $block */
+?>
+
+<script>
+    require([
+        'Temu/Category/Attribute/Validation/Popup'
+    ], function(Popup) {
+        window.TemuCategoryAttributeValidationPopup = new Popup(
+            {
+                modalOpenUrl: '<?= $block->escapeHtml($block->getModalOpenUrl()) ?>',
+            },
+        );
+    });
+</script>
+
+

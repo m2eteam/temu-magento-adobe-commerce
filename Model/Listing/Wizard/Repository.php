@@ -479,4 +479,87 @@ class Repository
             $connection->insertOnDuplicate($tableName, $preparedData, ['category_id', 'is_processed']);
         }
     }
+
+    /**
+     * @param \M2E\Temu\Model\Listing\Wizard $wizard
+     *
+     * @return int
+     */
+    public function getProductCount(\M2E\Temu\Model\Listing\Wizard $wizard): int
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $productCollection
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_WIZARD_ID,
+                ['eq' => $wizard->getId()],
+            );
+
+        return (int)$productCollection->getSize();
+    }
+
+    /**
+     * @param \M2E\Temu\Model\Listing\Wizard $wizard
+     * @param int $productLimit
+     *
+     * @return \M2E\Temu\Model\Listing\Wizard\Product[]
+     */
+    public function findProductsForValidateCategoryAttributes(\M2E\Temu\Model\Listing\Wizard $wizard, int $productLimit): array
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $productCollection
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_WIZARD_ID,
+                ['eq' => $wizard->getId()],
+            )
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES,
+                ['null' => true]
+            )
+            ->addFieldToFilter(
+                WizardProductResource::COLUMN_CATEGORY_ID,
+                ['notnull' => true]
+            )
+            ->setPageSize($productLimit);
+
+        $result = [];
+        foreach ($productCollection->getItems() as $product) {
+            $product->initWizard($wizard);
+
+            $result[] = $product;
+        }
+
+        return $result;
+    }
+
+    public function resetCategoryAttributesValidationData(\M2E\Temu\Model\Listing\Wizard $wizard): void
+    {
+        $this->wizardProductResource
+            ->getConnection()
+            ->update(
+                $this->wizardProductResource->getMainTable(),
+                [
+                    WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES => null,
+                    WizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS => null,
+                ],
+                [
+                    sprintf('%s = %d', WizardProductResource::COLUMN_WIZARD_ID, $wizard->getId()),
+                ],
+            );
+    }
+
+    public function resetCategoryAttributesValidationDataByCategoryId(int $categoryId): void
+    {
+        $this->wizardProductResource
+            ->getConnection()
+            ->update(
+                $this->wizardProductResource->getMainTable(),
+                [
+                    WizardProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES => null,
+                    WizardProductResource::COLUMN_CATEGORY_ATTRIBUTES_ERRORS => null,
+                ],
+                [
+                    sprintf('%s = %d', WizardProductResource::COLUMN_CATEGORY_ID, $categoryId),
+                ],
+            );
+    }
 }

@@ -83,7 +83,10 @@ define([
                     template_category_id: selectedCategory.dictionaryId
                 },
                 onSuccess: function (transport) {
-                    self.cancelCategorySettings();
+                    window.TemuCategoryAttributeValidationPopup.closePopupCallback = function () {
+                        self.cancelCategorySettings()
+                    }
+                    window.TemuCategoryAttributeValidationPopup.open(selectedCategory.dictionaryId);
                 }.bind(this)
             });
         },

@@ -44,6 +44,10 @@ class SellingFormat extends \M2E\Temu\Model\ActiveRecord\AbstractModel implement
     public const PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT = 1;
     public const PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT = 2;
 
+    public const ITEM_TAX_CODE_MODE_NONE = 0;
+    public const ITEM_TAX_CODE_MODE_ATTRIBUTE = 1;
+    public const ITEM_TAX_CODE_MODE_CUSTOM_VALUE = 2;
+
     /** @var \M2E\Temu\Model\Policy\SellingFormat\Source[] */
     private array $sellingSourceModels = [];
     private SellingFormat\SourceFactory $sourceFactory;
@@ -189,9 +193,19 @@ class SellingFormat extends \M2E\Temu\Model\ActiveRecord\AbstractModel implement
         return $this->getData(SellingFormatResource::COLUMN_REFERENCE_LINK_ATTRIBUTE);
     }
 
+    public function getItemTaxCodeMode(): int
+    {
+        return (int)$this->getData(SellingFormatResource::COLUMN_ITEM_TAX_CODE_MODE);
+    }
+
     public function getItemTaxCodeAttribute(): ?string
     {
         return $this->getData(SellingFormatResource::COLUMN_ITEM_TAX_CODE_ATTRIBUTE);
+    }
+
+    public function getItemTaxCodeCustomValue(): ?string
+    {
+        return $this->getData(SellingFormatResource::COLUMN_ITEM_TAX_CODE_CUSTOM_VALUE);
     }
 
     public function getUpdateDate()

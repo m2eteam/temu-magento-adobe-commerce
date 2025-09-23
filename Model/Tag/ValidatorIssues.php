@@ -30,6 +30,7 @@ class ValidatorIssues
     public const ERROR_PACKAGE_WEIGHT_MISSING = '0020-m2e';
     public const ERROR_ZERO_QTY = '0021-m2e';
     public const ERROR_VARIATION_ATTRIBUTE_MISSING = '0022-m2e';
+    public const ERROR_CATEGORY_ATTRIBUTE_MISSING = '0023-m2e';
 
     public function mapByCode(string $code): ?\M2E\Temu\Model\Product\Action\Validator\ValidatorMessage
     {
@@ -56,6 +57,7 @@ class ValidatorIssues
             self::ERROR_PACKAGE_WEIGHT_MISSING => (string)__('Package Weight is missing.'),
             self::ERROR_ZERO_QTY => (string)__('The Product Quantity must be greater than 0.'),
             self::ERROR_VARIATION_ATTRIBUTE_MISSING => (string)__('Temu variation attribute is missing a value. Please ensure at least one valid value is provided.'),
+            self::ERROR_CATEGORY_ATTRIBUTE_MISSING => (string)__('Unable to List Product Due to missing Item Attribute(s)'),
         ];
 
         if (!isset($map[$code])) {

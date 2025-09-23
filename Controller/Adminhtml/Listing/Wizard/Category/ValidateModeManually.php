@@ -74,7 +74,7 @@ class ValidateModeManually extends AbstractListing
         }
 
         $category = $this->categoryDictionaryRepository->get($templateCategoryId);
-        if (!$category->getHasRequiredProductAttributes()) {
+        if (!$category->hasRequiredProductAttributes()) {
             return $this->cachedCategoryResult[$templateCategoryId] = self::CATEGORY_AND_ATTRIBUTES_VALID;
         }
 

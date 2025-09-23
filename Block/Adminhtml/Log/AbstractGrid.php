@@ -225,6 +225,7 @@ HTML;
     protected function _prepareLayout()
     {
         $this->css->addFile('log/grid.css');
+        $this->css->addFile('switcher.css');
 
         parent::_prepareLayout();
     }

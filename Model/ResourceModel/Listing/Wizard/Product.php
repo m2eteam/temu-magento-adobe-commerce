@@ -11,6 +11,8 @@ class Product extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_UNMANAGED_PRODUCT_ID = 'unmanaged_product_id';
     public const COLUMN_MAGENTO_PRODUCT_ID = 'magento_product_id';
     public const COLUMN_CATEGORY_ID = 'category_id';
+    public const COLUMN_IS_VALID_CATEGORY_ATTRIBUTES = 'is_valid_category_attributes';
+    public const COLUMN_CATEGORY_ATTRIBUTES_ERRORS = 'category_attributes_errors';
     public const COLUMN_IS_PROCESSED = 'is_processed';
 
     protected function _construct(): void

@@ -26,6 +26,7 @@
 
         <referenceContainer name="content">
             <block class="M2E\Temu\Block\Adminhtml\Category\Chooser\Prepare"/>
+            <block class="M2E\Temu\Block\Adminhtml\Category\Attributes\Validation\Popup"/>
 
             <container name="m2e.temu.listing.header">
                 <block class="M2E\Temu\Block\Adminhtml\Listing\View\Header">

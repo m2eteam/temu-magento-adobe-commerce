@@ -693,6 +693,8 @@ HTML;
 
     private function addBulletPointFields(\Magento\Framework\Data\Form\Element\Fieldset $fieldset, array $formData): void
     {
+        $existBulletPoints = $formData[DescriptionResource::COLUMN_BULLET_POINTS] ?? [];
+
         $addMoreButtonHtml = $this->getLayout()->createBlock(\M2E\Temu\Block\Adminhtml\Magento\Button::class)
                               ->addData(
                                   [
@@ -710,9 +712,12 @@ HTML;
             Keep each point under 200 characters and make them clear and impactful.'
         );
 
+        if (count($existBulletPoints) >= \M2E\Temu\Model\Policy\Description\BulletPoint::MAX_COUNT) {
+            $addMoreButtonHtml = '';
+        }
+
         $afterElementHtml = $this->getTooltipHtml($tooltipMessage) . $addMoreButtonHtml;
 
-        $existBulletPoints = $formData[DescriptionResource::COLUMN_BULLET_POINTS] ?? [];
         if (empty($existBulletPoints)) {
             $this->createBulletPointRow(
                 0,

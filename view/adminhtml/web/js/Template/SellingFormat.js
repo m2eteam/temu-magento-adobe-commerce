@@ -117,6 +117,10 @@ define([
             $('fixed_price_mode')
                     .observe('change', this.fixed_price_mode_change)
                     .simulate('change');
+
+            $('item_tax_code_mode')
+                    .observe('change', this.item_tax_code_mode_change)
+                    .simulate('change')
         },
 
 
@@ -209,6 +213,39 @@ define([
             attributeElement.value = '';
             if (this.value == Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\SellingFormat::PRICE_MODE_ATTRIBUTE')) {
                 TemuTemplateSellingFormatObj.selectMagentoAttribute(this, attributeElement);
+            }
+        },
+
+        item_tax_code_mode_change: function () {
+            const itemTaxCodeMode = parseInt(this.value);
+
+            const modeNone = Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\SellingFormat::ITEM_TAX_CODE_MODE_NONE');
+            const modeAttribute = Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE');
+            const modeCustomValue = Temu.php.constant('\\M2E\\Temu\\Model\\Policy\\SellingFormat::ITEM_TAX_CODE_MODE_CUSTOM_VALUE');
+
+            let attributeField = $('item_tax_code_attribute');
+            let customValueField = $('item_tax_code_custom_value');
+            let modeSelect = $('item_tax_code_mode')
+
+            let customValueBlock = $('item_tax_code_custom_value_tr');
+
+            if (itemTaxCodeMode === modeNone) {
+                attributeField.value = null;
+                customValueField.value = null;
+                customValueBlock.hide();
+            }
+
+            if (itemTaxCodeMode === modeAttribute) {
+                attributeField.value = modeSelect
+                        .options[this.selectedIndex]
+                        .getAttribute('attribute_code')
+                customValueField.value = null;
+                customValueBlock.hide();
+            }
+
+            if (itemTaxCodeMode === modeCustomValue) {
+                attributeField.value = null;
+                customValueBlock.show();
             }
         },
 

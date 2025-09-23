@@ -19,6 +19,8 @@ class Manager
     private \M2E\Temu\Model\Template\Category\ChangeProcessorFactory $changeProcessorFactory;
     private \M2E\Temu\Model\Template\Category\AffectedListingsProductsFactory $affectedListingsProductsFactory;
     private \M2E\Temu\Model\AttributeMapping\GeneralService $attributeMappingGeneralService;
+    private \M2E\Temu\Model\Product\Repository $productRepository;
+    private \M2E\Temu\Model\Listing\Wizard\Repository $listingWizardRepository;
 
     public function __construct(
         \M2E\Temu\Model\Category\Dictionary\Repository $categoryDictionaryRepository,
@@ -28,7 +30,9 @@ class Manager
         \M2E\Temu\Model\Template\Category\DiffFactory $diffFactory,
         \M2E\Temu\Model\Template\Category\ChangeProcessorFactory $changeProcessorFactory,
         \M2E\Temu\Model\Template\Category\AffectedListingsProductsFactory $affectedListingsProductsFactory,
-        \M2E\Temu\Model\AttributeMapping\GeneralService $attributeMappingGeneralService
+        \M2E\Temu\Model\AttributeMapping\GeneralService $attributeMappingGeneralService,
+        \M2E\Temu\Model\Product\Repository $productRepository,
+        \M2E\Temu\Model\Listing\Wizard\Repository $listingWizardRepository
     ) {
         $this->categoryDictionaryRepository = $categoryDictionaryRepository;
         $this->categoryAttributeRepository = $categoryAttributeRepository;
@@ -38,6 +42,8 @@ class Manager
         $this->changeProcessorFactory = $changeProcessorFactory;
         $this->affectedListingsProductsFactory = $affectedListingsProductsFactory;
         $this->attributeMappingGeneralService = $attributeMappingGeneralService;
+        $this->productRepository = $productRepository;
+        $this->listingWizardRepository = $listingWizardRepository;
     }
 
     /**
@@ -100,6 +106,8 @@ class Manager
             $this->categoryDictionaryRepository->save($dictionary);
 
             $this->attributeMappingGeneralService->create($dictionary->getRelatedAttributes());
+
+            $this->resetCategoryAttributesValidation($dictionary->getId());
         } catch (\Throwable $exception) {
             $transaction->rollBack();
             throw $exception;
@@ -203,5 +211,11 @@ class Manager
         return empty($attribute->getCustomValue())
             && empty($attribute->getCustomAttributeValue())
             && empty($attribute->getRecommendedValue());
+    }
+
+    private function resetCategoryAttributesValidation(int $categoryId): void
+    {
+        $this->productRepository->resetCategoryAttributesValidationData($categoryId);
+        $this->listingWizardRepository->resetCategoryAttributesValidationDataByCategoryId($categoryId);
     }
 }

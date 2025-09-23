@@ -9,15 +9,18 @@ class CompleteProcessor
     private \M2E\Temu\Model\Listing\AddProductsService $addProductsService;
     private \M2E\Temu\Model\UnmanagedProduct\Repository $listingOtherRepository;
     private \M2E\Temu\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService;
+    private \M2E\Temu\Model\Product\Category\Attribute\ValidateManager $productAttributeValidateManager;
 
     public function __construct(
         \M2E\Temu\Model\Listing\AddProductsService $addProductsService,
         \M2E\Temu\Model\UnmanagedProduct\Repository $listingOtherRepository,
-        \M2E\Temu\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService
+        \M2E\Temu\Model\UnmanagedProduct\DeleteService $unmanagedProductDeleteService,
+        \M2E\Temu\Model\Product\Category\Attribute\ValidateManager $productAttributeValidateManager
     ) {
         $this->addProductsService = $addProductsService;
         $this->listingOtherRepository = $listingOtherRepository;
         $this->unmanagedProductDeleteService = $unmanagedProductDeleteService;
+        $this->productAttributeValidateManager = $productAttributeValidateManager;
     }
 
     public function process(Manager $wizardManager): array
@@ -62,6 +65,15 @@ class CompleteProcessor
 
             if ($listingProduct === null) {
                 continue;
+            }
+
+            if ($wizardProduct->isInvalidCategoryAttributes()) {
+                $this->productAttributeValidateManager->markProductAsNotValid(
+                    $listingProduct,
+                    $wizardProduct->getCategoryAttributesErrors()
+                );
+            } else {
+                $this->productAttributeValidateManager->markProductAsValid($listingProduct);
             }
 
             $listingProducts[] = $listingProduct;

@@ -124,9 +124,23 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
             $data['reference_link_attribute'] = empty($value) ? null : $value;
         }
 
-        if (isset($rawData['item_tax_code_attribute'])) {
-            $value = $rawData['item_tax_code_attribute'];
-            $data['item_tax_code_attribute'] = empty($value) ? null : $value;
+        if (isset($rawData['item_tax_code_mode'])) {
+            $itemTaxCodeMode = (int)$rawData['item_tax_code_mode'];
+            if ($itemTaxCodeMode === SellingFormat::ITEM_TAX_CODE_MODE_NONE) {
+                $data['item_tax_code_attribute'] = null;
+                $data['item_tax_code_custom_value'] = null;
+            }
+
+            if ($itemTaxCodeMode === SellingFormat::ITEM_TAX_CODE_MODE_ATTRIBUTE) {
+                $data['item_tax_code_attribute'] = $rawData['item_tax_code_attribute'];
+                $data['item_tax_code_custom_value'] = null;
+            }
+
+            if ($itemTaxCodeMode === SellingFormat::ITEM_TAX_CODE_MODE_CUSTOM_VALUE) {
+                $data['item_tax_code_attribute'] = null;
+                $data['item_tax_code_custom_value'] = $rawData['item_tax_code_custom_value'];
+            }
+            $data['item_tax_code_mode'] = $itemTaxCodeMode;
         }
 
         // ---------------------------------------
@@ -303,7 +317,7 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
     {
         return [
 
-            'qty_mode' => \M2E\Temu\Model\Policy\SellingFormat::QTY_MODE_PRODUCT,
+            'qty_mode' => SellingFormat::QTY_MODE_PRODUCT,
             'qty_custom_value' => 1,
             'qty_custom_attribute' => '',
             'qty_percentage' => 100,
@@ -311,12 +325,15 @@ class Builder extends \M2E\Temu\Model\Policy\AbstractBuilder
             'qty_min_posted_value' => SellingFormat::QTY_MIN_POSTED_DEFAULT_VALUE,
             'qty_max_posted_value' => SellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
 
-            'fixed_price_mode' => \M2E\Temu\Model\Policy\SellingFormat::PRICE_MODE_PRODUCT,
+            'fixed_price_mode' => SellingFormat::PRICE_MODE_PRODUCT,
             'fixed_price_modifier' => '[]',
             'fixed_price_custom_attribute' => '',
 
             'reference_link_attribute' => null,
+
+            'item_tax_code_mode' => SellingFormat::ITEM_TAX_CODE_MODE_NONE,
             'item_tax_code_attribute' => null,
+            'item_tax_code_custom_value' => null,
         ];
     }
 }

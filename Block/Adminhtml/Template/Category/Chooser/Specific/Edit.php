@@ -40,10 +40,12 @@ class Edit extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         $realAttributes = $this->dictionaryMapper->getProductAttributes($this->dictionary);
         $salesAttributes = $this->dictionaryMapper->getSalesAttributes($this->dictionary);
+        $safetyAndComplianceAttributes = $this->dictionaryMapper->getSafetyAndComplianceAttributes($this->dictionary);
 
         $formData = [
             'real_attributes' => $realAttributes,
-            'sales_attributes' => $salesAttributes
+            'sales_attributes' => $salesAttributes,
+            'safety_and_compliance' => $safetyAndComplianceAttributes
         ];
 
         $this->getChildBlock('form')

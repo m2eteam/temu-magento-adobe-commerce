@@ -6,22 +6,6 @@ use M2E\Temu\Block\Adminhtml\Template\Category\Chooser\Specific\Form as Attribut
 
 class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    private const SAFETY_AND_COMPLIANCE_BRAND = [
-        'pid' => 1467,
-        'title' => 'Brand',
-    ];
-
-    private const SAFETY_AND_COMPLIANCE_OTHER = [
-        [
-            'id' => '1000001000',
-            'title' => 'Country of Origin',
-        ],
-        [
-            'id' => '1000001001',
-            'title' => 'Province/Region (for China)',
-        ],
-    ];
-
     public function _construct()
     {
         parent::_construct();
@@ -42,7 +26,8 @@ class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
 
         $formData = $this->getFormData();
 
-        if (!empty($formData['sales_attributes'])) {
+        $salesAttributes = $formData['sales_attributes'] ?? [];
+        if (!empty($salesAttributes)) {
             $fieldset = $form->addFieldset(
                 'sales_attributes_fieldset',
                 [
@@ -60,14 +45,11 @@ class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
             $this->addAttributesTable(
                 $fieldset,
                 'sales_attributes',
-                $formData['sales_attributes']
+                $salesAttributes
             );
         }
 
-        $realAttributes = $formData['real_attributes'] ?? [];
-        $categoryAttributes = $this->getGeneralProductAttributes($realAttributes);
-        $safetyAndComplianceAttributes = $this->getSafetyComplianceAttributes($realAttributes);
-
+        $safetyAndComplianceAttributes = $formData['safety_and_compliance'] ?? [];
         if (!empty($safetyAndComplianceAttributes)) {
             $fieldset = $form->addFieldset(
                 'safety_compliance_attributes_fieldset',
@@ -84,20 +66,23 @@ class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        $fieldset = $form->addFieldset(
-            'dictionary',
-            [
-                'legend' => __('Category Attributes'),
-                'collapsable' => false,
-            ]
-        );
-
-        if (!empty($formData['real_attributes'])) {
-            $this->addAttributesTable(
-                $fieldset,
-                'real_attributes',
-                $categoryAttributes
+        $realAttributes = $formData['real_attributes'] ?? [];
+        if (!empty($realAttributes)) {
+            $fieldset = $form->addFieldset(
+                'dictionary',
+                [
+                    'legend' => __('Category Attributes'),
+                    'collapsable' => false,
+                ]
             );
+
+            if (!empty($formData['real_attributes'])) {
+                $this->addAttributesTable(
+                    $fieldset,
+                    'real_attributes',
+                    $realAttributes
+                );
+            }
         }
 
         $form->setUseContainer(true);
@@ -126,57 +111,5 @@ class Form extends \M2E\Temu\Block\Adminhtml\Magento\Form\AbstractForm
 
         $field = $fieldset->addField($id, AttributesForm\Element\Dictionary::class, $config);
         $field->setRenderer($renderer);
-    }
-
-    private function getGeneralProductAttributes(array $attributes): array
-    {
-        $result = [];
-
-        foreach ($attributes as $attribute) {
-            if (!$this->isSafetyComplianceAttribute($attribute)) {
-                $result[] = $attribute;
-            }
-        }
-
-        return $result;
-    }
-
-    private function getSafetyComplianceAttributes(array $attributes): array
-    {
-        $result = [];
-
-        foreach ($attributes as $attribute) {
-            if ($this->isSafetyComplianceAttribute($attribute)) {
-                $result[] = $attribute;
-            }
-        }
-
-        return $result;
-    }
-
-    private function isSafetyComplianceAttribute(array $attribute): bool
-    {
-        return $this->isBrandAttribute($attribute)
-            || $this->isOtherSafetyComplianceAttribute($attribute);
-    }
-
-    private function isBrandAttribute(array $attribute): bool
-    {
-        return ($attribute['pid'] ?? null) === self::SAFETY_AND_COMPLIANCE_BRAND['pid']
-            || ($attribute['title'] ?? '') === self::SAFETY_AND_COMPLIANCE_BRAND['title'];
-    }
-
-    private function isOtherSafetyComplianceAttribute(array $attribute): bool
-    {
-        foreach (self::SAFETY_AND_COMPLIANCE_OTHER as $item) {
-            if (
-                ($attribute['id'] ?? null) === $item['id']
-                || ($attribute['title'] ?? '') === $item['title']
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

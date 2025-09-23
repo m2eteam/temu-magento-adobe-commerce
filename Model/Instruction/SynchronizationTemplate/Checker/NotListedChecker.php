@@ -34,6 +34,10 @@ class NotListedChecker extends \M2E\Temu\Model\Instruction\SynchronizationTempla
             return false;
         }
 
+        if ($listingProduct->isInvalidCategoryAttributes()) {
+            return false;
+        }
+
         return true;
     }
 

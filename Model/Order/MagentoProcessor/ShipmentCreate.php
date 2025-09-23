@@ -94,7 +94,7 @@ class ShipmentCreate
             return false;
         }
 
-        if (!$magentoOrder->canShip()) {
+        if ($magentoOrder->hasShipments() || !$magentoOrder->canShip()) {
             return false;
         }
 
