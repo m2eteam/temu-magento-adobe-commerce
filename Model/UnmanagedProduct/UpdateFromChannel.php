@@ -31,13 +31,13 @@ class UpdateFromChannel
         $this->unmanagedDeleteService = $unmanagedDeleteService;
     }
 
-    public function process(ChannelProductCollection $channelProductCollection): ?ChannelProductCollection
+    public function process(ChannelProductCollection $channelProductCollection): ChannelProductCollection
     {
         if ($channelProductCollection->empty()) {
-            return null;
+            return new ChannelProductCollection();
         }
 
-        $existProductCollection = $this->removeExistInListingProduct($channelProductCollection);
+        $existInListingProductCollection = $this->removeExistInListingProduct($channelProductCollection);
 
         $this->processExist($channelProductCollection);
         $unmanagedItems = $this->processNew($channelProductCollection);
@@ -46,7 +46,7 @@ class UpdateFromChannel
 
         $this->autoMapping($unmanagedItems);
 
-        return $existProductCollection;
+        return $existInListingProductCollection;
     }
 
     private function removeExistInListingProduct(

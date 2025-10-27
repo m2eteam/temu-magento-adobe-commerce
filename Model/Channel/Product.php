@@ -14,6 +14,7 @@ class Product
     private int $categoryId;
     private int $shippingTemplateId;
     private int $status;
+    private ?string $incompleteReason;
 
     public function __construct(
         int $accountId,
@@ -23,16 +24,18 @@ class Product
         Product\VariantSku\VariantSkuCollection $variantSkusCollection,
         int $categoryId,
         int $shippingTemplateId,
-        int $status
+        int $status,
+        ?string $incompleteReason
     ) {
-        $this->accountId              = $accountId;
-        $this->channelProductId       = $channelProductId;
-        $this->title                  = $title;
-        $this->imageUrl               = $imageUrl;
-        $this->variantSkusCollection  = $variantSkusCollection;
-        $this->categoryId             = $categoryId;
-        $this->shippingTemplateId     = $shippingTemplateId;
-        $this->status                 = $status;
+        $this->accountId = $accountId;
+        $this->channelProductId = $channelProductId;
+        $this->title = $title;
+        $this->imageUrl = $imageUrl;
+        $this->variantSkusCollection = $variantSkusCollection;
+        $this->categoryId = $categoryId;
+        $this->shippingTemplateId = $shippingTemplateId;
+        $this->status = $status;
+        $this->incompleteReason = $incompleteReason;
     }
 
     public function getAccountId(): int
@@ -73,5 +76,10 @@ class Product
     public function getImageUrl(): string
     {
         return $this->imageUrl;
+    }
+
+    public function getIncompleteReason(): ?string
+    {
+        return $this->incompleteReason;
     }
 }

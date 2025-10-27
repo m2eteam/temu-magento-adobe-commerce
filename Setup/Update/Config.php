@@ -41,6 +41,9 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
             'y25_m09' => [
                 \M2E\Temu\Setup\Update\y25_m09\AddCustomValueToItemTaxCode::class,
             ],
+            'y25_m10' => [
+                \M2E\Temu\Setup\Update\y25_m10\SupportIncompleteProductsInExternalChanges::class,
+            ],
         ];
     }
 }

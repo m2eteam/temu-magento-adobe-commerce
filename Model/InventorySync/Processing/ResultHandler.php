@@ -58,16 +58,13 @@ class ResultHandler implements \M2E\Temu\Model\Processing\PartialResultHandlerIn
             $this->account
         );
 
-        $productCollection = $this->unmanagedProductUpdateFromChannelProcessorFactory
+        $existedInListingProductCollection = $this->unmanagedProductUpdateFromChannelProcessorFactory
             ->create($this->account)
             ->process(clone $channelProductCollection);
 
-        if ($productCollection !== null) {
+        if (!$existedInListingProductCollection->empty()) {
             $this->productUpdateFromChannelProcessor
-                ->process(
-                    $productCollection,
-                    $this->account
-                );
+                ->process($existedInListingProductCollection, $this->account);
         }
     }
 

@@ -33,7 +33,6 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     public function render(\Magento\Framework\DataObject $row): string
     {
         $html = '';
-        $listingProductId = (int)$row->getData('listing_product_id');
 
         if ($this->getColumn()->getData('showLogIcon')) {
             /** @var \M2E\Temu\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing $viewLogIcon */
@@ -52,33 +51,28 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
                 $synchNote = $this->viewHelper->getModifiedLogMessage($synchNote);
 
                 if (empty($html)) {
-                    $html = <<<HTML
-<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">
-    {$this->getTooltipHtml($synchNote, 'map_link_error_icon_' . $row->getId())}
-</span>
-HTML;
+                    $html = sprintf(
+                        '<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">%s</span>',
+                        $this->getTooltipHtml($synchNote, 'map_link_error_icon_' . $row->getId())
+                    );
                 } else {
-                    $html .= <<<HTML
-<div id="synch_template_list_rules_note_{$listingProductId}" style="display: none">{$synchNote}</div>
-HTML;
+                    $html .= sprintf(
+                        '<div id="synch_template_list_rules_note_%s" style="display: none">%s</div>',
+                        (int)$row->getData('listing_product_id'),
+                        $synchNote
+                    );
                 }
             }
         }
-        $html .= $this->getCurrentStatus($row);
 
+        $html .= $this->getIncompleteReasonTooltip($row);
+        $html .= $this->getCurrentStatus($row);
         $html .= $this->getScheduledTag($row);
         $html .= $this->getProgressTag($row);
         $html .= $this->getItemAttributeValidationWarning($row);
 
         return $html;
     }
-
-    public function renderExport(\Magento\Framework\DataObject $row): string
-    {
-        return strip_tags($this->getCurrentStatus($row));
-    }
-
-    // ----------------------------------------
 
     private function getCurrentStatus(\Magento\Framework\DataObject $row): string
     {
@@ -182,7 +176,7 @@ HTML;
         return $html;
     }
 
-    private function getItemAttributeValidationWarning(\Magento\Framework\DataObject $row)
+    private function getItemAttributeValidationWarning(\Magento\Framework\DataObject $row): string
     {
         if ((int)$row->getData('status') !== Product::STATUS_NOT_LISTED) {
             return '';
@@ -198,6 +192,19 @@ HTML;
         return sprintf(
             '<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">%s</span>',
             $this->getTooltipHtml($warningMessage)
+        );
+    }
+
+    private function getIncompleteReasonTooltip(\Magento\Framework\DataObject $row): string
+    {
+        $incompleteReason = $row->getData('incomplete_reason');
+        if (empty($incompleteReason)) {
+            return '';
+        }
+
+        return sprintf(
+            '<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">%s</span>',
+            $this->getTooltipHtml($incompleteReason)
         );
     }
 }

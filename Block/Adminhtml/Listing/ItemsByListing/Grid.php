@@ -77,7 +77,10 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\Grid
                 \M2E\Temu\Model\ResourceModel\Account::COLUMN_ID,
                 \M2E\Temu\Model\ResourceModel\Listing::COLUMN_ACCOUNT_ID
             ),
-            ['account_title' => \M2E\Temu\Model\ResourceModel\Account::COLUMN_TITLE]
+            [
+                'account_title' => \M2E\Temu\Model\ResourceModel\Account::COLUMN_TITLE,
+                'site_title' => \M2E\Temu\Model\ResourceModel\Account::COLUMN_SITE_TITLE,
+            ]
         );
 
         $select = $collection->getConnection()->select();
@@ -255,6 +258,7 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\Grid
 HTML;
 
         $accountTitle = $row->getData('account_title');
+        $siteTitle = $row->getData('site_title');
 
         $storeModel = $this->_storeManager->getStore($row->getStoreId());
         $storeView = $this->_storeManager->getWebsite($storeModel->getWebsiteId())->getName();
@@ -272,6 +276,7 @@ HTML;
         $value .= <<<HTML
 <div>
     <span style="font-weight: bold">$account</span>: <span style="color: #505050">$accountTitle</span><br/>
+    <span style="font-weight: bold">$site</span>: <span style="color: #505050">$siteTitle</span><br/>
     <span style="font-weight: bold">$store</span>: <span style="color: #505050">$storeView</span>
 </div>
 HTML;

@@ -36,6 +36,11 @@ class Header extends \M2E\Temu\Block\Adminhtml\Magento\AbstractBlock
         return $this->cutLongLines($this->getListing()->getAccount()->getTitle());
     }
 
+    public function getSiteTitle()
+    {
+        return $this->cutLongLines($this->getListing()->getAccount()->getSiteTitle());
+    }
+
     public function getStoreViewBreadcrumb(bool $cutLongValues = true): string
     {
         $breadcrumb = $this->magentoStoreHelper->getStorePath($this->getListing()->getStoreId());

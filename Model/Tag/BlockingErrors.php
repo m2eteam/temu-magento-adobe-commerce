@@ -9,18 +9,17 @@ class BlockingErrors
     public function getList(): array
     {
         return [
-            '12052348', // The product description html tag required attribute is miss.
-            '12052013', // The product description cannot exceed maximum characters
-            '12052116', // product package size is invalid
-            '12052301', // The width and length of product image 3 {5/2/...} must be at least \n300:300, check the image URI
-            '12052105', // required qualification is missing
-            '12038004', // upload file type is invalid
-            '12052345', // The product description html tag not support
-            '12019011', // product package weight is invalid
-            '12038002', // upload file is invalid (for an image)
-            '12052105', // required qualification is missing (certificate)
-            '36009004', // body.package_weight.value is missing
-            '12052038', // Product price locked due to ongoing promotion.
+            '150011010', // The keyword attribute [...] is required, please fill in accurately and appropriately
+            '150010202', // Invalid unit for weight/Invalid unit for volume
+            '150011000', // Attribute or Specification Error: Please reset the variants template and enter the required variants...
+            '150010027', // Variant too long
+            '1320432631', // Sku has no price order
+            '150010011', // Only use letters, numbers and common punctuation for product name
+            '150010052', // Rich text not supported
+            '150010020', // Upload 3 to 10 images
+            '150010090', // SKU duplicated
+            '150011010', // The keyword attribute [...] is required, please fill in accurately and appropriately
+            '150011019', // The input ... is incorrect, please modify it.
         ];
     }
 }

@@ -35,7 +35,8 @@ class ProductBuilder
                 $variantSkusCollection,
                 (int)$channelRawProduct['category_id'],
                 (int)$channelRawProduct['shipping_template_id'],
-                $this->mapChannelStatusOnExtension($channelRawProduct['status'])
+                $this->mapChannelStatusOnExtension($channelRawProduct['status']),
+                $channelRawProduct['incomplete_reason']
             );
 
             $result->add($channelProduct);

@@ -217,7 +217,8 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
 
         $product
             ->recalculateOnlineDataByVariants()
-            ->removeBlockingByError();
+            ->removeBlockingByError()
+            ->setIncompleteReason(null);
 
         $this->productRepository->save($product);
 

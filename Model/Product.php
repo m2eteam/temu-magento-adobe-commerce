@@ -93,7 +93,8 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
              ->setStatus($unmanagedProduct->getStatus(), self::STATUS_CHANGER_COMPONENT)
              ->setOnlineTitle($unmanagedProduct->getTitle())
              ->setOnlineQty($unmanagedProduct->getQty())
-             ->setOnlineCategoryId($unmanagedProduct->getCategoryId());
+             ->setOnlineCategoryId($unmanagedProduct->getCategoryId())
+             ->setIncompleteReason($unmanagedProduct->getIncompleteReason());
 
         $additionalData = $this->getAdditionalData();
         $additionalData[self::MOVING_LISTING_OTHER_SOURCE_KEY] = $unmanagedProduct->getId();
@@ -435,6 +436,26 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return $this;
     }
 
+    public function getIncompleteReason(): string
+    {
+        return (string)$this->getData(ProductResource::COLUMN_INCOMPLETE_REASON);
+    }
+
+    public function setIncompleteReason(?string $incompleteReason): self
+    {
+        if (empty($incompleteReason)) {
+            $this->setData(ProductResource::COLUMN_INCOMPLETE_REASON, null);
+            $this->removeBlockingByError();
+
+            return $this;
+        }
+
+        $this->setData(ProductResource::COLUMN_INCOMPLETE_REASON, $incompleteReason);
+        $this->setBlockingByError(\M2E\Core\Helper\Date::createCurrentGmt());
+
+        return $this;
+    }
+
     public function getOnlineCategoryData(): string
     {
         return (string)$this->getData(ProductResource::COLUMN_ONLINE_CATEGORIES_DATA);
@@ -763,6 +784,16 @@ class Product extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         $twentyFourHoursAgoDate = \M2E\Core\Helper\Date::createCurrentGmt()->modify('-24 hour');
 
         return $lastBlockingDate->getTimestamp() > $twentyFourHoursAgoDate->getTimestamp();
+    }
+
+    public function setBlockingByError(\DateTime $dateTime): self
+    {
+        $this->setData(
+            ProductResource::COLUMN_LAST_BLOCKING_ERROR_DATE,
+            $dateTime->format('Y-m-d H:i:s')
+        );
+
+        return $this;
     }
 
     public function removeBlockingByError(): self

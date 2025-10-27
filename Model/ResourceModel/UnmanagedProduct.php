@@ -20,6 +20,7 @@ class UnmanagedProduct extends \M2E\Temu\Model\ResourceModel\ActiveRecord\Abstra
     public const COLUMN_CURRENCY_CODE = 'currency_code';
     public const COLUMN_QTY = 'qty';
     public const COLUMN_IS_SIMPLE = 'is_simple';
+    public const COLUMN_INCOMPLETE_REASON = 'incomplete_reason';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';
 

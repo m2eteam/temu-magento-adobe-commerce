@@ -198,6 +198,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['nullable' => true, 'default' => null]
             )
             ->addColumn(
+                ProductResource::COLUMN_INCOMPLETE_REASON,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true]
+            )
+            ->addColumn(
                 ProductResource::COLUMN_LAST_BLOCKING_ERROR_DATE,
                 Table::TYPE_DATETIME,
                 null,
@@ -736,6 +742,12 @@ class ProductHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => true]
+            )
+            ->addColumn(
+                UnmanagedProductResource::COLUMN_INCOMPLETE_REASON,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true]
             )
             ->addColumn(
                 UnmanagedProductResource::COLUMN_UPDATE_DATE,

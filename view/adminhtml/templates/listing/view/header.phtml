@@ -77,6 +77,16 @@
         <li>
             <label>
                 <span class="label">
+                    <?php /* @noEscape */ echo __('Site'); ?>:&nbsp;
+                </span>
+                <span class="value">
+                    <?php echo $escaper->escapeHtml($block->getSiteTitle()); ?>
+                </span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <span class="label">
                     <?php  /* @noEscape */ echo __('Magento Store View'); ?>:&nbsp;
                 </span>
                 <span class="value">

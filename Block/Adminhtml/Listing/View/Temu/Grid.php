@@ -113,6 +113,7 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\View\AbstractGrid
                 'listing_id' => ListingProductResource::COLUMN_LISTING_ID,
                 'variation_attributes' => ListingProductResource::COLUMN_VARIATION_ATTRIBUTES,
                 'is_valid_category_attributes' => ListingProductResource::COLUMN_IS_VALID_CATEGORY_ATTRIBUTES,
+                'incomplete_reason' => ListingProductResource::COLUMN_INCOMPLETE_REASON,
             ],
             sprintf(
                 '{{table}}.%s = %s',

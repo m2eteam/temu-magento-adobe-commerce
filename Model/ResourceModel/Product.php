@@ -34,6 +34,7 @@ class Product extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_VARIATION_ATTRIBUTES = 'variation_attributes';
     public const COLUMN_IS_VALID_CATEGORY_ATTRIBUTES = 'is_valid_category_attributes';
     public const COLUMN_CATEGORY_ATTRIBUTES_ERRORS = 'category_attributes_errors';
+    public const COLUMN_INCOMPLETE_REASON = 'incomplete_reason';
     public const COLUMN_UPDATE_DATE = 'update_date';
     public const COLUMN_CREATE_DATE = 'create_date';
 

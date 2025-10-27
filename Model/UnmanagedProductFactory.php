@@ -31,7 +31,8 @@ class UnmanagedProductFactory
                 strip_tags($channelProduct->getImageUrl(),)
             ),
             $channelProduct->getShippingTemplateId(),
-            $channelProduct->getCategoryId()
+            $channelProduct->getCategoryId(),
+            $channelProduct->getIncompleteReason()
         );
     }
 
@@ -42,7 +43,8 @@ class UnmanagedProductFactory
         string $title,
         string $imageUrl,
         int $deliveryTemplateId,
-        int $categoryId
+        int $categoryId,
+        ?string $incompleteReason
     ): UnmanagedProduct {
         $object = $this->createEmpty();
 
@@ -53,7 +55,8 @@ class UnmanagedProductFactory
             $title,
             $imageUrl,
             $deliveryTemplateId,
-            $categoryId
+            $categoryId,
+            $incompleteReason
         );
 
         return $object;

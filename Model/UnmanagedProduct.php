@@ -53,7 +53,8 @@ class UnmanagedProduct extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         string $title,
         string $imageUrl,
         int $shippingTemplateId,
-        int $categoryId
+        int $categoryId,
+        ?string $incompleteReason
     ): self {
         $this
             ->setData(UnmanagedProductResource::COLUMN_ACCOUNT_ID, $accountId)
@@ -62,7 +63,8 @@ class UnmanagedProduct extends \M2E\Temu\Model\ActiveRecord\AbstractModel
             ->setTitle($title)
             ->setImageUrl($imageUrl)
             ->setCategoryId($categoryId)
-            ->setShippingTemplateId($shippingTemplateId);
+            ->setShippingTemplateId($shippingTemplateId)
+            ->setIncompleteReason($incompleteReason);
 
         return $this;
     }
@@ -166,6 +168,20 @@ class UnmanagedProduct extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public function getTitle(): string
     {
         return (string)$this->getData(UnmanagedProductResource::COLUMN_TITLE);
+    }
+
+    // ----------------------------------------
+
+    public function getIncompleteReason(): ?string
+    {
+        return $this->getData(UnmanagedProductResource::COLUMN_INCOMPLETE_REASON);
+    }
+
+    public function setIncompleteReason(?string $incompleteReason): self
+    {
+        $this->setData(UnmanagedProductResource::COLUMN_INCOMPLETE_REASON, $incompleteReason);
+
+        return $this;
     }
 
     public function getCurrencyCode(): string
@@ -357,6 +373,10 @@ class UnmanagedProduct extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
         if ($this->getStatus() !== $channelProduct->getStatus()) {
             $this->setStatus($channelProduct->getStatus());
+        }
+
+        if ($this->getIncompleteReason() !== $channelProduct->getIncompleteReason()) {
+            $this->setIncompleteReason($channelProduct->getIncompleteReason());
         }
 
         $existProductChanged = false;

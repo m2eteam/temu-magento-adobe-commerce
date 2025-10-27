@@ -94,6 +94,7 @@ class Response extends \M2E\Temu\Model\Product\Action\Type\AbstractResponse
                 ->setOnlineBulletPoints($metadata[DataProvider\BulletPointsProvider::NICK])
                 ->setOnlineItemTaxCode($metadata[DataProvider\ItemTaxCodeProvider::NICK] ?? null)
                 ->removeBlockingByError()
+                ->setIncompleteReason(null)
                 ->recalculateOnlineDataByVariants();
 
         if (isset($metadata[DataProvider\ShippingProvider::NICK]['template_id'])) {

@@ -55,6 +55,11 @@ class Processor
             $isChangedProduct = true;
         }
 
+        if ($this->isNeedChangeIncompleteReason()) {
+            $this->changeIncompleteReason();
+            $isChangedProduct = true;
+        }
+
         return $isChangedProduct;
     }
 
@@ -144,7 +149,7 @@ class Processor
                     ),
                 );
 
-                $existVariant->setOnlineCurrentPrice($channelVariant->getPrice());
+                $existVariant->setOnlinePrice($channelVariant->getPrice());
 
                 $isChanged = true;
             }
@@ -280,10 +285,24 @@ class Processor
             return false;
         }
 
+        if ($channelVariant->getPrice() <= 0) {
+            return false;
+        }
+
         return $variant->getOnlinePrice() !== $channelVariant->getPrice();
     }
 
     # endregion
+
+    private function isNeedChangeIncompleteReason(): bool
+    {
+        return (string)$this->channelProduct->getIncompleteReason() !== $this->product->getIncompleteReason();
+    }
+
+    private function changeIncompleteReason(): void
+    {
+        $this->product->setIncompleteReason($this->channelProduct->getIncompleteReason());
+    }
 
     // ----------------------------------------
 

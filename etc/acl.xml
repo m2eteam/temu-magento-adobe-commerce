@@ -27,6 +27,7 @@
 
                     <resource id="M2E_Temu::configuration" title="Configuration" sortOrder="3">
                         <resource id="M2E_Temu::configuration_accounts" title="Accounts" sortOrder="1"/>
+                        <resource id="M2E_Temu::configuration_categories" title="Categories" sortOrder="2"/>
                         <resource id="M2E_Temu::configuration_templates" title="Policies" sortOrder="3"/>
                         <resource id="M2E_Temu::configuration_settings" title="Settings" sortOrder="4"/>
                     </resource>
