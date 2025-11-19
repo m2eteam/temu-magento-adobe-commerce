@@ -9,6 +9,7 @@ class TitleProvider implements DataBuilderInterface
     use DataBuilderHelpTrait;
 
     public const NICK = 'Title';
+    private const MAX_TITLE_LENGTH = 500;
 
     private string $onlineTitle;
 
@@ -22,8 +23,8 @@ class TitleProvider implements DataBuilderInterface
     {
         $title = $product->getDescriptionTemplateSource()->getTitle();
 
-        if (strlen($title) > 70) {
-            $title = substr($title, 0, 70);
+        if (mb_strlen($title) > self::MAX_TITLE_LENGTH) {
+            $title = mb_substr($title, 0, self::MAX_TITLE_LENGTH);
         }
 
         $this->onlineTitle = $title;

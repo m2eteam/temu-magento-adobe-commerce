@@ -15,8 +15,10 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     private \M2E\Temu\Model\Category\Attribute\Repository $attributeRepository;
     private \M2E\Temu\Model\Category\Dictionary\Attribute\Serializer $attributeSerializer;
     private \M2E\Temu\Model\ResourceModel\Product\CollectionFactory $listingProductCollectionFactory;
+    private \M2E\Temu\Model\Category\Dictionary\AttributeClassifier $attributeClassifier;
 
     public function __construct(
+        \M2E\Temu\Model\Category\Dictionary\AttributeClassifier $attributeClassifier,
         \M2E\Temu\Model\ResourceModel\Product\CollectionFactory $listingProductCollectionFactory,
         \M2E\Temu\Model\Category\Attribute\Repository $attributeRepository,
         \M2E\Temu\Model\Category\Dictionary\Attribute\Serializer $attributeSerializer,
@@ -37,6 +39,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         $this->attributeRepository = $attributeRepository;
         $this->attributeSerializer = $attributeSerializer;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
+        $this->attributeClassifier = $attributeClassifier;
     }
 
     public function _construct(): void
@@ -193,9 +196,17 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
      */
     public function getProductAttributes(): array
     {
-        return $this->attributeSerializer->unSerializeProductAttributes(
+        $attributes = $this->attributeSerializer->unSerializeProductAttributes(
             $this->getData(DictionaryResource::COLUMN_PRODUCT_ATTRIBUTES)
         );
+
+        foreach ($attributes as $attribute) {
+            if ($this->attributeClassifier->isBrandAttribute($attribute)) {
+                $attribute->setIsCustomized(true);
+            }
+        }
+
+        return $attributes;
     }
 
     public function setCategoryRules(array $categoryRules): void

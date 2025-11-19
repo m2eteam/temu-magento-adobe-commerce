@@ -8,33 +8,21 @@ use M2E\Temu\Model\Category\CategoryAttribute;
 
 class DictionaryMapper
 {
-    private const SAFETY_AND_COMPLIANCE_BRAND = [
-        'pid' => 1467,
-        'title' => 'Brand',
-    ];
-
-    private const SAFETY_AND_COMPLIANCE_OTHER = [
-        [
-            'id' => '1000001000',
-            'title' => 'Country of Origin',
-        ],
-        [
-            'id' => '1000001001',
-            'title' => 'Province/Region (for China)',
-        ],
-    ];
-
-    private \M2E\Temu\Model\Category\Attribute\Repository $attributeRepository;
-    private \M2E\Temu\Model\AttributeMapping\GeneralService $generalService;
     /** @var \M2E\Core\Model\AttributeMapping\Pair[] */
     private array $generalAttributeMapping;
 
+    private \M2E\Temu\Model\Category\Attribute\Repository $attributeRepository;
+    private \M2E\Temu\Model\AttributeMapping\GeneralService $generalService;
+    private \M2E\Temu\Model\Category\Dictionary\AttributeClassifier $attributeClassifier;
+
     public function __construct(
         \M2E\Temu\Model\Category\Attribute\Repository $attributeRepository,
-        \M2E\Temu\Model\AttributeMapping\GeneralService $generalService
+        \M2E\Temu\Model\AttributeMapping\GeneralService $generalService,
+        \M2E\Temu\Model\Category\Dictionary\AttributeClassifier $attributeClassifier
     ) {
         $this->attributeRepository = $attributeRepository;
         $this->generalService = $generalService;
+        $this->attributeClassifier = $attributeClassifier;
     }
 
     /**
@@ -49,7 +37,7 @@ class DictionaryMapper
 
         $attributes = [];
         foreach ($dictionary->getProductAttributes() as $productAttribute) {
-            if ($this->isSafetyComplianceAttribute($productAttribute)) {
+            if ($this->attributeClassifier->isSafetyComplianceAttribute($productAttribute)) {
                 continue;
             }
 
@@ -103,7 +91,7 @@ class DictionaryMapper
 
         $attributes = [];
         foreach ($dictionary->getProductAttributes() as $productAttribute) {
-            if (!$this->isSafetyComplianceAttribute($productAttribute)) {
+            if (!$this->attributeClassifier->isSafetyComplianceAttribute($productAttribute)) {
                 continue;
             }
 
@@ -310,31 +298,5 @@ class DictionaryMapper
 
         return $savedId !== $attribute->getId()
             && $cleanedId === $attribute->getId();
-    }
-
-    private function isSafetyComplianceAttribute(\M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute): bool
-    {
-        return $this->isBrandAttribute($attribute)
-            || $this->isOtherSafetyComplianceAttribute($attribute);
-    }
-
-    private function isBrandAttribute(\M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute): bool
-    {
-        return $attribute->getPid() === self::SAFETY_AND_COMPLIANCE_BRAND['pid']
-            || $attribute->getName() === self::SAFETY_AND_COMPLIANCE_BRAND['title'];
-    }
-
-    private function isOtherSafetyComplianceAttribute(\M2E\Temu\Model\Category\Dictionary\Attribute\ProductAttribute $attribute): bool
-    {
-        foreach (self::SAFETY_AND_COMPLIANCE_OTHER as $item) {
-            if (
-                (string)$attribute->getRefPid() === $item['id']
-                || $attribute->getName() === $item['title']
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

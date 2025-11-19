@@ -141,4 +141,11 @@ abstract class AbstractAttribute
     {
         return $this->multipleSelectedMaxCount;
     }
+
+    public function setIsCustomized(bool $isCustomized): self
+    {
+        $this->isCustomised = $isCustomized;
+
+        return $this;
+    }
 }
