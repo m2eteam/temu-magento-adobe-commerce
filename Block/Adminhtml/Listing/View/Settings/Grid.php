@@ -96,6 +96,7 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\View\AbstractGrid
                 ['category' => $categoryTableName],
                 sprintf('%s = template_category_id', CategoryDictionaryResource::COLUMN_ID),
                 [
+                    'title' => CategoryDictionaryResource::COLUMN_TITLE,
                     'path' => CategoryDictionaryResource::COLUMN_PATH,
                     'category_id' => CategoryDictionaryResource::COLUMN_CATEGORY_ID,
                     'is_valid' => CategoryDictionaryResource::COLUMN_IS_VALID,
@@ -219,7 +220,7 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\View\AbstractGrid
             );
         }
 
-        $view = sprintf('%s (%s)', $path, $categoryId);
+        $view = sprintf('%s<br>%s (%s)', $row->getData('title'), $path, $categoryId);
 
         if (!$row->getData('is_valid')) {
             return sprintf(

@@ -22,6 +22,11 @@ define([
 
         // ---------------------------------------
 
+        resetSelectedData: function () {
+            this.selectedCategory = {};
+            this.selectedSpecifics = {};
+        },
+
         initialize: function (region, accountId) {
             this.region = region;
             this.accountId = accountId;
@@ -46,6 +51,45 @@ define([
             jQuery('#edit_attributes').on('click', function () {
                 self.editAttributes();
             });
+
+            jQuery('#edit_title').on('click', function () {
+                jQuery('.dictionary_title_wrapper').hide();
+                jQuery('.dictionary_title_edit_wrapper').show();
+
+                const currentTitle = jQuery('#dictionary_title').text();
+                jQuery('#dictionary_title_input').val(currentTitle).focus();
+            });
+
+            jQuery('#cancel_save_title').on('click', function () {
+                jQuery('.dictionary_title_edit_wrapper').hide();
+                jQuery('.dictionary_title_wrapper').show();
+            });
+
+            jQuery('#save_title').on('click', () => {
+                this.messagesClearOnModalHeaderBlock();
+                const newTitle = jQuery('#dictionary_title_input').val();
+
+                new Ajax.Request(Temu.url.get('category/changeTitle'), {
+                    method: 'post',
+                    parameters: {
+                        dictionary_id: this.selectedCategory.dictionaryId,
+                        title: newTitle,
+                    },
+                    onSuccess: (transport) => {
+                        let response = transport.responseText.evalJSON();
+                        console.log(response)
+                        if (!response.success) {
+                            this.messageAddErrorToModalHeaderBlock(response.message);
+                            return;
+                        }
+
+                        this.selectedCategory.dictionaryTitle = newTitle;
+                        jQuery('#dictionary_title').text(newTitle);
+                        jQuery('.dictionary_title_edit_wrapper').hide();
+                        jQuery('.dictionary_title_wrapper').show();
+                    }
+                });
+            });
         },
 
         // ---------------------------------------
@@ -58,8 +102,9 @@ define([
             return this.accountId;
         },
 
-        setSelectedCategory: function (category) {
+        setSelectedCategory: function (category, dictionaryId) {
             this.selectedCategory.value = category;
+            this.selectedCategory.dictionaryId = dictionaryId;
         },
 
         getSelectedCategory: function () {
@@ -87,6 +132,7 @@ define([
                     account_id: self.accountId,
                     selected_value: selected.value,
                     selected_path: selected.path,
+                    dictionary_id: selected.dictionaryId,
                     view_mode: 'with_tabs',
                 },
                 onSuccess: function (transport) {
@@ -142,7 +188,7 @@ define([
 
         // ---------------------------------------
 
-        selectCategory: function (categoryId) {
+        selectCategory: function (categoryId, dictionaryId = undefined) {
             this.messagesClearAll();
             const self = this;
 
@@ -150,7 +196,8 @@ define([
                 method: 'post',
                 parameters: {
                     region: self.region,
-                    value: categoryId,
+                    category_id: categoryId,
+                    dictionary_id: dictionaryId
                 },
                 onSuccess: function (transport) {
                     const response = transport.responseText.evalJSON();
@@ -158,11 +205,12 @@ define([
                     self.selectedCategory = {
                         value: categoryId,
                         path: response.path,
+                        dictionaryId: dictionaryId,
                     };
 
                     let pathElement = $('selected_category_path');
                     if (pathElement) {
-                        let interfacePath = response.path + '(' + categoryId + ')';
+                        let interfacePath = response.interface_path;
                         pathElement.setAttribute('title', interfacePath);
                         pathElement.innerHTML = self.cutDownLongPath(interfacePath, 130, '>');
                     }
@@ -204,6 +252,7 @@ define([
                     parameters: {
                         region: self.region,
                         category_id: self.selectedCategory.value,
+                        dictionary_id: self.selectedCategory.dictionaryId ?? null,
                     },
                     onSuccess: function (transport) {
                         let response = transport.responseText.evalJSON();
@@ -215,6 +264,7 @@ define([
                         }
 
                         self.selectedCategory.dictionaryId = response.dictionary_id;
+                        self.selectedCategory.dictionaryTitle = response.dictionary_title;
                         self.selectedCategory.is_all_required_attributes_filled = response.is_all_required_attributes_filled;
                         self.selectedCategory.path = response.path;
 
@@ -237,6 +287,10 @@ define([
                 jQuery('#attributes_wrapper').addClass('hidden');
 
                 return;
+            }
+
+            if (this.selectedCategory.dictionaryTitle) {
+                jQuery('#dictionary_title').text(this.selectedCategory.dictionaryTitle);
             }
 
             if (this.selectedCategory.path) {
@@ -317,16 +371,29 @@ define([
                     let html = '';
 
                     if (transport.responseText.length > 2) {
-                        html += '<tr><td width="730px"></td><td width="70px"></td></tr>';
+                        // html += '<tr><td width="730px"></td><td width="70px"></td></tr>';
                         categories.each(function (category) {
                             if (!category.is_valid) {
                                 return;
                             }
 
-                            html += '<tr><td>' + category.path + '</td>' +
-                                    '<td style="width: 60px"><a href="javascript:void(0)" ' +
-                                    'onclick="TemuCategoryChooserObj.selectCategory(\'' + category.id + '\')">' +
-                                    $t('Select') + '</a></td></tr>';
+                            const selectLink = jQuery('<a>')
+                                    .attr('href', 'javascript:void(0)')
+                                    .attr('onclick', `TemuCategoryChooserObj.selectCategory('${category.category_id}', '${category.dictionary_id}')`)
+                                    .text($t('Select'))
+                                    .prop('outerHTML');
+
+                            const crateCopyLink = jQuery('<a>')
+                                    .attr('href', 'javascript:void(0)')
+                                    .attr('onclick', `TemuCategoryChooserObj.selectCategory('${category.category_id}')`)
+                                    .text($t('Create Copy'))
+                                    .prop('outerHTML');
+
+                            html += '<tr>';
+                            html += `<td>${category.title}<br>${category.path}</td>`;
+                            html += `<td style="width: 70px; text-align: center">${selectLink}</td>`;
+                            html += `<td style="width: 125px; text-align: center">${crateCopyLink}</td>`;
+                            html += '</tr>';
 
                         });
                     } else {

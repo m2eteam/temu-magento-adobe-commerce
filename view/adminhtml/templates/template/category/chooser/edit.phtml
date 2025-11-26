@@ -15,10 +15,12 @@ $selectedCategory = $block->getSelectedCategory();
         border: 1px solid #e3e3e3;
         background-color: #ffffff;
         margin-bottom: 30px;
+        padding: 1em .5em 1em 1.8rem;
     }
 
-    #selected_category_container table td:first-child {
-        padding: 1em .5em 1em 1.8rem;
+    #selected_category_container.flex-row {
+        display: flex;
+        gap: 10px;
     }
 
     #chooser_browser {
@@ -125,31 +127,26 @@ $selectedCategory = $block->getSelectedCategory();
         overflow: auto;
         border: 1px solid #e3e3e3;
     }
+    .flex-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
 </style>
 
 <div id="change_category_messaged_container"></div>
 
 <div id="selected_category_container">
-    <table>
-        <tr>
-            <td style="vertical-align: middle;">
-                <strong id="category_title_container">
-                    <?= /* @noEscape */ __('Category'); ?>
-                </strong>
+    <div class="flex-row">
+        <span><strong><?= /* @noEscape */ __('Category'); ?></strong>:</span>
 
-                <span id="selected_category_path" style="vertical-align: middle; padding-left: 5px">
-                    <?php
-                    /* @noEscape */ echo $block->getSelectedCategoryPathHtml(); ?>
-                </span>
+        <span id="selected_category_path"><?= /* @noEscape */ $block->getSelectedCategoryPathHtml(); ?></span>
 
-                <a href="javascript:void(0)" id="category_reset_link" <?php
-                if (empty($selectedCategory)) : ?>style="display: none"<?php
-                endif; ?>
-                   onclick="TemuCategoryChooserObj.unSelectCategory()"><?= /* @noEscape */ __('Reset') ?></a>
-            </td>
-
-        </tr>
-    </table>
+        <a href="javascript:void(0)" id="category_reset_link" <?php
+        if (empty($selectedCategory)) : ?>style="display: none"<?php
+        endif; ?>
+           onclick="TemuCategoryChooserObj.unSelectCategory()"><?= /* @noEscape */ __('Reset') ?></a>
+    </div>
 </div>
 
 <input type="hidden" id="category_validation" value="" class="required-entry">

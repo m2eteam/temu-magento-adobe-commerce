@@ -330,6 +330,18 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
             return false;
         }
 
+        $allItemsCanceled = true;
+        foreach ($this->getItems() as $item) {
+            if (!$item->isStatusCanceled()) {
+                $allItemsCanceled = false;
+                break;
+            }
+        }
+
+        if ($allItemsCanceled) {
+            return false;
+        }
+
         return true;
     }
 

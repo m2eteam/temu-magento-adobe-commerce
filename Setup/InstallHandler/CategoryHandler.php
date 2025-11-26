@@ -55,6 +55,12 @@ class CategoryHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['nullable' => false,]
             )
             ->addColumn(
+                CategoryResource::COLUMN_TITLE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false,]
+            )
+            ->addColumn(
                 CategoryResource::COLUMN_STATE,
                 Table::TYPE_SMALLINT,
                 null,
@@ -139,11 +145,6 @@ class CategoryHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 Table::TYPE_DATETIME,
                 null,
                 ['default' => null]
-            )
-            ->addIndex(
-                'region__category_id',
-                [CategoryResource::COLUMN_REGION, CategoryResource::COLUMN_CATEGORY_ID],
-                ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
             );
 
         $setup->getConnection()->createTable($table);

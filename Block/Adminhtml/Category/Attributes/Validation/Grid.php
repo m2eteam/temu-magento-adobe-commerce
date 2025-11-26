@@ -66,6 +66,7 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
             ['category' => $this->categoryResource->getMainTable()],
             'id = category_dictionary_id',
             [
+                'category_title' => CategoryDictionaryResource::COLUMN_TITLE,
                 'category_id' => CategoryDictionaryResource::COLUMN_CATEGORY_ID,
                 'category_path' => CategoryDictionaryResource::COLUMN_PATH,
             ],
@@ -198,7 +199,8 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         return sprintf(
-            '%s (%s)',
+            '%s<br>%s (%s)',
+            $row->getData('category_title'),
             $row->getData('category_path'),
             $row->getData('category_id')
         );

@@ -26,6 +26,10 @@ class Info extends \M2E\Temu\Block\Adminhtml\Widget\Info
                     'value' => $this->dictionary->getRegion(),
                 ],
                 [
+                    'label' => __('Title'),
+                    'value' => $this->dictionary->getTitle(),
+                ],
+                [
                     'label' => __('Category'),
                     'value' => $this->dictionary->getPathWithCategoryId(),
                 ],

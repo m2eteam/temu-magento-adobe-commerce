@@ -56,7 +56,7 @@ class Same extends \M2E\Temu\Block\Adminhtml\Magento\AbstractContainer
             ->createBlock(
                 \M2E\Temu\Block\Adminhtml\Category\CategoryChooser::class,
                 '',
-                ['selectedCategory' => null],
+                ['categoryDictionary' => null],
             );
 
         return parent::_toHtml()

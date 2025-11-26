@@ -102,6 +102,11 @@ class Item extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return (int)($this->getData(OrderItemResource::COLUMN_ORDER_ITEM_STATUS) ?? 0);
     }
 
+    public function isStatusCanceled(): bool
+    {
+        return $this->getStatus() === \M2E\Temu\Model\Order::STATUS_CANCELED;
+    }
+
     public function isStatusUnshipped(): bool
     {
         return $this->getStatus() === \M2E\Temu\Model\Order::STATUS_UNSHIPPED;

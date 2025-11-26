@@ -12,6 +12,7 @@ class CreateService
     private \M2E\Temu\Model\Category\Dictionary\AttributeService $attributeService;
     private \M2E\Temu\Model\Category\Dictionary\Repository $categoryDictionaryRepository;
     private \M2E\Temu\Model\Account\Repository $accountRepository;
+    private \M2E\Temu\Model\Category\Dictionary\TitleService $titleService;
 
     public function __construct(
         \M2E\Temu\Model\Category\DictionaryFactory $dictionaryFactory,
@@ -19,7 +20,8 @@ class CreateService
         \M2E\Temu\Model\Category\Dictionary\Repository $categoryDictionaryRepository,
         \M2E\Temu\Model\Category\Tree\Repository $categoryTreeRepository,
         \M2E\Temu\Model\Category\Tree\PathBuilder $pathBuilder,
-        \M2E\Temu\Model\Account\Repository $accountRepository
+        \M2E\Temu\Model\Account\Repository $accountRepository,
+        \M2E\Temu\Model\Category\Dictionary\TitleService $titleService
     ) {
         $this->dictionaryFactory = $dictionaryFactory;
         $this->attributeService = $attributeService;
@@ -27,6 +29,7 @@ class CreateService
         $this->pathBuilder = $pathBuilder;
         $this->categoryTreeRepository = $categoryTreeRepository;
         $this->accountRepository = $accountRepository;
+        $this->titleService = $titleService;
     }
 
     public function create(
@@ -41,7 +44,6 @@ class CreateService
         }
         $account = $this->getAccountForRegion($region);
         $categoryData = $this->attributeService->getCategoryDataFromServer($region, $categoryId, $account);
-        //$authorizedBrandData = $this->attributeService->getBrandsDataFromServer($region, $categoryId);//TODO brand
 
         $productAttributes = $this->attributeService->getProductAttributes($categoryData);
         $salesAttributes = $this->attributeService->getSalesAttributes($categoryData);
@@ -49,15 +51,17 @@ class CreateService
         $totalSalesAttributes = $this->attributeService->getTotalSalesAttributes($categoryData);
         $hasRequiredProductAttributes = $this->attributeService->getHasRequiredAttributes($categoryData);
         $hasRequiredSalesAttributes = $this->attributeService->getHasRequiredSalesAttributes($categoryData);
+        $path = $this->pathBuilder->getPath($treeNode);
 
         $dictionary = $this->dictionaryFactory->create()->create(
             $region,
             $categoryId,
-            $this->pathBuilder->getPath($treeNode),
+            $this->titleService->getUnique($region, $categoryId, $path),
+            $path,
             $salesAttributes,
             $productAttributes,
             $categoryData->getRules(),
-            [], // TODO $authorizedBrandData->getBrands(),
+            [],
             $totalProductAttributes,
             $hasRequiredProductAttributes,
             $totalSalesAttributes,

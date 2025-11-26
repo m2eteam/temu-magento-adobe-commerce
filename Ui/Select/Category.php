@@ -31,18 +31,9 @@ class Category implements OptionSourceInterface
 
     private function formatLabel(\M2E\Temu\Model\Category\Dictionary $dictionary): string
     {
-        $path = $dictionary->getPath();
-        $parts = array_map('trim', explode('>', $path));
-
-        if (count($parts) > 2) {
-            $shortPath = sprintf('%s > ... > %s', reset($parts), end($parts));
-        } else {
-            $shortPath = $path;
-        }
-
         return sprintf(
             '%s (%s) (%s)',
-            $shortPath,
+            $dictionary->getTitle(),
             $dictionary->getCategoryId(),
             ucfirst($dictionary->getRegion())
         );

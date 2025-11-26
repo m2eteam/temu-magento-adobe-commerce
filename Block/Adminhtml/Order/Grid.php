@@ -403,10 +403,20 @@ HTML;
                 );
             }
 
+            $canceledLabel = '';
+            if ($item->isStatusCanceled()) {
+                $canceledLabel = sprintf(
+                    '&nbsp;<span style="color: %s">%s</span>',
+                    $this->orderStatusHelper->getStatusColor($item->getStatus()),
+                    $this->orderStatusHelper->getStatusLabel($item->getStatus())
+                );
+            }
+
             $qtyPurchasedHtml = sprintf(
-                '<span style="padding-left: 10px;"><b>%s:</b>&nbsp;%d</span><br/>',
+                '<span style="padding-left: 10px;"><b>%s:</b>&nbsp;%d</span>%s<br/>',
                 __('QTY'),
-                $item->getQty()
+                $item->getQty(),
+                $canceledLabel
             );
 
             $opcHtml = sprintf(
@@ -475,6 +485,7 @@ HTML;
 
         if (empty($orderIds)) {
             $collection->addFieldToFilter('main_table.id', ['in' => [0]]);
+
             return;
         }
 

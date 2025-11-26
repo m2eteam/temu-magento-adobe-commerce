@@ -12,8 +12,10 @@ class Item extends AbstractGrid
     private \M2E\Temu\Model\Currency $currency;
     private \M2E\Temu\Model\Magento\ProductFactory $ourMagentoProductFactory;
     private \M2E\Temu\Model\Order\Item\Repository $orderItemRepository;
+    private \M2E\Temu\Block\Adminhtml\Order\StatusHelper $orderStatusHelper;
 
     public function __construct(
+        \M2E\Temu\Block\Adminhtml\Order\StatusHelper $orderStatusHelper,
         \M2E\Temu\Model\Order\Item\Repository $orderItemRepository,
         \M2E\Temu\Model\Magento\ProductFactory $ourMagentoProductFactory,
         \M2E\Temu\Model\Currency $currency,
@@ -31,6 +33,7 @@ class Item extends AbstractGrid
         $this->ourMagentoProductFactory = $ourMagentoProductFactory;
         $this->orderItemRepository = $orderItemRepository;
         parent::__construct($context, $backendHelper, $data);
+        $this->orderStatusHelper = $orderStatusHelper;
     }
 
     public function _construct()
@@ -144,6 +147,15 @@ class Item extends AbstractGrid
             'filter' => false,
             'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnRowTotal'],
+        ]);
+
+        $this->addColumn('row_status', [
+            'header' => __('Status'),
+            'align' => 'left',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnRowStatus'],
         ]);
 
         return parent::_prepareColumns();
@@ -329,6 +341,15 @@ class Item extends AbstractGrid
         return $this->currency->formatPrice(
             $this->order->getCurrency(),
             $total
+        );
+    }
+
+    public function callbackColumnRowStatus($value, \M2E\Temu\Model\Order\Item $row, $column, $isExport)
+    {
+        return sprintf(
+            '<span style="color: %s">%s</span>',
+            $this->orderStatusHelper->getStatusColor($row->getStatus()),
+            $this->orderStatusHelper->getStatusLabel($row->getStatus())
         );
     }
 

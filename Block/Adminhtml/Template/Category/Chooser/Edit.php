@@ -8,7 +8,7 @@ class Edit extends \M2E\Temu\Block\Adminhtml\Magento\AbstractContainer
     public const WITHOUT_TABS_VIEW_MODE = 'without_tabs';
     public const VIEW_MODE_KEY = 'view_mode';
 
-    private $_selectedCategory = [];
+    private array $selectedCategory = [];
 
     public function _construct()
     {
@@ -60,28 +60,40 @@ class Edit extends \M2E\Temu\Block\Adminhtml\Magento\AbstractContainer
 
     public function getSelectedCategory(): array
     {
-        return $this->_selectedCategory;
+        return $this->selectedCategory;
     }
 
-    public function setSelectedCategory(string $value, string $path): void
+    public function setSelectedCategory(string $value, string $path, string $title): void
     {
-        $this->_selectedCategory = [
+        $this->selectedCategory = [
             'value' => $value,
-            'path' => $path
+            'path' => $path,
+            'title' => $title,
         ];
     }
 
     public function getSelectedCategoryPathHtml(): string
     {
         if (
-            empty($this->_selectedCategory['path'])
-            || empty($this->_selectedCategory['value'])
+            empty($this->selectedCategory['path'])
+            || empty($this->selectedCategory['value'])
         ) {
-            return <<<HTML
-<span style="font-style: italic; color: grey">{$this->__('Not Selected')}</span>
-HTML;
+            return sprintf(
+                '<span style="font-style: italic; color: grey">%s</span>',
+                __('Not Selected')
+            );
         }
 
-        return "{$this->_selectedCategory['path']} ({$this->_selectedCategory['value']})";
+        $path = sprintf(
+            '%s (%s)',
+            $this->selectedCategory['path'],
+            $this->selectedCategory['value']
+        );
+
+        if ($this->selectedCategory['title']) {
+            $path = $this->selectedCategory['title'] . '<br>' . $path;
+        }
+
+        return $path;
     }
 }

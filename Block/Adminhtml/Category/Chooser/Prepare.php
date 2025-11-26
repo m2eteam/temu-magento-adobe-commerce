@@ -62,6 +62,9 @@ class Prepare extends \M2E\Temu\Block\Adminhtml\Magento\AbstractBlock
                 'category/saveCategoryAttributesAjax' => $urlBuilder->getUrl(
                     '*/category/saveCategoryAttributesAjax'
                 ),
+                'category/changeTitle' => $urlBuilder->getUrl(
+                    '*/category/changeTitle'
+                ),
             ],
         );
 

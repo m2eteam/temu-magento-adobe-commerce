@@ -24,8 +24,10 @@ class GetRecent extends \M2E\Temu\Controller\Adminhtml\AbstractCategory
         $result = [];
         foreach ($categories as $category) {
             $result[] = [
-                'id' => $category->getCategoryId(),
+                'dictionary_id' => $category->getId(),
+                'category_id' => $category->getCategoryId(),
                 'path' => $category->getPathWithCategoryId(),
+                'title' => $category->getTitle(),
                 'is_valid' => $category->isCategoryValid(),
             ];
         }

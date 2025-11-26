@@ -51,6 +51,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public function create(
         string $region,
         int $categoryId,
+        string $title,
         string $path,
         array $salesAttributes,
         array $productAttributes,
@@ -65,6 +66,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
         $this->setRegion($region);
         $this->setCategoryId($categoryId);
+        $this->setTitle($title);
         $this->setPath($path);
         $this->setSalesAttributes($salesAttributes);
         $this->setProductAttributes($productAttributes);
@@ -134,6 +136,18 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     public function getCategoryId(): string
     {
         return $this->getData(DictionaryResource::COLUMN_CATEGORY_ID);
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->setData(DictionaryResource::COLUMN_TITLE, $title);
+
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return (string)$this->getData(DictionaryResource::COLUMN_TITLE);
     }
 
     public function setState(int $state): void

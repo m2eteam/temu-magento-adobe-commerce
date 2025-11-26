@@ -52,7 +52,7 @@ class CreateMagentoOrder extends AbstractOrder
                 }
             } else {
                 $warnings++;
-                $this->message = __('Magento Order cannot be created. Reason: Buyer information is missing.');
+                $this->message = __('Magento order creation rules are not met.');
             }
         }
 

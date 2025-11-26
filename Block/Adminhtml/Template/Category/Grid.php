@@ -64,9 +64,20 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $this->addColumn(
-            'path',
+            'title',
             [
                 'header' => __('Title'),
+                'align' => 'left',
+                'type' => 'text',
+                'escape' => true,
+                'index' => \M2E\Temu\Model\ResourceModel\Category\Dictionary::COLUMN_TITLE,
+            ]
+        );
+
+        $this->addColumn(
+            'path',
+            [
+                'header' => __('Category'),
                 'align' => 'left',
                 'type' => 'text',
                 'escape' => true,
@@ -136,9 +147,13 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'filter' => false,
                 'sortable' => false,
                 'renderer' => \M2E\Temu\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+                'group_order' => [
+                    'edit_actions' => __('Edit'),
+                ],
                 'actions' => [
                     [
-                        'caption' => __('Edit'),
+                        'group' => 'edit_actions',
+                        'caption' => __('Attributes'),
                         'url' => [
                             'base' => '*/category/view',
                             'params' => [
@@ -146,6 +161,15 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
                             ],
                         ],
                         'field' => 'id',
+                    ],
+                    [
+                        'group' => 'edit_actions',
+                        'caption' => __('Title'),
+                        'field' => 'id',
+                        'onclick_action' => 'TemuCategoryEditTitleObj.openPopup',
+                        'params' => [
+                            'title' => '$title',
+                        ],
                     ],
                 ],
             ]
@@ -169,6 +193,35 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         return parent::_prepareMassaction();
+    }
+
+    protected function _toHtml()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return parent::_toHtml();
+        }
+
+        $this->jsUrl->add(
+            $this->getUrl('*/category/changeTitleForm'),
+            'category/changeTitleForm'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/category/changeTitle'),
+            'category/changeTitle'
+        );
+
+        $this->js->add(
+            <<<JS
+    require([
+        'Temu/Category/EditTitle'
+    ], function() {
+        window.TemuCategoryEditTitleObj = new TemuCategoryEditTitle('{$this->getId()}');
+    });
+JS
+        );
+
+        return parent::_toHtml();
     }
 
     public function callbackColumnFilterPath($value, $row, $column, $isExport)

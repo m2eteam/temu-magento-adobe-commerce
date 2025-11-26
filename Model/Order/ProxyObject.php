@@ -64,6 +64,10 @@ class ProxyObject
             $items = [];
 
             foreach ($this->order->getItems() as $item) {
+                if ($item->isStatusCanceled()) {
+                    continue;
+                }
+
                 $proxyItem = $item->getProxy();
                 if ($proxyItem->getQty() <= 0) {
                     continue;

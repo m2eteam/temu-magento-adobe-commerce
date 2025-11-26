@@ -15,7 +15,7 @@ class Edit extends \M2E\Temu\Controller\Adminhtml\Template\AbstractCategory
         );
 
         if (!empty($selectedValue)) {
-            $editBlock->setSelectedCategory($selectedValue, $selectedPath);
+            $editBlock->setSelectedCategory($selectedValue, $selectedPath, '');
         }
 
         $html = $editBlock->toHtml();

@@ -7,20 +7,20 @@ namespace M2E\Temu\Controller\Adminhtml\Listing\Product\Category\Settings;
 class Edit extends \M2E\Temu\Controller\Adminhtml\AbstractListing
 {
     private \M2E\Temu\Model\ResourceModel\Product $listingProductResource;
-    private \M2E\Temu\Model\Category\Dictionary\Repository $categoryRepository;
+    private \M2E\Temu\Model\Category\Dictionary\Repository $categoryDictionaryRepository;
     private \M2E\Temu\Model\Listing\Ui\RuntimeStorage $uiListingRuntimeStorage;
     private \M2E\Temu\Model\Listing\Repository $listingRepository;
 
     public function __construct(
         \M2E\Temu\Model\ResourceModel\Product $listingProductResource,
-        \M2E\Temu\Model\Category\Dictionary\Repository $categoryRepository,
+        \M2E\Temu\Model\Category\Dictionary\Repository $categoryDictionaryRepository,
         \M2E\Temu\Model\Listing\Ui\RuntimeStorage $uiListingRuntimeStorage,
         \M2E\Temu\Model\Listing\Repository $listingRepository
     ) {
         parent::__construct();
 
         $this->listingProductResource = $listingProductResource;
-        $this->categoryRepository = $categoryRepository;
+        $this->categoryDictionaryRepository = $categoryDictionaryRepository;
         $this->uiListingRuntimeStorage = $uiListingRuntimeStorage;
         $this->listingRepository = $listingRepository;
     }
@@ -45,18 +45,20 @@ class Edit extends \M2E\Temu\Controller\Adminhtml\AbstractListing
 
         $this->uiListingRuntimeStorage->setListing($listing);
 
-        $ids = $this->listingProductResource
+        $templateCategoryIds = $this->listingProductResource
             ->getTemplateCategoryIds($listingProductIds, 'template_category_id', true);
 
-        $categories = $this->categoryRepository->getItems($ids);
+        $categoryDictionaries = $this->categoryDictionaryRepository->getItems($templateCategoryIds);
 
-        $category = count($categories) === 1 ? reset($categories) : null;
+        $categoryDictionary = count($categoryDictionaries) === 1 ? reset($categoryDictionaries) : null;
 
         /** @var \M2E\Temu\Block\Adminhtml\Category\CategoryChooser $block */
         $block = $this->getLayout()->createBlock(
             \M2E\Temu\Block\Adminhtml\Category\CategoryChooser::class,
             '',
-            ['selectedCategory' => $category !== null ? $category->getCategoryId() : null]
+            [
+                'categoryDictionary' => $categoryDictionary,
+            ]
         );
 
         $this->setAjaxContent($block->toHtml());

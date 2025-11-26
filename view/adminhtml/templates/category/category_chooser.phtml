@@ -30,6 +30,17 @@
     &nbsp;<a href="javascript:void(0);" id="edit_category"><?= /* @noEscape */ __('Edit') ?></a>
     <br>
     <div id="attributes_wrapper" class="hidden">
+        <b><?= /* @noEscape */ __('Title') ?></b>:
+        <span class="dictionary_title_wrapper">
+            <span id="dictionary_title" style="font-style: italic; color: #808080"></span>
+            &nbsp<a href="javascript:void(0);" id="edit_title"><?= /* @noEscape */ __('Edit') ?></a>
+        </span>
+        <span class="dictionary_title_edit_wrapper" style="display: none;">
+            <input type="text" id="dictionary_title_input" class="input-text admin__control-text" style="min-width: 400px;">
+            &nbsp<a href="javascript:void(0);" id="save_title"><?= /* @noEscape */ __('Save') ?></a>
+            &nbsp<a href="javascript:void(0);" id="cancel_save_title"><?= /* @noEscape */ __('Cancel') ?></a>
+        </span>
+        <br>
         <b><?= /* @noEscape */ __('Attributes') ?></b>:
         <span id="attributes_required" class="required hidden">*</span>
         <span id="attributes_counts" style="font-style: italic; color: #808080">0/0</span>
@@ -44,8 +55,12 @@
     require([
         'Temu/Category/Chooser'
     ], function() {
+        TemuCategoryChooserObj.resetSelectedData();
         <?php if($block->getSelectedCategory() !== null): ?>
-        TemuCategoryChooserObj.setSelectedCategory(<?= /* @noEscape */ $block->getSelectedCategory() ?>);
+        TemuCategoryChooserObj.setSelectedCategory(
+            <?= /* @noEscape */ $block->getSelectedCategory() ?>,
+            <?= /* @noEscape */ $block->getSelectedDictionaryId() ?>
+        );
         TemuCategoryChooserObj.confirmCategory()
         <?php endif; ?>
         TemuCategoryChooserObj.initObservers();

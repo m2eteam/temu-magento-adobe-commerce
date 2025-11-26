@@ -107,6 +107,25 @@ class Repository
         return $entity->isObjectNew() ? null : $entity;
     }
 
+    /**
+     * @return \M2E\Temu\Model\Category\Dictionary[]
+     */
+    public function findAllByRegionAndCategoryId(string $region, int $categoryId): array
+    {
+        $collection = $this->dictionaryCollectionFactory->create();
+        $collection
+            ->addFieldToFilter(
+                DictionaryResource::COLUMN_CATEGORY_ID,
+                ['eq' => $categoryId]
+            )
+            ->addFieldToFilter(
+                DictionaryResource::COLUMN_REGION,
+                ['eq' => $region]
+            );
+
+        return array_values($collection->getItems());
+    }
+
     public function delete(\M2E\Temu\Model\Category\Dictionary $dictionary): void
     {
         $this->categoryDictionaryResource->delete($dictionary);

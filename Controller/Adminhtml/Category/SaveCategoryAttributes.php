@@ -88,7 +88,7 @@ class SaveCategoryAttributes extends \M2E\Temu\Controller\Adminhtml\AbstractCate
                 $inputAttribute['attribute_type'],
                 $inputAttribute['attribute_id'],
                 $inputAttribute['attribute_name'],
-                $inputAttribute['value_mode'],
+                (int)$inputAttribute['value_mode'],
                 $recommendedValues,
                 $inputAttribute['value_custom_value'] ?? '',
                 $inputAttribute['value_custom_attribute'] ?? ''

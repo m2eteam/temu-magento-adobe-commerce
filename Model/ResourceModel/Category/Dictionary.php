@@ -9,6 +9,7 @@ class Dictionary extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractMode
     public const COLUMN_ID = 'id';
     public const COLUMN_REGION = 'region';
     public const COLUMN_CATEGORY_ID = 'category_id';
+    public const COLUMN_TITLE = 'title';
     public const COLUMN_STATE = 'state';
     public const COLUMN_PATH = 'path';
     public const COLUMN_SALES_ATTRIBUTES = 'sales_attributes';

@@ -37,8 +37,7 @@ class ChooserBlockModeManually extends AbstractListing
                 \M2E\Temu\Block\Adminhtml\Category\CategoryChooser::class,
                 '',
                 [
-                    'listing' => $manager->getListing(),
-                    'selectedCategory' => $wizardProduct->getCategoryId(),
+                    'categoryDictionary' => $wizardProduct->getCategoryDictionary(),
                 ],
             );
 
