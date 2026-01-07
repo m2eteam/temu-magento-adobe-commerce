@@ -35,7 +35,7 @@ class OrderFactory
             ->setRegionId($channelOrder->getRegionId())
             // ----------------------------------------
             ->setPriceTotal($channelOrder->getPrice()->total)
-            ->setPriceDelivery($channelOrder->getPrice()->delivery)
+            ->setShippingPrice($channelOrder->getPrice()->delivery)
             ->setPriceDiscount($channelOrder->getPrice()->discount)
             // ----------------------------------------
             ->setShippingDetails(self::createShippingDetails($channelOrder))
@@ -77,8 +77,8 @@ class OrderFactory
             $wasChanged = true;
         }
 
-        if ($order->getPriceDelivery() !== $channelOrder->getPrice()->delivery) {
-            $order->setPriceDelivery($channelOrder->getPrice()->delivery);
+        if ($order->getShippingPrice() !== $channelOrder->getPrice()->delivery) {
+            $order->setShippingPrice($channelOrder->getPrice()->delivery);
 
             $wasChanged = true;
         }
@@ -198,6 +198,8 @@ class OrderFactory
         return [
             'amount' => $taxDetails->taxAfterDiscount,
             'taxTotal' => $taxDetails->taxTotal,
+            'product_amount' => $taxDetails->productTaxAmount,
+            'shipping_amount' => $taxDetails->shippingTaxAmount,
         ];
     }
 }

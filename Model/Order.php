@@ -65,7 +65,6 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
     private Order\Item\Repository $orderItemRepository;
     private \M2E\Temu\Model\Order\EventDispatcher $orderEventDispatcher;
     private \M2E\Temu\Model\Order\Repository $orderRepository;
-    private \M2E\Temu\Model\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory;
 
     public function __construct(
         \M2E\Temu\Model\Order\Repository $orderRepository,
@@ -83,7 +82,6 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         \M2E\Temu\Helper\Data\GlobalData $globalDataHelper,
         \M2E\Temu\Helper\Module\Logger $loggerHelper,
         \M2E\Temu\Helper\Module\Exception $exceptionHelper,
-        \M2E\Temu\Model\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\OrderFactory $orderFactory,
@@ -123,7 +121,6 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         $this->orderEventDispatcher = $orderEventDispatcher;
         $this->orderSender = $orderSender;
         $this->orderRepository = $orderRepository;
-        $this->priceTaxRateFactory = $priceTaxRateFactory;
     }
 
     public function _construct(): void
@@ -1033,12 +1030,26 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|float
-     */
-    public function getTaxRate()
+    public function getProductTaxRate(): float
     {
-        return $this->priceTaxRateFactory->createProductPriceTaxRateByOrder($this)->getValue();
+        $shippingTaxRate = ($this->getProductTaxAmount() / $this->getTotalPrice()) * 100;
+
+        return round($shippingTaxRate, 2);
+    }
+
+    public function getShippingPriceTaxRate(): float
+    {
+        $shippingTaxRate = ($this->getShippingTaxAmount() / $this->getShippingPrice()) * 100;
+
+        return round($shippingTaxRate, 2);
+    }
+
+    public function setTaxDetails(array $details): self
+    {
+        $value = json_encode($details, JSON_THROW_ON_ERROR);
+        $this->setData(OrderResource::COLUMN_TAX_DETAILS, $value);
+
+        return $this;
     }
 
     public function getTaxDetails(): array
@@ -1051,17 +1062,6 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return json_decode($value, true);
     }
 
-    public function setTaxDetails(array $details): self
-    {
-        $value = json_encode($details, JSON_THROW_ON_ERROR);
-        $this->setData(OrderResource::COLUMN_TAX_DETAILS, $value);
-
-        return $this;
-    }
-
-    /**
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
     public function getTaxAmount(): float
     {
         $taxDetails = $this->getTaxDetails();
@@ -1072,40 +1072,23 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return (float)($taxDetails['amount'] ?? 0.0);
     }
 
-    /**
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
-    public function isShippingPriceHasTax(): bool
-    {
-        if (!$this->hasShippingTax()) {
-            return false;
-        }
-
-        if ($this->isVatTax()) {
-            return true;
-        }
-
-        $taxDetails = $this->getTaxDetails();
-
-        return isset($taxDetails['includes_shipping']) && $taxDetails['includes_shipping'];
-    }
-
-    /**
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
     public function hasShippingTax(): bool
     {
-        return $this->getShippingTax() > 0;
+        return $this->getShippingTaxAmount() > 0;
     }
 
-    /**
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
-    public function getShippingTax()
+    public function getShippingTaxAmount(): float
     {
         $taxDetails = $this->getTaxDetails();
 
-        return $taxDetails['tax_delivery'] ?? 0.0;
+        return (float)($taxDetails['shipping_amount'] ?? 0.0);
+    }
+
+    public function getProductTaxAmount(): float
+    {
+        $taxDetails = $this->getTaxDetails();
+
+        return (float)($taxDetails['product_amount'] ?? 0.0);
     }
 
     public function getShippingService(): string
@@ -1163,9 +1146,7 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
     public function getShippingPrice(): float
     {
-        $shippingPrice = $this->getPriceDelivery();
-
-        return (float)$shippingPrice;
+        return (float)$this->getData(OrderResource::COLUMN_PRICE_DELIVERY);
     }
 
     public function getShippingTrackingDetails(): array
@@ -1210,21 +1191,11 @@ class Order extends \M2E\Temu\Model\ActiveRecord\AbstractModel
         return true;
     }
 
-    public function setPriceDelivery(float $priceDelivery): self
+    public function setShippingPrice(float $shippingPrice): self
     {
-        $this->setData(OrderResource::COLUMN_PRICE_DELIVERY, $priceDelivery);
+        $this->setData(OrderResource::COLUMN_PRICE_DELIVERY, $shippingPrice);
 
         return $this;
-    }
-
-    public function getPriceDelivery(): ?float
-    {
-        $value = $this->getData(OrderResource::COLUMN_PRICE_DELIVERY);
-        if ($value === null) {
-            return null;
-        }
-
-        return (float)$value;
     }
 
     public function setPriceDiscount(float $priceDiscount): self

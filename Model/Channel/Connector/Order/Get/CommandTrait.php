@@ -87,6 +87,8 @@ trait CommandTrait
                 new \M2E\Temu\Model\Channel\Order\Tax(
                     (float)$order['tax']['total'],
                     (float)$order['tax']['after_discount'],
+                    (float)$order['tax']['product_amount'],
+                    (float)$order['tax']['shipping_amount']
                 ),
                 new \M2E\Temu\Model\Channel\Order\Price(
                     (float)$order['price']['total'],

@@ -139,6 +139,9 @@ class Item extends \Magento\Framework\DataObject
     private function getTaxRateOfProxyItem()
     {
         $productPriceTaxRateObject = $this->proxyItem->getProductPriceTaxRateObject();
+        if (empty($productPriceTaxRateObject)) {
+            return $this->proxyItem->getTaxRate();
+        }
 
         $rateValue = $productPriceTaxRateObject->getValue();
         if (!$productPriceTaxRateObject->isEnabledRoundingOfValue()) {

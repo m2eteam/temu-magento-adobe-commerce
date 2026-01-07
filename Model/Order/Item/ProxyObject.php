@@ -123,7 +123,7 @@ class ProxyObject
         return $this->item->getAssociatedProducts();
     }
 
-    public function getBasePrice()
+    public function getBasePrice(): float
     {
         return $this->getProxyOrder()->convertPriceToBase($this->getPrice());
     }
@@ -167,7 +167,12 @@ class ProxyObject
         return $this->getOriginalQty();
     }
 
-    public function getProductPriceTaxRateObject(): \M2E\Temu\Model\Order\Tax\PriceTaxRateInterface
+    public function getTaxRate(): float
+    {
+        return $this->getProxyOrder()->getProductPriceTaxRate();
+    }
+
+    public function getProductPriceTaxRateObject(): ?\M2E\Temu\Model\Order\Tax\PriceTaxRateInterface
     {
         return $this->getProxyOrder()->getProductPriceTaxRateObject();
     }

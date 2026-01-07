@@ -23,7 +23,6 @@ class ProxyObject
     protected \Magento\Tax\Model\Calculation $taxCalculation;
     private \M2E\Core\Model\Magento\CustomerFactory $magentoCustomerFactory;
     private \M2E\Temu\Model\Config\Manager $config;
-    private \M2E\Temu\Model\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory;
 
     public function __construct(
         \M2E\Temu\Model\Order $order,
@@ -34,8 +33,7 @@ class ProxyObject
         TemuPayment $payment,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        \M2E\Temu\Model\Order\UserInfoFactory $userInfoFactory,
-        \M2E\Temu\Model\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory
+        \M2E\Temu\Model\Order\UserInfoFactory $userInfoFactory
     ) {
         $this->order = $order;
         $this->config = $config;
@@ -46,7 +44,6 @@ class ProxyObject
         $this->customerRepository = $customerRepository;
         $this->taxCalculation = $taxCalculation;
         $this->magentoCustomerFactory = $magentoCustomerFactory;
-        $this->priceTaxRateFactory = $priceTaxRateFactory;
     }
 
     public function createUserInfoFromRawName(string $rawName): UserInfo
@@ -385,135 +382,100 @@ class ProxyObject
         ];
     }
 
-    /**
-     * @return float
-     */
-    protected function getShippingPrice()
-    {
-        $price = $this->order->getShippingPrice();
-
-        if ($this->isTaxModeNone() && !$this->isShippingPriceIncludeTax()) {
-            $taxAmount = $this->taxCalculation->calcTaxAmount(
-                $price,
-                $this->getShippingPriceTaxRate(),
-                false,
-                false
-            );
-
-            $price += $taxAmount;
-        }
-
-        return $price;
-    }
-
-    protected function getBaseShippingPrice()
+    protected function getBaseShippingPrice(): float
     {
         return $this->convertPriceToBase($this->getShippingPrice());
     }
 
     public function hasTax(): bool
     {
-        return $this->order->getTaxRate() > 0;
-    }
-
-    /**
-     * @return int|float
-     */
-    public function getTaxRate()
-    {
-        return $this->order->getTaxRate();
+        return $this->order->getProductTaxRate() > 0;
     }
 
     // ---------------------------------------
 
-    /**
-     * @return float|int
-     */
-    public function getProductPriceTaxRate()
+    public function isProductPriceIncludeTax(): ?bool
+    {
+        $configValue = $this->isPriceIncludeTax('product');
+        if ($configValue !== null) {
+            return $configValue;
+        }
+
+        if (
+            $this->isTaxModeChannel()
+            || ($this->isTaxModeMixed() && $this->hasTax())
+        ) {
+            return false;
+        }
+
+        return null;
+    }
+
+    public function getProductPriceTaxRate(): float
     {
         if (!$this->hasTax()) {
-            return 0;
+            return 0.0;
         }
 
         if ($this->isTaxModeNone() || $this->isTaxModeMagento()) {
-            return 0;
+            return 0.0;
         }
 
-        return $this->order->getTaxRate();
+        return $this->order->getProductTaxRate();
     }
 
-    public function getProductPriceTaxRateObject(): \M2E\Temu\Model\Order\Tax\PriceTaxRateInterface
+    public function getProductPriceTaxRateObject(): ?\M2E\Temu\Model\Order\Tax\PriceTaxRateInterface
     {
-        return $this->priceTaxRateFactory->createProductPriceTaxRateByOrder($this->order);
+        return null;
     }
 
-    /**
-     * @return float|int
-     */
-    public function getShippingPriceTaxRate()
+    // ----------------------------------------
+
+    public function isShippingPriceIncludeTax(): ?bool
+    {
+        $configValue = $this->isPriceIncludeTax('product');
+        if ($configValue !== null) {
+            return $configValue;
+        }
+
+        if (
+            $this->isTaxModeChannel()
+            || ($this->isTaxModeMixed() && $this->order->hasShippingTax())
+        ) {
+            return false;
+        }
+
+        return null;
+    }
+
+    protected function getShippingPrice(): float
+    {
+        return $this->order->getShippingPrice();
+    }
+
+    public function getShippingPriceTaxRate(): float
     {
         if (!$this->hasTax()) {
-            return 0;
+            return 0.0;
         }
 
         if ($this->isTaxModeNone() || $this->isTaxModeMagento()) {
-            return 0;
+            return 0.0;
         }
 
-        if (!$this->order->isShippingPriceHasTax()) {
-            return 0;
+        if (!$this->order->hasShippingTax()) {
+            return 0.0;
         }
 
-        return $this->getProductPriceTaxRate();
+        return $this->order->getShippingPriceTaxRate();
     }
 
-    /**
-     * @return \M2E\Temu\Model\Order\Tax\PriceTaxRateInterface|null
-     */
     public function getShippingPriceTaxRateObject(): ?\M2E\Temu\Model\Order\Tax\PriceTaxRateInterface
     {
         return null;
     }
 
     // ---------------------------------------
-
-    /**
-     * @return bool|null
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
-    public function isProductPriceIncludeTax(): ?bool
-    {
-        return false;
-    }
-
-    /**
-     * @return bool|null
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
-    public function isShippingPriceIncludeTax(): ?bool
-    {
-        return $this->isPriceIncludeTax('shipping');
-    }
-
-    /**
-     * @param $priceType
-     *
-     * @return bool|null
-     * @throws \M2E\Temu\Model\Exception\Logic
-     */
-    protected function isPriceIncludeTax(string $priceType): ?bool
-    {
-        $configValue = $this->config->get("/order/tax/{$priceType}_price/", 'is_include_tax');
-        if ($configValue !== null) {
-            return (bool)$configValue;
-        }
-
-        if ($this->isTaxModeChannel() || ($this->isTaxModeMixed() && $this->hasTax())) {
-            return true;
-        }
-
-        return null;
-    }
 
     public function isTaxModeNone(): bool
     {
@@ -542,10 +504,7 @@ class ProxyObject
         return array_merge($this->getGeneralComments(), $this->getChannelComments());
     }
 
-    /**
-     * @return array
-     */
-    public function getChannelComments()
+    public function getChannelComments(): array
     {
         return [];
     }
@@ -602,5 +561,15 @@ class ProxyObject
         }
 
         return $comments;
+    }
+
+    protected function isPriceIncludeTax(string $priceType): ?bool
+    {
+        $configValue = $this->config->getGroupValue("/order/tax/{$priceType}_price/", 'is_include_tax');
+        if ($configValue !== null) {
+            return (bool)$configValue;
+        }
+
+        return null;
     }
 }

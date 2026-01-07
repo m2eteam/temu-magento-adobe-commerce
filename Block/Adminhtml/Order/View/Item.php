@@ -71,6 +71,7 @@ class Item extends AbstractGrid
             'header' => __('Product'),
             'align' => 'left',
             'width' => '*',
+            'sortable' => false,
             'index' => 'product_id',
             'frame_callback' => [$this, 'callbackColumnProduct'],
         ]);
@@ -326,12 +327,12 @@ class Item extends AbstractGrid
 
     public function callbackColumnTaxPercent($value, \M2E\Temu\Model\Order\Item $row, $column, $isExport)
     {
-        $rate = $this->order->getTaxRate();
-        if (empty($rate)) {
+        $productTaxRate = $this->order->getProductTaxRate();
+        if (empty($productTaxRate)) {
             return '0%';
         }
 
-        return sprintf('%s%%', $rate);
+        return sprintf('%s%%', $productTaxRate);
     }
 
     public function callbackColumnRowTotal($value, \M2E\Temu\Model\Order\Item $row, $column, $isExport)

@@ -4,15 +4,9 @@ namespace M2E\Temu\Model\Order\Tax;
 
 interface PriceTaxRateInterface
 {
-    /**
-     * @return float|int
-     */
-    public function getValue();
+    public function getValue(): float;
 
-    /**
-     * @return float|int
-     */
-    public function getNotRoundedValue();
+    public function getNotRoundedValue(): float;
 
     public function isEnabledRoundingOfValue(): bool;
 }

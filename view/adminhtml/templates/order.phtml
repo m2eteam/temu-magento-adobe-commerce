@@ -254,7 +254,7 @@
                                 <strong>
                                     <?= /* @noEscape */ $block->formatPrice(
                                         $block->order->getCurrency(),
-                                        $block->order->getPriceDelivery()
+                                        $block->order->getShippingPrice()
                                     ) ?>
                                 </strong>
                             </td>
