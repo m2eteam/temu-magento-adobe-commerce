@@ -56,7 +56,7 @@
         'Temu/Category/Chooser'
     ], function() {
         TemuCategoryChooserObj.resetSelectedData();
-        <?php if($block->getSelectedCategory() !== null): ?>
+        <?php if ($block->isExistCategoryDictionary()): ?>
         TemuCategoryChooserObj.setSelectedCategory(
             <?= /* @noEscape */ $block->getSelectedCategory() ?>,
             <?= /* @noEscape */ $block->getSelectedDictionaryId() ?>

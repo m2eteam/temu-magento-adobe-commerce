@@ -5,44 +5,41 @@
 
     <acl>
         <resources>
-            <resource id="Magento_Backend::admin" title="Temu">
-
+            <resource id="Magento_Backend::admin">
+                <!-- Temu Connect ACL -->
                 <resource id="M2E_Temu::temu" title="Temu Integration" sortOrder="61">
-
                     <!-- Listing -->
-
                     <resource id="M2E_Temu::listings" title="Listings" sortOrder="1">
                         <resource id="M2E_Temu::listings_items" title="Items" sortOrder="1"/>
                         <resource id="M2E_Temu::listings_logs" title="Logs &#38; Events" sortOrder="2"/>
                     </resource>
-
                     <!-- Sales -->
-
                     <resource id="M2E_Temu::sales" title="Sales" sortOrder="2">
                         <resource id="M2E_Temu::sales_orders" title="Orders" sortOrder="1"/>
                         <resource id="M2E_Temu::sales_logs" title="Logs &#38; Events" sortOrder="2"/>
                     </resource>
-
                     <!-- Configuration -->
-
                     <resource id="M2E_Temu::configuration" title="Configuration" sortOrder="3">
                         <resource id="M2E_Temu::configuration_accounts" title="Accounts" sortOrder="1"/>
                         <resource id="M2E_Temu::configuration_categories" title="Categories" sortOrder="2"/>
                         <resource id="M2E_Temu::configuration_templates" title="Policies" sortOrder="3"/>
                         <resource id="M2E_Temu::configuration_settings" title="Settings" sortOrder="4"/>
                     </resource>
-
-                    <!-- help center acl -->
-
+                    <!-- Help Center -->
                     <resource id="M2E_Temu::help_center" title="Help Center" sortOrder="4">
                         <resource id="M2E_Temu::help_center_health_status" title="Health Status" sortOrder="1"/>
-                        <resource id="M2E_Temu::help_center_synchronization_log" title="Synchronization Logs"
-                                  sortOrder="2"/>
+                        <resource id="M2E_Temu::help_center_synchronization_log" title="Synchronization Logs" sortOrder="2"/>
                         <resource id="M2E_Temu::help_center_m2e_support" title="M2E Support" sortOrder="3"/>
                     </resource>
-
                 </resource>
-
+                <!-- System Configuration ACL -->
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="M2E_Temu::system_configuration" title="Temu Connect" sortOrder="450" />
+                        </resource>
+                    </resource>
+                </resource>
             </resource>
         </resources>
     </acl>

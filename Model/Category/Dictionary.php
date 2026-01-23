@@ -135,7 +135,7 @@ class Dictionary extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
     public function getCategoryId(): string
     {
-        return $this->getData(DictionaryResource::COLUMN_CATEGORY_ID);
+        return (string)$this->getData(DictionaryResource::COLUMN_CATEGORY_ID);
     }
 
     public function setTitle(string $title): self

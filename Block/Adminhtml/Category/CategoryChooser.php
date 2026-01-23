@@ -21,7 +21,7 @@ class CategoryChooser extends \M2E\Temu\Block\Adminhtml\Magento\AbstractBlock
 
     public function getSelectedCategory(): ?string
     {
-        if ($this->categoryDictionary === null) {
+        if (!$this->isExistCategoryDictionary()) {
             return null;
         }
 
@@ -30,10 +30,23 @@ class CategoryChooser extends \M2E\Temu\Block\Adminhtml\Magento\AbstractBlock
 
     public function getSelectedDictionaryId(): ?int
     {
-        if ($this->categoryDictionary === null) {
+        if (!$this->isExistCategoryDictionary()) {
             return null;
         }
 
         return $this->categoryDictionary->getId();
+    }
+
+    public function isExistCategoryDictionary(): bool
+    {
+        if ($this->categoryDictionary === null) {
+            return false;
+        }
+
+        if ($this->categoryDictionary->isObjectNew()) {
+            return false;
+        }
+
+        return true;
     }
 }
