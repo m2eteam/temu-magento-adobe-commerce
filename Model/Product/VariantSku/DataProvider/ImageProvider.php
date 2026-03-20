@@ -16,14 +16,35 @@ class ImageProvider implements DataBuilderInterface
 
     public function getImage(\M2E\Temu\Model\Product\VariantSku $variantSku): Value
     {
+        $set = $this->findImagesFromVariant($variantSku);
+        if (empty($set)) {
+            $set = $this->findImagesFromProduct($variantSku);
+        }
+
+        return new Value($set);
+    }
+
+    private function findImagesFromVariant(\M2E\Temu\Model\Product\VariantSku $variantSku): array
+    {
         $variantImageSet = $variantSku->getDescriptionTemplateSource()->getImageSet();
 
         $set = [];
-
         foreach ($variantImageSet->getAll() as $variantImage) {
             $set[] = new \M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Image($variantImage->getUrl());
         }
 
-        return new Value($set);
+        return $set;
+    }
+
+    private function findImagesFromProduct(\M2E\Temu\Model\Product\VariantSku $variantSku): array
+    {
+        $productMainImage = $variantSku->getProduct()->getDescriptionTemplateSource()->getMainImage();
+        if ($productMainImage === null) {
+            return [];
+        }
+
+        return [
+            new \M2E\Temu\Model\Product\VariantSku\DataProvider\Images\Image($productMainImage->getUrl()),
+        ];
     }
 }

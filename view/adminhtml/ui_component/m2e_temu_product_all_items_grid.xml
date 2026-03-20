@@ -273,7 +273,7 @@
             </argument>
         </column>
 
-        <column name="channel_product_id" class="M2E\Temu\Ui\Product\Component\Listing\Column\ChannelProductId">
+        <column name="product_channel_product_id" class="M2E\Temu\Ui\Product\Component\Listing\Column\ChannelProductId">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="label" translate="true" xsi:type="string">Goods ID</item>

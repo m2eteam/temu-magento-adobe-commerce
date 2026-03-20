@@ -31,19 +31,19 @@ class ChannelProductId extends \Magento\Ui\Component\Listing\Columns\Column
                 continue;
             }
 
-            $row['channel_product_id'] = __('N/A');
+            $row['product_channel_product_id'] = __('N/A');
 
             $channelProductId = $product->getChannelProductId();
 
             if ($product->isStatusNotListed()) {
-                $row['channel_product_id'] = sprintf('<span style="color: gray;">%s</span>', __('Not Listed'));
+                $row['product_channel_product_id'] = sprintf('<span style="color: gray;">%s</span>', __('Not Listed'));
             }
 
             if ($channelProductId === '') {
                 continue;
             }
 
-            $row['channel_product_id'] = $channelProductId;
+            $row['product_channel_product_id'] = $channelProductId;
         }
 
         return $dataSource;

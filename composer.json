@@ -2,7 +2,7 @@
     "name" : "m2e/temu-magento-adobe-commerce",
     "description" : "M2E Temu Connect is a trusted Adobe Commerce extension that lets you add and categorize Magento products on Temu while efficiently managing orders and inventory. List your products and start selling on Temu with M2E",
     "type" : "magento2-module",
-    "version" : "1.12.2",
+    "version" : "1.13.0",
     "license" : "proprietary",
     "keywords" : [
         "magento",
