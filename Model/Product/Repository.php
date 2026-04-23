@@ -690,28 +690,6 @@ class Repository
         );
     }
 
-    public function addProductTotalCountForListingCollection(
-        \M2E\Temu\Model\ResourceModel\Listing\Collection $listingCollection
-    ): void {
-        $collection = $this->productCollectionFactory->create();
-        $collection->addFieldToSelect(ProductResource::COLUMN_LISTING_ID);
-        $collection->addExpressionFieldToSelect(
-            'products_total_count',
-            'COUNT({{id}})',
-            ['id' => ProductResource::COLUMN_ID]
-        );
-        $collection->getSelect()->group(ProductResource::COLUMN_LISTING_ID);
-
-        $listingCollection->getSelect()
-                          ->joinLeft(
-                              ['t' => $collection->getSelect()],
-                              'main_table.id=t.listing_id',
-                              [
-                                  'products_total_count' => 'products_total_count',
-                              ]
-                          );
-    }
-
     public function getIds(int $fromId, int $limit): array
     {
         $collection = $this->productCollectionFactory->create();

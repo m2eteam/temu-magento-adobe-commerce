@@ -1,35 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace M2E\Temu\Block\Adminhtml\Listing\ItemsByListing;
 
 use M2E\Temu\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite;
 
 class Grid extends \M2E\Temu\Block\Adminhtml\Listing\Grid
 {
+    private \M2E\Temu\Model\Listing\ProductTotalsSelect $productTotalsSelect;
     private \M2E\Temu\Model\ResourceModel\Account $accountResource;
-    private \M2E\Temu\Model\ResourceModel\Product $listingProductResource;
-    /** @var \M2E\Core\Helper\Url */
-    private $urlHelper;
-    /** @var \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory */
-    private $listingCollectionFactory;
+    private \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory;
+    private \M2E\Core\Helper\Url $urlHelper;
 
     public function __construct(
-        \M2E\Temu\Model\ResourceModel\Product $listingProductResource,
+        \M2E\Temu\Model\Listing\ProductTotalsSelect $productTotalsSelect,
         \M2E\Temu\Model\ResourceModel\Account $accountResource,
+        \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
+        \M2E\Core\Helper\Url $urlHelper,
         \M2E\Temu\Helper\View $viewHelper,
         \M2E\Temu\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \M2E\Temu\Helper\Data $dataHelper,
-        \M2E\Core\Helper\Url $urlHelper,
-        \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         array $data = []
     ) {
-        parent::__construct($urlHelper, $viewHelper, $context, $backendHelper, $dataHelper, $data);
-
+        parent::__construct(
+            $urlHelper,
+            $viewHelper,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
+        $this->productTotalsSelect = $productTotalsSelect;
         $this->accountResource = $accountResource;
-        $this->listingProductResource = $listingProductResource;
-        $this->urlHelper = $urlHelper;
         $this->listingCollectionFactory = $listingCollectionFactory;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -64,7 +70,6 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\Grid
     }
 
     /**
-     * @return \M2E\Temu\Block\Adminhtml\Temu\Listing\ItemsByListing\Grid
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _prepareCollection()
@@ -83,41 +88,8 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Listing\Grid
             ]
         );
 
-        $select = $collection->getConnection()->select();
-        $select->from(['lp' => $this->listingProductResource->getMainTable()], [
-            'listing_id' => \M2E\Temu\Model\ResourceModel\Product::COLUMN_LISTING_ID,
-            'products_total_count' => new \Zend_Db_Expr(
-                sprintf(
-                    'COUNT(lp.%s)',
-                    \M2E\Temu\Model\ResourceModel\Product::COLUMN_ID
-                )
-            ),
-            'products_active_count' => new \Zend_Db_Expr(
-                sprintf(
-                    'COUNT(IF(lp.%s = %s, lp.%s, NULL))',
-                    \M2E\Temu\Model\ResourceModel\Product::COLUMN_STATUS,
-                    \M2E\Temu\Model\Product::STATUS_LISTED,
-                    \M2E\Temu\Model\ResourceModel\Product::COLUMN_ID
-                )
-            ),
-            'products_inactive_count' => new \Zend_Db_Expr(
-                sprintf(
-                    'COUNT(IF(lp.%s != %s, lp.%s, NULL))',
-                    \M2E\Temu\Model\ResourceModel\Product::COLUMN_STATUS,
-                    \M2E\Temu\Model\Product::STATUS_LISTED,
-                    \M2E\Temu\Model\ResourceModel\Product::COLUMN_ID
-                )
-            ),
-        ]);
-        $select->group(
-            sprintf(
-                'lp.%s',
-                \M2E\Temu\Model\ResourceModel\Product::COLUMN_LISTING_ID
-            )
-        );
-
         $collection->getSelect()->joinLeft(
-            ['t' => $select],
+            ['t' => $this->productTotalsSelect->getSelect()],
             'main_table.id = t.listing_id',
             [
                 'products_total_count' => 'products_total_count',

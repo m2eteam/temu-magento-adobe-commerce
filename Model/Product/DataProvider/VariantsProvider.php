@@ -132,6 +132,7 @@ class VariantsProvider implements DataBuilderInterface
             $item->setImages($variant->getDataProvider()->getImages()->getValue()->set);
             $item->setIdentifier($variant->getDataProvider()->getIdentifier()->getValue());
             $item->setReferenceLink($variant->getDataProvider()->getReferenceLink()->getValue());
+            $item->setCategoryVariationAttributes($this->getCategoryVariationSalesAttributes($variant));
             $item->setVariationAttributes($this->getVariationSalesAttributes($variant));
             try {
                 $packageWeight = $variant->getDataProvider()->getPackage()->getValue()->packageWeight;
@@ -222,6 +223,11 @@ class VariantsProvider implements DataBuilderInterface
         }
 
         return $variationAttributes;
+    }
+
+    private function getCategoryVariationSalesAttributes(\M2E\Temu\Model\Product\VariantSku $variant): array
+    {
+        return $variant->getDataProvider()->getCategorySalesAttributesData()->getValue();
     }
 
     private function addWarningMessages(array $messages): void

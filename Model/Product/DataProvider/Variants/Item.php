@@ -14,6 +14,7 @@ class Item
     private string $currency;
     private array $images;
     private array $variationAttributes;
+    private array $categoryVariationAttributes;
     private array $packageWeight;
     private array $packageDimensions;
     private bool $isDeletedVariation = false;
@@ -143,5 +144,15 @@ class Item
     public function getReferenceLink(): ?string
     {
         return $this->referenceLink;
+    }
+
+    public function setCategoryVariationAttributes(array $categoryVariationSalesAttributes): void
+    {
+        $this->categoryVariationAttributes = $categoryVariationSalesAttributes;
+    }
+
+    public function getCategoryVariationAttributes(): array
+    {
+        return $this->categoryVariationAttributes;
     }
 }

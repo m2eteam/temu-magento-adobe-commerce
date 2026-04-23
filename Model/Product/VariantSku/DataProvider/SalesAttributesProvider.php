@@ -25,9 +25,12 @@ class SalesAttributesProvider implements DataBuilderInterface
         $this->attributeDataProcessor = $attributeDataProcessor;
     }
 
-    public function getSalesAttributesData(\M2E\Temu\Model\Product\VariantSku $variantSku): array
+    public function getSalesAttributesData(\M2E\Temu\Model\Product\VariantSku $variantSku, bool $asSimple): array
     {
-        if ($variantSku->getProduct()->isSimple()) {
+        if (
+            $asSimple
+            || $variantSku->getProduct()->isSimple()
+        ) {
             return $this->getSalesAttributesDataByCategoryAttributes($variantSku);
         }
 

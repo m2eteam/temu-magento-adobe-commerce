@@ -27,6 +27,10 @@ class ValidateMagentoProduct
      */
     public function validateProduct(\M2E\Temu\Model\Magento\Product $magentoProduct): array
     {
+        if ($magentoProduct->isConfigurableType()) {
+            return [];
+        }
+
         $attributes = $this->findAttributesForValidation();
         if (empty($attributes)) {
             return [];

@@ -33,27 +33,32 @@ trait DataProviderTrait
     // ----------------------------------------
 
     private function getBuilder(
-        string $nick
+        string $builderNick,
+        string $builderAlias = ''
     ): \M2E\Temu\Model\Product\DataProvider\DataBuilderInterface {
-        if (isset($this->dataBuilders[$nick])) {
-            return $this->dataBuilders[$nick];
+        if (empty($builderAlias)) {
+            $builderAlias = $builderNick;
         }
 
-        return $this->dataBuilders[$nick] = $this->dataBuilderFactory->create($nick);
+        if (isset($this->dataBuilders[$builderAlias])) {
+            return $this->dataBuilders[$builderAlias];
+        }
+
+        return $this->dataBuilders[$builderAlias] = $this->dataBuilderFactory->create($builderNick);
     }
 
-    private function addResult(string $builderNick, DataProvider\AbstractResult $result): void
+    private function addResult(string $builderAlias, DataProvider\AbstractResult $result): void
     {
-        $this->results[$builderNick] = $result;
+        $this->results[$builderAlias] = $result;
     }
 
-    private function hasResult(string $builderNick): bool
+    private function hasResult(string $builderAlias): bool
     {
-        return isset($this->results[$builderNick]);
+        return isset($this->results[$builderAlias]);
     }
 
-    private function getResult(string $builderNick): \M2E\Temu\Model\Product\DataProvider\AbstractResult
+    private function getResult(string $builderAlias): \M2E\Temu\Model\Product\DataProvider\AbstractResult
     {
-        return $this->results[$builderNick];
+        return $this->results[$builderAlias];
     }
 }

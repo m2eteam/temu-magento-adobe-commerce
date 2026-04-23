@@ -13,15 +13,15 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
     private \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory;
     private \Magento\Backend\Model\UrlInterface $urlBuilder;
     private \M2E\Temu\Model\Listing\Repository $listingRepository;
-    private \M2E\Temu\Model\Product\Repository $productRepository;
+    private \M2E\Temu\Model\Listing\ProductTotalsSelect $productTotalsSelect;
 
     public function __construct(
         int $ignoreListing,
-        \M2E\Temu\Model\Product\Repository $productRepository,
-        \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         \Magento\Store\Model\StoreFactory $storeFactory,
+        \M2E\Temu\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \M2E\Temu\Model\Listing\Repository $listingRepository,
+        \M2E\Temu\Model\Listing\ProductTotalsSelect $productTotalsSelect,
         \M2E\Temu\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -31,7 +31,8 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->listingCollectionFactory = $listingCollectionFactory;
         $this->urlBuilder = $urlBuilder;
         $this->listingRepository = $listingRepository;
-        $this->productRepository = $productRepository;
+        $this->productTotalsSelect = $productTotalsSelect;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -63,7 +64,11 @@ class Grid extends \M2E\Temu\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->addFieldToFilter(ListingResource::COLUMN_ACCOUNT_ID, $ignoreListing->getAccountId());
         $collection->addFieldToFilter(ListingResource::COLUMN_SITE_ID, $ignoreListing->getSiteId());
 
-        $this->productRepository->addProductTotalCountForListingCollection($collection);
+        $collection->joinLeft(
+            ['t' => $this->productTotalsSelect->getSelect()],
+            'main_table.id = t.listing_id',
+            ['products_total_count' => 'products_total_count']
+        );
 
         $this->setCollection($collection);
 

@@ -1,11 +1,15 @@
 define([
+    'M2ECore/Plugin/Messages',
     'Temu/Common'
-], function () {
+], function (messages) {
     window.TemuTemplateCategoryChooserTabsBrowse = Class.create(Common, {
 
         // ---------------------------------------
 
         initialize: function () {
+            this.messages = Object.create(messages);
+            this.messages.setContainer('#chooser_container');
+
             this.region = null;
             this.accountId = null;
             this.observers = {
@@ -94,6 +98,8 @@ define([
         renderChildCategories: function (parentCategoryId) {
             let self = this;
 
+            this.messages.clearAll();
+
             new Ajax.Request(Temu.url.get('category/getChildCategories'), {
                 method: 'post',
                 asynchronous: true,
@@ -101,15 +107,16 @@ define([
                     "parent_category_id": parentCategoryId,
                     "region": self.getRegion()
                 },
-                onSuccess: function (transport) {
+                onSuccess: (transport)=> {
+                    const response = JSON.parse(transport.responseText);
+                    if (!response.success) {
+                        this.messages.addError(response.message);
 
-                    if (transport.responseText.length <= 2) {
                         return;
                     }
 
-                    let categories = JSON.parse(transport.responseText);
                     let optionsHtml = '';
-                    categories.each(function (category) {
+                    response.categories.each(function (category) {
                         let title   = category.title
 
                         if (parseInt(category.invite_only) === 1) {
@@ -128,7 +135,7 @@ define([
                     $(self.getCategoriesSelectElementId(parentCategoryId)).innerHTML = optionsHtml;
                     $(self.getCategoriesSelectElementId(parentCategoryId)).style.display = 'inline-block';
                     $('chooser_browser').scrollLeft = $('chooser_browser').scrollWidth;
-                }
+                },
             });
         },
 

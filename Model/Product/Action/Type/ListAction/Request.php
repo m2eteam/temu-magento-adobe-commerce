@@ -17,7 +17,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
         array $params
     ): array {
         $dataProvider = $product->getDataProvider();
-        $variantSkus = $dataProvider->getVariantSkusForList()->getValue();
+        $variantSkus = $dataProvider->getVariantSkusForList($variantSettings)->getValue();
         $attributes = $dataProvider->getProductAttributesData()->getValue();
 
         $request['title'] = $dataProvider->getTitle()->getValue();
@@ -64,6 +64,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
                         $item->getImages()
                     ),
                     'variation_attributes' => $item->getVariationAttributes(),
+                    'category_variation_attributes' => $item->getCategoryVariationAttributes(),
                     'package_weight' => $item->getPackageWeight(),
                     'package_dimensions' => $item->getPackageDimensions(),
                     'reference_link' => $item->getReferenceLink()

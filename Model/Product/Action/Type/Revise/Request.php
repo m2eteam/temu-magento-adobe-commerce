@@ -33,10 +33,10 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
         array $params
     ): array {
         if ($this->isNeedUpdateDetail($product, $actionConfigurator)) {
-            return $this->createRequestForDetailRevise($product, $actionConfigurator);
+            return $this->createRequestForDetailRevise($product, $actionConfigurator, $variantSettings);
         }
 
-        return $this->createRequestQtyAndPriceUpdate($product);
+        return $this->createRequestQtyAndPriceUpdate($product, $variantSettings);
     }
 
     protected function getActionMetadata(): array
@@ -65,10 +65,12 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
         return false;
     }
 
-    private function createRequestQtyAndPriceUpdate(\M2E\Temu\Model\Product $product): array
-    {
+    private function createRequestQtyAndPriceUpdate(
+        \M2E\Temu\Model\Product $product,
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
+    ): array {
         $dataProvider = $product->getDataProvider();
-        $variantSkus = $dataProvider->getVariantSkusForRevise()->getValue();
+        $variantSkus = $dataProvider->getVariantSkusForRevise($variantSettings)->getValue();
         $request['id'] = $product->getChannelProductId();
 
         $request['skus'] = array_map(
@@ -93,10 +95,11 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
 
     private function createRequestForDetailRevise(
         \M2E\Temu\Model\Product $product,
-        \M2E\Temu\Model\Product\Action\Configurator $actionConfigurator
+        \M2E\Temu\Model\Product\Action\Configurator $actionConfigurator,
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
     ): array {
         $dataProvider = $product->getDataProvider();
-        $variantSkus = $dataProvider->getVariantSkusForReviseDetails()->getValue();
+        $variantSkus = $dataProvider->getVariantSkusForReviseDetails($variantSettings)->getValue();
 
         $request['id'] = $product->getChannelProductId();
         $request['category_id'] = $dataProvider->getCategoryData()->getValue();
@@ -114,7 +117,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
                     ),
                     'package_weight' => $item->getPackageWeight(),
                     'package_dimensions' => $item->getPackageDimensions(),
-                    'reference_link' => $item->getReferenceLink()
+                    'reference_link' => $item->getReferenceLink(),
                 ];
             },
             $variantSkus->items

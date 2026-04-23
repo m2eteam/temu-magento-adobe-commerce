@@ -11,24 +11,20 @@ class DataProvider
     /** @var \M2E\Temu\Model\Product\DataProvider\DataBuilderInterface[] */
     private array $dataBuilders = [];
 
-    /** @var \M2E\Temu\Model\Product\DataProvider\Factory */
-    private \M2E\Temu\Model\Product\DataProvider\Factory $dataBuilderFactory;
-
     private \M2E\Temu\Model\Product $product;
-    private \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings;
+    private \M2E\Temu\Model\Product\DataProvider\Factory $dataBuilderFactory;
 
     public function __construct(
         \M2E\Temu\Model\Product $product,
-        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings,
         \M2E\Temu\Model\Product\DataProvider\Factory $dataBuilderFactory
     ) {
         $this->product = $product;
-        $this->variantSettings = $variantSettings;
         $this->dataBuilderFactory = $dataBuilderFactory;
     }
 
-    public function getVariantSkusForRevise(): DataProvider\Variants\Result
-    {
+    public function getVariantSkusForRevise(
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
+    ): DataProvider\Variants\Result {
         if ($this->hasResult(DataProvider\VariantsProvider::NICK)) {
             /** @var DataProvider\Variants\Result */
             return $this->getResult(DataProvider\VariantsProvider::NICK);
@@ -37,7 +33,7 @@ class DataProvider
         /** @var \M2E\Temu\Model\Product\DataProvider\VariantsProvider $builder */
         $builder = $this->getBuilder(\M2E\Temu\Model\Product\DataProvider\VariantsProvider::NICK);
 
-        $value = $builder->getVariantSkusForRevise($this->product, $this->variantSettings);
+        $value = $builder->getVariantSkusForRevise($this->product, $variantSettings);
 
         $result = DataProvider\Variants\Result::success($value, $builder->getWarningMessages());
 
@@ -46,8 +42,9 @@ class DataProvider
         return $result;
     }
 
-    public function getVariantSkusForReviseDetails(): DataProvider\Variants\Result
-    {
+    public function getVariantSkusForReviseDetails(
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
+    ): DataProvider\Variants\Result {
         if ($this->hasResult(DataProvider\VariantsProvider::NICK)) {
             /** @var DataProvider\Variants\Result */
             return $this->getResult(DataProvider\VariantsProvider::NICK);
@@ -56,7 +53,7 @@ class DataProvider
         /** @var \M2E\Temu\Model\Product\DataProvider\VariantsProvider $builder */
         $builder = $this->getBuilder(\M2E\Temu\Model\Product\DataProvider\VariantsProvider::NICK);
 
-        $value = $builder->getVariantSkusForReviseDetails($this->product, $this->variantSettings);
+        $value = $builder->getVariantSkusForReviseDetails($this->product, $variantSettings);
 
         $result = DataProvider\Variants\Result::success($value, $builder->getWarningMessages());
 
@@ -65,8 +62,9 @@ class DataProvider
         return $result;
     }
 
-    public function getVariantSkusForList(): DataProvider\Variants\Result
-    {
+    public function getVariantSkusForList(
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
+    ): DataProvider\Variants\Result {
         if ($this->hasResult(DataProvider\VariantsProvider::NICK)) {
             /** @var DataProvider\Variants\Result */
             return $this->getResult(DataProvider\VariantsProvider::NICK);
@@ -75,7 +73,7 @@ class DataProvider
         /** @var \M2E\Temu\Model\Product\DataProvider\VariantsProvider $builder */
         $builder = $this->getBuilder(\M2E\Temu\Model\Product\DataProvider\VariantsProvider::NICK);
 
-        $value = $builder->getVariantSkusForList($this->product, $this->variantSettings);
+        $value = $builder->getVariantSkusForList($this->product, $variantSettings);
 
         $result = DataProvider\Variants\Result::success($value, $builder->getWarningMessages());
 
@@ -242,11 +240,12 @@ class DataProvider
         return $metaData;
     }
 
-    public function getVariantSkuIds(): array
-    {
+    public function getVariantSkuIds(
+        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings
+    ): array {
         /** @var \M2E\Temu\Model\Product\DataProvider\VariantsProvider $builder */
         $builder = $this->getBuilder(\M2E\Temu\Model\Product\DataProvider\VariantsProvider::NICK);
 
-        return $builder->getVariantSkuIds($this->product, $this->variantSettings);
+        return $builder->getVariantSkuIds($this->product, $variantSettings);
     }
 }

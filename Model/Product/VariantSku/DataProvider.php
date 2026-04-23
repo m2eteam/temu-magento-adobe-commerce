@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace M2E\Temu\Model\Product\VariantSku;
 
-use M2E\Temu\Model\Product\DataProvider\AbstractResult;
 use M2E\Temu\Model\Product\DataProviderTrait;
 
 class DataProvider
 {
     use DataProviderTrait;
 
-    private \M2E\Temu\Model\Product\VariantSku\DataProvider\Factory $dataBuilderFactory;
     private \M2E\Temu\Model\Product\VariantSku $variantSku;
-    private \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings;
+    private \M2E\Temu\Model\Product\VariantSku\DataProvider\Factory $dataBuilderFactory;
 
     public function __construct(
         \M2E\Temu\Model\Product\VariantSku $variantSku,
-        \M2E\Temu\Model\Product\Action\VariantSettings $variantSettings,
         \M2E\Temu\Model\Product\VariantSku\DataProvider\Factory $dataBuilderFactory
     ) {
         $this->variantSku = $variantSku;
-        $this->variantSettings = $variantSettings;
         $this->dataBuilderFactory = $dataBuilderFactory;
     }
 
@@ -150,7 +146,7 @@ class DataProvider
 
         /** @var \M2E\Temu\Model\Product\VariantSku\DataProvider\SalesAttributesProvider $builder */
         $builder = $this->getBuilder(DataProvider\SalesAttributesProvider::NICK);
-        $value = $builder->getSalesAttributesData($this->variantSku);
+        $value = $builder->getSalesAttributesData($this->variantSku, false);
         $result = \M2E\Temu\Model\Product\VariantSku\DataProvider\Attributes\Result::success(
             $value,
             $builder->getWarningMessages()
@@ -161,13 +157,22 @@ class DataProvider
         return $result;
     }
 
-    private function getBuilder(
-        string $nick
-    ): \M2E\Temu\Model\Product\DataProvider\DataBuilderInterface {
-        if (isset($this->dataBuilders[$nick])) {
-            return $this->dataBuilders[$nick];
+    public function getCategorySalesAttributesData(): \M2E\Temu\Model\Product\VariantSku\DataProvider\Attributes\Result
+    {
+        $builderAlias = 'CategorySalesAttributesProvider';
+        if ($this->hasResult($builderAlias)) {
+            /** @var \M2E\Temu\Model\Product\VariantSku\DataProvider\Attributes\Result */
+            return $this->getResult($builderAlias);
         }
 
-        return $this->dataBuilders[$nick] = $this->dataBuilderFactory->create($nick);
+        /** @var \M2E\Temu\Model\Product\VariantSku\DataProvider\SalesAttributesProvider $builder */
+        $builder = $this->getBuilder(DataProvider\SalesAttributesProvider::NICK, $builderAlias);
+        $value = $builder->getSalesAttributesData($this->variantSku, true);
+
+        $result = \M2E\Temu\Model\Product\VariantSku\DataProvider\Attributes\Result::success($value);
+
+        $this->addResult($builderAlias, $result);
+
+        return $result;
     }
 }

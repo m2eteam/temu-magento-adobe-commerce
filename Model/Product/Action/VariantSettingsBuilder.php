@@ -67,10 +67,6 @@ class VariantSettingsBuilder
                 if ($currentStatus === \M2E\Temu\Model\Product::STATUS_INACTIVE) {
                     $action = VariantSettings::ACTION_STOP;
                 }
-
-                if ($currentStatus === \M2E\Temu\Model\Product::STATUS_NOT_LISTED) {
-                    $action = VariantSettings::ACTION_STOP;
-                }
             }
 
             $result[$variantId] = [

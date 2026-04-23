@@ -56,6 +56,7 @@ class Collection
                 'online_qty' => $item->getQty(),
                 'images' => $this->generateImagesHash($item->getImages()),
                 'variation_attributes' => $item->getVariationAttributes(),
+                'category_variation_attributes' => $item->getCategoryVariationAttributes(),
                 'package_weight' => $item->getPackageWeight(),
                 'package_dimensions' => $item->getPackageDimensions(),
                 'online_reference_link' => $item->getReferenceLink()

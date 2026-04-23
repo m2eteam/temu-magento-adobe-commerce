@@ -203,21 +203,24 @@ HTML;
             $calculateAction = 'Nothing action allowed.';
         }
 
-        $requestData = $request === null
-            ? 'Nothing action allowed.'
-            : $this->printRequestData(
-                $request,
-                $product,
-                $action
-            );
+        $requestMessagesHtml = 'Nothing action allowed.';
+        $requestDataHtml = 'Nothing action allowed.';
+        $requestMetaDataHtml = 'Nothing action allowed.';
 
-        $requestMetaData = $request === null
-            ? 'Nothing action allowed.'
-            : $this->printRequestMetaData(
-                $request,
+        if ($request !== null) {
+            $logBuffer = $this->logBufferFactory->create();
+            $requestData = $request->build(
                 $product,
-                $action
-            );
+                $action->getConfigurator(),
+                $action->getVariantSettings(),
+                $logBuffer,
+                []
+            )->toArray();
+
+            $requestMessagesHtml = $this->printRequestMessages($logBuffer);
+            $requestDataHtml = $this->printRequestData($requestData);
+            $requestMetaDataHtml = $this->printRequestMetaData($request->getMetadata());
+        }
 
         $currentStatusTitle = \M2E\Temu\Model\Product::getStatusTitle($product->getStatus());
         $productSku = $product->getMagentoProduct()->getSku();
@@ -242,33 +245,28 @@ HTML;
         <td>$calculateAction</td>
     </tr>
     <tr>
+        <td>Request Messages</td>
+        <td>$requestMessagesHtml</td>
+    </tr>
+    <tr>
         <td>Request Data</td>
-        <td>$requestData</td>
+        <td>$requestDataHtml</td>
     </tr>
     <tr>
         <td>Request MetaData</td>
-        <td>$requestMetaData</td>
+        <td>$requestMetaDataHtml</td>
     </tr>
 </table>
 HTML;
     }
 
-    private function printRequestData(
-        \M2E\Temu\Model\Product\Action\AbstractRequest $request,
-        \M2E\Temu\Model\Product $product,
-        \M2E\Temu\Model\Product\Action $action
-    ): string {
+    private function printRequestData(array $requestData): string
+    {
         return sprintf(
             '<pre class="white-space_pre-wrap">%s</pre>',
             $this->escaper->escapeHtml(
                 json_encode(
-                    $request->build(
-                        $product,
-                        $action->getConfigurator(),
-                        $action->getVariantSettings(),
-                        $this->logBufferFactory->create(),
-                        []
-                    )->toArray(),
+                    $requestData,
                     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
                 ),
                 ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401,
@@ -276,16 +274,35 @@ HTML;
         );
     }
 
-    private function printRequestMetaData(
-        \M2E\Temu\Model\Product\Action\AbstractRequest $request,
-        \M2E\Temu\Model\Product $product,
-        Action $action
-    ) {
+    private function printRequestMetaData(array $metaData): string
+    {
         return sprintf(
             '<pre class="white-space_pre-wrap">%s</pre>',
             $this->escaper->escapeHtml(
                 json_encode(
-                    $request->getMetadata(),
+                    $metaData,
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+                ),
+                ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401,
+            ),
+        );
+    }
+
+    private function printRequestMessages(\M2E\Temu\Model\Product\Action\LogBuffer $logBuffer): string
+    {
+        $logsArray = [];
+        foreach ($logBuffer->getLogs() as $log) {
+            $logsArray[] = [
+                'type' => $log->getSeverity(),
+                'text' => $log->getMessage(),
+            ];
+        };
+
+        return sprintf(
+            '<pre class="white-space_pre-wrap">%s</pre>',
+            $this->escaper->escapeHtml(
+                json_encode(
+                    $logsArray,
                     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
                 ),
                 ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401,

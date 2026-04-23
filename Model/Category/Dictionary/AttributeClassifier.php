@@ -20,6 +20,14 @@ class AttributeClassifier
             'id' => '1000001001',
             'title' => 'Province/Region (for China)',
         ],
+        [
+            'id' => '1000002000',
+            'title' => 'Manufacturer',
+        ],
+        [
+            'id' => '1000002001',
+            'title' => 'Responsible Person',
+        ],
     ];
 
     public function isSafetyComplianceAttribute(

@@ -17,7 +17,7 @@ class Request extends \M2E\Temu\Model\Product\Action\AbstractRequest
 
         return [
             'id' => $product->getChannelProductId(),
-            'skus' => $dataProvider->getVariantSkuIds()
+            'skus' => $dataProvider->getVariantSkuIds($variantSettings)
         ];
     }
 
