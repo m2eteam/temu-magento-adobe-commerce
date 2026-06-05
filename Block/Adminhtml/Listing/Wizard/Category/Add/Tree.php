@@ -178,7 +178,7 @@ class Tree extends \M2E\Temu\Block\Adminhtml\Listing\Category\Tree
         if ($node->hasChildren()) {
             $item['children'] = [];
 
-            if (!($node->getLevel() > 1 && !$isParent)) {
+            if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
                 foreach ($node->getChildren() as $child) {
                     $item['children'][] = $this->_getNodeJson($child, $level + 1);
                 }
@@ -206,9 +206,13 @@ class Tree extends \M2E\Temu\Block\Adminhtml\Listing\Category\Tree
 
     public function buildNodeName($node): string
     {
-        return $this->escapeHtml($node->getName()) . <<<HTML
-<span category_id="{$node->getId()}">(0</span>{$this->__('of')} {$node->getProductCount()})
-HTML;
+        return sprintf(
+            '%s (<span category_id="%s">0</span> %s %s)',
+            $this->_escaper->escapeHtml($node->getName()),
+            $node->getId(),
+            __('of'),
+            $node->getProductCount()
+        );
     }
 
     public function getCategoryChildrenJson($categoryId)
