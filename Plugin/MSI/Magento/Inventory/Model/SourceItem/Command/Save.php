@@ -51,14 +51,14 @@ class Save extends \M2E\Temu\Plugin\AbstractPlugin
                 ->create();
 
             foreach ($this->sourceItemRepo->getList($searchCriteria)->getItems() as $beforeSourceItem) {
-                $sourceItemsBefore[$sourceItem->getSourceItemId()] = $beforeSourceItem;
+                $sourceItemsBefore[(string)$sourceItem->getSourceCode()] = $beforeSourceItem;
             }
         }
 
         $result = $callback(...$arguments);
 
         foreach ($sourceItems as $sourceItem) {
-            $sourceItemBefore = $sourceItemsBefore[$sourceItem->getSourceItemId()] ?? null;
+            $sourceItemBefore = $sourceItemsBefore[$sourceItem->getSourceCode()] ?? null;
 
             $affectedProductCollection = $this->msiAffectedProducts->getAffectedProductsBySourceAndSku(
                 $sourceItem->getSourceCode(),
