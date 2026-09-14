@@ -18,6 +18,7 @@ class DeleteService
     private \M2E\Temu\Model\Listing\Repository $listingRepository;
     private \M2E\Temu\Model\Order\DeleteService $deleteService;
     private \M2E\Temu\Model\StopQueue\Repository $stopQueueRepository;
+    private \M2E\Temu\Model\ShippingProvider\Repository $shippingProviderRepository;
 
     public function __construct(
         Repository $accountRepository,
@@ -29,7 +30,8 @@ class DeleteService
         \M2E\Temu\Model\Listing\Repository $listingRepository,
         \M2E\Temu\Helper\Data\Cache\Permanent $cache,
         \M2E\Temu\Model\Order\DeleteService $deleteService,
-        \M2E\Temu\Model\StopQueue\Repository $stopQueueRepository
+        \M2E\Temu\Model\StopQueue\Repository $stopQueueRepository,
+        \M2E\Temu\Model\ShippingProvider\Repository $shippingProviderRepository
     ) {
         $this->accountRepository = $accountRepository;
         $this->orderLogRepository = $orderLogRepository;
@@ -41,6 +43,7 @@ class DeleteService
         $this->listingRepository = $listingRepository;
         $this->deleteService = $deleteService;
         $this->stopQueueRepository = $stopQueueRepository;
+        $this->shippingProviderRepository = $shippingProviderRepository;
     }
 
     /**
@@ -57,21 +60,25 @@ class DeleteService
 
         try {
             $this->orderLogRepository->removeByAccountId($accountId);
-
             $this->deleteService->deleteByAccountId($accountId);
-
             $this->listingLogRepository->removeByAccountId($accountId);
-
             $this->unmanagedProductDeleteService->deleteUnmanagedByAccountId($accountId);
-
             $this->stopQueueRepository->removeByAccountId($accountId);
-
+            $this->removeShippingProviders($account);
             $this->removeListings($account);
 
             $this->deleteAccount($account);
         } catch (\Throwable $e) {
             $this->exceptionHelper->process($e);
             throw $e;
+        }
+    }
+
+    private function removeShippingProviders(\M2E\Temu\Model\Account $account): void
+    {
+        $shippingProviders = $this->shippingProviderRepository->getByAccount($account);
+        foreach ($shippingProviders as $shippingProvider) {
+            $this->shippingProviderRepository->delete($shippingProvider);
         }
     }
 

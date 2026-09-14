@@ -9,6 +9,8 @@ use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCo
 
 class Track
 {
+    public const CUSTOM_CARRIER_CODE = 'custom';
+
     private \Magento\Sales\Model\Order $magentoOrder;
     private array $trackingDetails;
     private \Magento\Sales\Model\Order\Shipment\TrackFactory $shipmentTrackFactory;
@@ -38,6 +40,7 @@ class Track
         $this->shipmentEventRuntimeManager->skipEvents();
         // ---------------------------------------
 
+        /** @var \Magento\Sales\Model\Order\Shipment[] $shipments */
         $shipments = $this->magentoOrder->getShipmentsCollection()->getItems();
 
         if (empty($shipments)) {
@@ -68,8 +71,7 @@ class Track
                 $track->setTitle($trackingDetail['supplier_name']);
                 $track->setCarrierCode($trackingDetail['supplier_name']);
 
-                $shipment->addTrack($track)
-                         ->save();
+                $shipment->addTrack($track)->save();
 
                 $tracks[] = $track;
             }
@@ -86,7 +88,11 @@ class Track
 
         foreach ($this->magentoOrder->getTracksCollection() as $track) {
             foreach ($this->trackingDetails as $key => $trackingDetail) {
-                if (strtolower((string)$track->getData('track_number')) === strtolower((string)$trackingDetail['tracking_number'])) {
+                if (
+                    strtolower((string)$track->getData('track_number')) === strtolower(
+                        (string)$trackingDetail['tracking_number']
+                    )
+                ) {
                     unset($this->trackingDetails[$key]);
                 }
             }
@@ -97,12 +103,12 @@ class Track
 
     /**
      * @param \Magento\Sales\Model\Order\Shipment[] $shipments
-     * @param string $trackNumber
-     *
-     * @return \Magento\Sales\Model\Order\Shipment|null
      */
-    private function findShipment(array $shipments, string $trackNumber, \M2E\Temu\Model\Order\Item $orderItem): ?\Magento\Sales\Model\Order\Shipment
-    {
+    private function findShipment(
+        array $shipments,
+        string $trackNumber,
+        \M2E\Temu\Model\Order\Item $orderItem
+    ): ?\Magento\Sales\Model\Order\Shipment {
         $shipmentsNew = [];
         foreach ($shipments as $shipment) {
             foreach ($shipment->getItems() as $shipmentItem) {

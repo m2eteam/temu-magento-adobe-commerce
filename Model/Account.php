@@ -2,8 +2,8 @@
 
 namespace M2E\Temu\Model;
 
-use M2E\Temu\Model\ResourceModel\Account as AccountResource;
 use M2E\Temu\Helper\Component\Temu as ComponentHelper;
+use M2E\Temu\Model\ResourceModel\Account as AccountResource;
 
 class Account extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 {
@@ -230,7 +230,11 @@ class Account extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
         $this
             ->setData(AccountResource::COLUMN_CREATE_MAGENTO_INVOICE, (int)$settings->isCreateMagentoInvoice())
-            ->setData(AccountResource::COLUMN_CREATE_MAGENTO_SHIPMENT, (int)$settings->isCreateMagentoShipment());
+            ->setData(AccountResource::COLUMN_CREATE_MAGENTO_SHIPMENT, (int)$settings->isCreateMagentoShipment())
+            ->setData(
+                AccountResource::COLUMN_MAP_SHIPPING_PROVIDER_BY_CUSTOM_CARRIER_TITLE,
+                (int)$settings->isMapShippingProviderByCustomCarrierTitle()
+            );
 
         return $this;
     }
@@ -246,7 +250,10 @@ class Account extends \M2E\Temu\Model\ActiveRecord\AbstractModel
 
         return $this->invoiceAndShipmentSettings = $settings
             ->createWithMagentoInvoice((bool)$this->getData(AccountResource::COLUMN_CREATE_MAGENTO_INVOICE))
-            ->createWithMagentoShipment((bool)$this->getData(AccountResource::COLUMN_CREATE_MAGENTO_SHIPMENT));
+            ->createWithMagentoShipment((bool)$this->getData(AccountResource::COLUMN_CREATE_MAGENTO_SHIPMENT))
+            ->createWithMapShippingProviderByCustomCarrierTitle(
+                (bool)$this->getData(AccountResource::COLUMN_MAP_SHIPPING_PROVIDER_BY_CUSTOM_CARRIER_TITLE)
+            );
     }
 
     public function setShippingProviderMapping(

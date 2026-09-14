@@ -7,11 +7,14 @@ namespace M2E\Temu\Model\Order\Shipment;
 class TrackingDetailsBuilder
 {
     private \Magento\Shipping\Model\CarrierFactoryInterface $carrierFactory;
+    private \M2E\Core\Helper\Magento\Carriers $carriersHelper;
 
     public function __construct(
-        \Magento\Shipping\Model\CarrierFactoryInterface $carrierFactory
+        \Magento\Shipping\Model\CarrierFactoryInterface $carrierFactory,
+        \M2E\Core\Helper\Magento\Carriers $carriersHelper
     ) {
         $this->carrierFactory = $carrierFactory;
+        $this->carriersHelper = $carriersHelper;
     }
 
     public function build(
@@ -28,12 +31,15 @@ class TrackingDetailsBuilder
             return null;
         }
 
+        $carrierCode = $this->getTrackCarrierCode($track);
+
         return new \M2E\Temu\Model\Order\Shipment\Data\TrackingDetails(
             (int)$shipment->getId(),
-            $this->getTrackCarrierCode($track),
+            $carrierCode,
             $this->getTrackCarrierTitle($track, $storeId),
             $this->getTrackTitle($track),
-            $trackNumber
+            $trackNumber,
+            $this->isCustomCarrierCode($carrierCode)
         );
     }
 
@@ -80,5 +86,20 @@ class TrackingDetailsBuilder
     private function getTrackTitle(\Magento\Sales\Model\Order\Shipment\Track $track): string
     {
         return trim((string)$track->getTitle());
+    }
+
+    private function isCustomCarrierCode(string $carrierCode): bool
+    {
+        if ($carrierCode === \M2E\Temu\Model\Magento\Order\Shipment\Track::CUSTOM_CARRIER_CODE) {
+            return true;
+        }
+
+        foreach ($this->carriersHelper->getCarriersWithAvailableTracking() as $carrier) {
+            if ($carrier->getCarrierCode() === $carrierCode) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

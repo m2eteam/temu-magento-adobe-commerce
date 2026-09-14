@@ -8,6 +8,7 @@ class InvoicesAndShipment
 {
     private bool $isCreateMagentoInvoice = true;
     private bool $isCreateMagentoShipment = true;
+    private bool $isMapShippingProviderByCustomCarrierTitle = false;
 
     public function isCreateMagentoInvoice(): bool
     {
@@ -33,6 +34,21 @@ class InvoicesAndShipment
     {
         $new = clone $this;
         $new->isCreateMagentoShipment = $status;
+
+        return $new;
+    }
+
+    // ----------------------------------------
+
+    public function isMapShippingProviderByCustomCarrierTitle(): bool
+    {
+        return $this->isMapShippingProviderByCustomCarrierTitle;
+    }
+
+    public function createWithMapShippingProviderByCustomCarrierTitle(bool $status): self
+    {
+        $new = clone $this;
+        $new->isMapShippingProviderByCustomCarrierTitle = $status;
 
         return $new;
     }

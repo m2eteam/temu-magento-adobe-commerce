@@ -47,6 +47,9 @@ class Config implements \M2E\Core\Model\Setup\Upgrade\Entity\ConfigInterface
             'y25_m11' => [
                 \M2E\Temu\Setup\Update\y25_m11\AbilityToSaveSeveralTemplates::class,
             ],
+            'y26_m09' => [
+                \M2E\Temu\Setup\Update\y26_m09\AddMapShippingProviderByCustomCarrierTitle::class
+            ]
         ];
     }
 }

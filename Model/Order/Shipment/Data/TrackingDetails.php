@@ -11,19 +11,22 @@ class TrackingDetails
     private string $carrierTitle;
     private string $carrierName;
     private string $trackingNumber;
+    private bool $isCustomCarrier;
 
     public function __construct(
         int $magentoShipmentId,
         string $carrierCode,
         string $carrierTitle,
         string $carrierName,
-        string $trackingNumber
+        string $trackingNumber,
+        bool $isCustomCarrier
     ) {
         $this->magentoShipmentId = $magentoShipmentId;
         $this->carrierCode = $carrierCode;
         $this->carrierTitle = $carrierTitle;
         $this->carrierName = $carrierName;
         $this->trackingNumber = $trackingNumber;
+        $this->isCustomCarrier = $isCustomCarrier;
     }
 
     public function getMagentoShipmentId(): int
@@ -49,5 +52,10 @@ class TrackingDetails
     public function getTrackingNumber(): string
     {
         return $this->trackingNumber;
+    }
+
+    public function isCustomCarrier(): bool
+    {
+        return $this->isCustomCarrier;
     }
 }

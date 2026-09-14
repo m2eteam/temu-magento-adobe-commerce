@@ -16,6 +16,7 @@ class Account extends \M2E\Temu\Model\ResourceModel\ActiveRecord\AbstractModel
     public const COLUMN_MAGENTO_ORDERS_SETTINGS = 'magento_orders_settings';
     public const COLUMN_CREATE_MAGENTO_INVOICE = 'create_magento_invoice';
     public const COLUMN_CREATE_MAGENTO_SHIPMENT = 'create_magento_shipment';
+    public const COLUMN_MAP_SHIPPING_PROVIDER_BY_CUSTOM_CARRIER_TITLE = 'map_shipping_provider_by_custom_carrier_title';
     public const COLUMN_SHIPPING_PROVIDER_MAPPING = 'shipping_provider_mapping';
     public const COLUMN_OTHER_LISTINGS_SYNCHRONIZATION = 'other_listings_synchronization';
     public const COLUMN_INVENTORY_LAST_SYNC_DATE = 'inventory_last_sync_date';

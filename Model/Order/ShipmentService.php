@@ -14,6 +14,7 @@ class ShipmentService
     private \M2E\Temu\Model\Order\ChangeCreateService $orderChangeCreateService;
     private \M2E\Temu\Model\Order\Item\Repository $orderItemRepository;
     private \M2E\Temu\Model\Account\Ui\UrlHelper $urlHelper;
+    private \M2E\Temu\Model\ShippingProvider\Repository $shippingProviderRepository;
 
     public function __construct(
         \M2E\Temu\Model\Order\Item\Repository $orderItemRepository,
@@ -21,7 +22,8 @@ class ShipmentService
         \M2E\Temu\Model\Order\Shipment\ItemLoader $itemLoader,
         \M2E\Temu\Model\Order\Change\Repository $orderChangeRepository,
         \M2E\Temu\Model\Order\ChangeCreateService $orderChangeCreateService,
-        \M2E\Temu\Model\Account\Ui\UrlHelper $urlHelper
+        \M2E\Temu\Model\Account\Ui\UrlHelper $urlHelper,
+        \M2E\Temu\Model\ShippingProvider\Repository $shippingProviderRepository
     ) {
         $this->trackingDetailsBuilder = $trackingDetailsBuilder;
         $this->itemLoader = $itemLoader;
@@ -29,6 +31,7 @@ class ShipmentService
         $this->orderChangeCreateService = $orderChangeCreateService;
         $this->orderItemRepository = $orderItemRepository;
         $this->urlHelper = $urlHelper;
+        $this->shippingProviderRepository = $shippingProviderRepository;
     }
 
     public function shipByShipment(
@@ -96,8 +99,8 @@ class ShipmentService
 
         $shippingProviderId = $this->findShippingProviderId(
             $shippingProviderMapping,
-            $trackingDetails->getCarrierCode(),
-            $order->getRegionId()
+            $trackingDetails,
+            $order
         );
         if ($shippingProviderId === null) {
             $order->addErrorLog(
@@ -152,14 +155,32 @@ class ShipmentService
 
     private function findShippingProviderId(
         \M2E\Temu\Model\Account\ShippingMapping $shippingProviderMapping,
-        string $carrierCode,
-        int $regionId
+        \M2E\Temu\Model\Order\Shipment\Data\TrackingDetails $trackingDetails,
+        \M2E\Temu\Model\Order $order
     ): ?int {
-        $shippingProviderId = $shippingProviderMapping
-            ->getProviderIdByCarrierCodeAndRegionId($regionId, $carrierCode);
+        $shippingProviderId = $shippingProviderMapping->getProviderIdByCarrierCodeAndRegionId(
+            $order->getRegionId(),
+            $trackingDetails->getCarrierCode()
+        );
+
+        if (
+            $shippingProviderId === null
+            && $trackingDetails->isCustomCarrier()
+            && $order->getAccount()->getInvoiceAndShipmentSettings()->isMapShippingProviderByCustomCarrierTitle()
+        ) {
+            $shippingProvider = $this->shippingProviderRepository->findByAccountRegionAndTitle(
+                $order->getAccountId(),
+                $order->getRegionId(),
+                $trackingDetails->getCarrierName()
+            );
+
+            if ($shippingProvider !== null) {
+                $shippingProviderId = $shippingProvider->getShippingProviderId();
+            }
+        }
 
         if ($shippingProviderId === null) {
-            $shippingProviderId = $shippingProviderMapping->getDefaultProviderId($regionId);
+            $shippingProviderId = $shippingProviderMapping->getDefaultProviderId($order->getRegionId());
         }
 
         return $shippingProviderId;

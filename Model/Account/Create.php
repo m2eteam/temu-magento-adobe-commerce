@@ -33,11 +33,6 @@ class Create
     }
 
     /**
-     * @param string $title
-     * @param string $token
-     * @param string $region
-     *
-     * @return \M2E\Temu\Model\Account
      * @throws \M2E\Core\Model\Exception
      * @throws \M2E\Core\Model\Exception\Connection
      * @throws \M2E\Temu\Model\Exception

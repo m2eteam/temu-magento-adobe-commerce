@@ -98,6 +98,12 @@ class AccountHandler implements \M2E\Core\Model\Setup\InstallHandlerInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
+                AccountResource::COLUMN_MAP_SHIPPING_PROVIDER_BY_CUSTOM_CARRIER_TITLE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 AccountResource::COLUMN_SHIPPING_PROVIDER_MAPPING,
                 Table::TYPE_TEXT,
                 null,

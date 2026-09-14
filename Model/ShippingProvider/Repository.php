@@ -71,11 +71,41 @@ class Repository
     ): ?\M2E\Temu\Model\ShippingProvider {
         $collection = $this->collectionFactory->create();
         $collection->addFieldToFilter(ShippingProviderResource::COLUMN_ACCOUNT_ID, $object->getAccountId());
-        $collection->addFieldToFilter(ShippingProviderResource::COLUMN_SHIPPING_PROVIDER_ID, $object->getShippingProviderId());
+        $collection->addFieldToFilter(
+            ShippingProviderResource::COLUMN_SHIPPING_PROVIDER_ID,
+            $object->getShippingProviderId()
+        );
 
         /** @var \M2E\Temu\Model\ShippingProvider $shippingProvider */
         $shippingProvider = $collection->getFirstItem();
 
+        if ($shippingProvider->isObjectNew()) {
+            return null;
+        }
+
+        return $shippingProvider;
+    }
+
+    public function findByAccountRegionAndTitle(
+        int $accountId,
+        int $regionId,
+        string $title
+    ): ?\M2E\Temu\Model\ShippingProvider {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(
+            ShippingProviderResource::COLUMN_ACCOUNT_ID,
+            ['eq' => $accountId]
+        );
+        $collection->addFieldToFilter(
+            ShippingProviderResource::COLUMN_SHIPPING_PROVIDER_REGION_ID,
+            ['eq' => $regionId]
+        );
+        $collection->addFieldToFilter(
+            ShippingProviderResource::COLUMN_SHIPPING_PROVIDER_NAME,
+            ['eq' => trim($title)]
+        );
+
+        $shippingProvider = $collection->getFirstItem();
         if ($shippingProvider->isObjectNew()) {
             return null;
         }
