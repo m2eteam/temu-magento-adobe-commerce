@@ -7,8 +7,8 @@ use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector;
 
 class RoundTaxPercent extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
 {
-    public const PRODUCT_PRICE_TAX_DATA_KEY = 'm2e_product_price_tax';
-    public const SHIPPING_PRICE_TAX_DATA_KEY = 'm2e_shipping_price_tax';
+    public const PRODUCT_PRICE_TAX_DATA_KEY = 'temu_product_price_tax';
+    public const SHIPPING_PRICE_TAX_DATA_KEY = 'temu_shipping_price_tax';
 
     public function collect(
         \Magento\Quote\Model\Quote $quote,
